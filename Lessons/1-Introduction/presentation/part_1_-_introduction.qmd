@@ -1,0 +1,87 @@
+---
+title: "Part 1 - Introduction to Machine Learning"
+author: "Alexandre Bry"
+incremental: true
+slide-level: 3
+reference-location: document
+format:
+  revealjs:
+    transition: slide
+    # theme: [default, _extensions/grantmcdermott/clean/clean.scss]
+    theme: simple
+    slide-number: true
+    show-slide-number: all
+    css: [styles.css]
+---
+
+# Introduction
+
+### Definition
+
+::: {.definition-block}
+Machine Learning (ML)
+
+Feeding **data** into a computer **algorithm** in order to learn **patterns** and make **predictions** in new and different **situations**.
+:::
+
+### Dataset
+
+
+
+# Categories of ML
+
+### Available data
+
+- Supervised: for each input in the dataset, the expected output is also part of the dataset
+- Unsupervised: for each input in the dataset, the expected output is **not** part of the dataset
+- Semi-supervised: only a portion of the inputs of the dataset have their expected output in the dataset
+- Reinforcement: there is no predefined dataset, but an environment giving feedback to the model when it takes actions
+
+### Output
+
+- Classification: assigning one (or multiple) label(s) chosen from a given list of classes to each element of the input
+- Regression: assigning one (or multiple) value(s) chosen from a continuous set of values
+- Clustering: create categories by grouping together similar inputs
+
+# Usual pipeline
+
+# Challenges
+
+## Data
+
+- Quality
+- Diversity
+- Biases and fairness (example of crime prediction)
+
+## Underfitting and Overfitting
+
+## Interpretable and Explainable
+
+### Definitions
+
+::: {.definition-block}
+Interpretable
+
+Qualifies a ML model which decision-making process is straightforward and **transparent**, making it directly **understandable** by humans. This requires to restrict the model **complexity**.
+:::
+
+::: {.definition-block}
+Explainable
+
+Qualifies a ML model which decision-making process can be partly interpreted afterwards using **post hoc interpretation techniques**. 
+:::
+
+### Examples
+
+- Example of the model detecting fishes using human hands
+- Depends a lot on the technique that is used
+
+# Resources
+
+## Machine Learning
+
+- GeeksforGeeks:
+  - [GeeksforGeeks Introduction to Machine Learning](https://www.geeksforgeeks.org/introduction-machine-learning/)
+  - [GeeksforGeeks 7 Major ML Challenges](https://www.geeksforgeeks.org/7-major-challenges-faced-by-machine-learning-professionals/)
+  - [GeeksforGeeks Explainable and Interpretable](https://www.geeksforgeeks.org/what-is-the-difference-between-explainable-and-interpretable-machine-learning/)
+- [Interpretable Machine Learning, Christoph Molnar](https://christophm.github.io/interpretable-ml-book/)
