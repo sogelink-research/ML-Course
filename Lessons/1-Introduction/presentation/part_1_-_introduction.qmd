@@ -12,6 +12,11 @@ format:
     slide-number: true
     show-slide-number: all
     css: [styles.css]
+    code-overflow: wrap
+    code-line-numbers: false
+    scrollable: true
+execute: 
+  echo: true
 ---
 
 # Introduction
@@ -45,6 +50,45 @@ Feeding **data** into a computer **algorithm** in order to learn **patterns** an
 
 # Usual pipeline
 
+- Data acquisition
+- Data preprocessing
+  - Outliers
+  - Missing data
+  - Formatting
+  - Normalization
+- Model selection
+  - Type of model
+  - Complexity
+  - Parameters
+- Model evaluation
+  - Cross-validation
+  - Hyperparameter tuning
+- Final model training
+
+# Overview of ML methods
+
+- Linear Regression
+- Decision Tree
+- Random Forest
+- Bagging?
+
+### Linear regression {auto-animate="true" auto-animate-easing="ease-in-out"}
+
+::: {data-id="equation"}
+$y = \beta_0 + \beta_1 X$
+:::
+ <!-- .fragment .fade-out -->
+
+### Linear regression {auto-animate="true" auto-animate-easing="ease-in-out"}
+
+<!-- $y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \cdots + \beta_n X_n$ {.fragment .fade-in} -->
+::: {data-id="equation"}
+$y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \cdots + \beta_n X_n$
+:::
+
+
+# Overview of NN methods
+
 # Challenges
 
 ## Data
@@ -55,7 +99,17 @@ Feeding **data** into a computer **algorithm** in order to learn **patterns** an
 
 ## Underfitting and Overfitting
 
+- Cross-validation
+- Feature selection
+- Regularization
+- Ensemble methods
+- Model complexity (increase if high bias and reduce if high variance)
+- Early stopping (overfitting)
+- Training data size (underfitting)
+
 ## Interpretable and Explainable
+
+## Bias and variance (stability)
 
 ### Definitions
 
@@ -75,6 +129,108 @@ Qualifies a ML model which decision-making process can be partly interpreted aft
 
 - Example of the model detecting fishes using human hands
 - Depends a lot on the technique that is used
+
+# Python libraries
+
+## Data manipulation
+
+### Libraries
+
+::: {.fragment .nonincremental}
+- [NumPy](https://numpy.org/)
+  - Fast numerical operations
+  - Matrices with any number of dimensions (called arrays)
+  - Lots of convenient operators on arrays
+:::
+::: {.fragment .nonincremental}
+- [Pandas](https://pandas.pydata.org/)
+  - Can store any type of data
+  - 1D or 2D tables (called DataFrames)
+  - Lots of convenient operators on DataFrames
+:::
+
+### NumPy
+
+::: {.fragment}
+```{python}
+import numpy as np
+```
+:::
+::: {.fragment}
+```{python}
+array = np.array([[0, 1], [2, 3]])
+print(array)
+```
+:::
+::: {.fragment}
+```{python}
+print(5 * array)
+```
+:::
+::: {.fragment}
+```{python}
+print(np.pow(array, 3))
+```
+:::
+::: {.fragment}
+```{python}
+print(array @ array)
+```
+:::
+::: {.fragment}
+```{python}
+print(np.where(array < 2, 10 - array, array))
+```
+:::
+
+### Pandas
+
+::: {.fragment}
+```{python}
+import pandas as pd
+import numpy.random as npr
+```
+:::
+
+::: {.fragment}
+```{python}
+df = pd.DataFrame([
+    ["Pi", 3.14159, npr.randint(-100, 101, (2, 2))],
+    ["Euler's number", 2.71828, npr.randint(-100, 101, (2, 2))],
+    ["Golden ratio", 1.61803, npr.randint(-100, 101, (2, 2))]
+  ], columns = ["Names", "Values", "Random numbers because why not"])
+print(df)
+```
+:::
+
+::: {.fragment}
+```{python}
+print(df[df["Values"] > 2])
+```
+:::
+
+::: {.fragment}
+```{python}
+print(df[df["Names"].str.contains("n")])
+```
+:::
+
+## ML
+
+- [SciPy](https://scipy.org/)
+- [scikit-learn](https://scikit-learn.org/stable/index.html)
+
+## NN
+
+- [PyTorch](https://pytorch.org/)
+- [TensorFlow](https://www.tensorflow.org/)
+- [Keras](https://keras.io/)
+
+## Visualization
+
+- [Matplotlib](https://matplotlib.org/)
+- [Plotly](https://plotly.com/python/)
+- [Seaborn](https://seaborn.pydata.org/index.html)
 
 # Resources
 
