@@ -32,8 +32,6 @@ Feeding **data** into a computer **algorithm** in order to learn **patterns** an
 
 ### Dataset
 
-
-
 # Categories of ML
 
 ### Available data
@@ -68,28 +66,98 @@ Feeding **data** into a computer **algorithm** in order to learn **patterns** an
 
 # Overview of ML methods
 
-- Linear Regression
-- Decision Tree
-- Random Forest
-- Bagging?
-- Maximum Likelihood Estimation
+## Supervised Learning
 
-### Linear regression {auto-animate="true" auto-animate-easing="ease-in-out"}
+- **Linear Regression**: Used for predicting continuous values.
+- **Logistic Regression**: Used for binary classification problems.
+- **Decision Trees**: A tree-like structure used for both classification and regression.
+- **Random Forests**: An ensemble method that combines multiple decision trees.
+- **Support Vector Machines (SVM)**: Used for classification and regression, effective in high-dimensional spaces.
+- **K-Nearest Neighbors (KNN)**: A non-parametric method for classification and regression.
+- **Naive Bayes**: A probabilistic classifier based on Bayes' theorem, often used for text classification.
+- **Gradient Boosting (e.g., XGBoost, LightGBM)**: Boosting technique that combines weak learners (usually decision trees) to form a stronger model.
 
-::: {data-id="equation"}
-$y = \beta_0 + \beta_1 X$
-:::
- <!-- .fragment .fade-out -->
+## Unsupervised Learning
 
-### Linear regression {auto-animate="true" auto-animate-easing="ease-in-out"}
+- **K-Means Clustering**: A method for partitioning data into K clusters.
+- **Hierarchical Clustering**: Builds a hierarchy of clusters using either agglomerative or divisive methods.
+- **DBSCAN (Density-Based Spatial Clustering of Applications with Noise)**: Clustering based on the density of data points.
+- **Principal Component Analysis (PCA)**: Dimensionality reduction technique to project data into lower dimensions.
+- **Independent Component Analysis (ICA)**: Similar to PCA but focuses on maximizing the statistical independence of the components.
+- **Autoencoders**: A type of neural network used for unsupervised learning, primarily for dimensionality reduction or feature learning.
+- **t-SNE (t-Distributed Stochastic Neighbor Embedding)**: A nonlinear dimensionality reduction technique primarily used for visualization of high-dimensional data.
 
-<!-- $y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \cdots + \beta_n X_n$ {.fragment .fade-in} -->
-::: {data-id="equation"}
-$y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \cdots + \beta_n X_n$
-:::
+## Reinforcement Learning
 
+- **Q-Learning**: A value-based reinforcement learning algorithm.
+- **SARSA (State-Action-Reward-State-Action)**: A modification of Q-Learning.
+- **Deep Q-Networks (DQN)**: Combines Q-Learning with deep neural networks for environments with large state spaces.
+- **Policy Gradient Methods**: These directly optimize the policy by adjusting parameters in the direction that improves performance (e.g., REINFORCE algorithm).
+- **Actor-Critic Methods**: Combines policy gradients and value-based methods to optimize both value functions and policies simultaneously.
 
 # Overview of NN methods
+
+## Feedforward Neural Networks (FNN)
+
+The most basic type of neural network where information moves in one direction (input to output).
+
+- **Fully Connected Networks (Dense Networks)**: Every neuron in one layer is connected to every neuron in the next layer.
+- **Multilayer Perceptron (MLP)**: A type of fully connected network with one or more hidden layers.
+
+## Convolutional Neural Networks (CNN)
+
+Primarily used for image data, where the convolution operation captures spatial hierarchies in the data.
+
+- **LeNet**: An early CNN model designed for handwritten digit recognition.
+- **AlexNet**: A pioneering CNN model in deep learning, which won the ImageNet challenge in 2012.
+- **VGGNet**: Known for its deep and uniform architecture (e.g., VGG16, VGG19).
+- **ResNet**: A very deep network with skip connections to avoid vanishing gradients, allowing training of networks with hundreds or thousands of layers.
+- **Inception Network (GoogLeNet)**: Uses different sized convolution filters in parallel and concatenates their outputs.
+
+## Recurrent Neural Networks (RNN)
+
+Used for sequential data like time series, text, or speech, where the network has loops to allow information persistence.
+
+- **Simple RNN**: Basic form of RNN where each neuron in the current time step is connected to the previous time step.
+- **Long Short-Term Memory (LSTM)**: A special type of RNN capable of learning long-term dependencies, overcoming the vanishing gradient problem.
+- **Gated Recurrent Unit (GRU)**: A simplified version of LSTM with fewer parameters, designed to improve computational efficiency.
+  
+## Transformers
+
+Currently the state-of-the-art architecture for natural language processing and other sequential tasks.
+
+- **BERT (Bidirectional Encoder Representations from Transformers)**: A transformer model pre-trained for a wide variety of language tasks.
+- **GPT (Generative Pre-trained Transformer)**: A transformer model designed for generating text, famous for its application in tasks like language modeling and dialogue generation.
+- **T5 (Text-to-Text Transfer Transformer)**: Converts all NLP tasks into a text-to-text format.
+- **Vision Transformers (ViT)**: An adaptation of transformers for image data, treating an image as a sequence of patches.
+
+## Autoencoders
+
+A type of neural network used for unsupervised learning by learning an efficient encoding of input data.
+
+- **Denoising Autoencoders**: Trains the network to remove noise from input data.
+- **Variational Autoencoders (VAE)**: A generative model that learns to map data to a continuous latent space, allowing generation of new data points.
+
+## Generative Models
+
+Focused on generating new data from learned distributions.
+
+- **Generative Adversarial Networks (GANs)**: Consist of two networks, a generator and a discriminator, which compete in a game to improve each other’s performance.
+- **Conditional GANs (cGANs)**: GANs conditioned on additional information like class labels.
+- **StyleGAN**: A GAN variant that generates highly realistic images with control over image style features.
+
+## Attention Mechanisms
+
+Attention mechanisms are often embedded into neural networks, especially in natural language processing and vision tasks.
+
+- **Self-Attention**: A mechanism in which every part of an input sequence interacts with every other part, learning which parts to focus on (core to transformers).
+- **Attention in RNNs**: Used to allow the network to focus on certain parts of a sequence when making predictions.
+
+## Neural Architecture Search (NAS)
+
+Automated methods to discover optimal neural network architectures.
+
+- **EfficientNet**: A family of models designed using NAS techniques, which balance model complexity and performance.
 
 ### Playground {.no-scrollable}
 

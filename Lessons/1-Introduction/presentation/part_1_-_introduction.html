@@ -470,37 +470,133 @@ Alexandre Bry
 <section>
 <section id="overview-of-ml-methods" class="title-slide slide level1 center">
 <h1>Overview of ML methods</h1>
+
+</section>
+<section id="supervised-learning" class="title-slide slide level2 center">
+<h2>Supervised Learning</h2>
 <ul>
-<li class="fragment">Linear Regression</li>
-<li class="fragment">Decision Tree</li>
-<li class="fragment">Random Forest</li>
-<li class="fragment">Bagging?</li>
-<li class="fragment">Maximum Likelihood Estimation</li>
+<li class="fragment"><strong>Linear Regression</strong>: Used for predicting continuous values.</li>
+<li class="fragment"><strong>Logistic Regression</strong>: Used for binary classification problems.</li>
+<li class="fragment"><strong>Decision Trees</strong>: A tree-like structure used for both classification and regression.</li>
+<li class="fragment"><strong>Random Forests</strong>: An ensemble method that combines multiple decision trees.</li>
+<li class="fragment"><strong>Support Vector Machines (SVM)</strong>: Used for classification and regression, effective in high-dimensional spaces.</li>
+<li class="fragment"><strong>K-Nearest Neighbors (KNN)</strong>: A non-parametric method for classification and regression.</li>
+<li class="fragment"><strong>Naive Bayes</strong>: A probabilistic classifier based on Bayes’ theorem, often used for text classification.</li>
+<li class="fragment"><strong>Gradient Boosting (e.g., XGBoost, LightGBM)</strong>: Boosting technique that combines weak learners (usually decision trees) to form a stronger model.</li>
 </ul>
 </section>
-<section id="linear-regression" class="slide level3" data-auto-animate="true" data-auto-animate-easing="ease-in-out">
-<h3 data-id="quarto-animate-title">Linear regression</h3>
-<div data-id="equation">
-<p><span class="math inline">\(y = \beta_0 + \beta_1 X\)</span></p>
-</div>
-<p><!-- .fragment .fade-out --></p>
+
+<section id="unsupervised-learning" class="title-slide slide level2 center">
+<h2>Unsupervised Learning</h2>
+<ul>
+<li class="fragment"><strong>K-Means Clustering</strong>: A method for partitioning data into K clusters.</li>
+<li class="fragment"><strong>Hierarchical Clustering</strong>: Builds a hierarchy of clusters using either agglomerative or divisive methods.</li>
+<li class="fragment"><strong>DBSCAN (Density-Based Spatial Clustering of Applications with Noise)</strong>: Clustering based on the density of data points.</li>
+<li class="fragment"><strong>Principal Component Analysis (PCA)</strong>: Dimensionality reduction technique to project data into lower dimensions.</li>
+<li class="fragment"><strong>Independent Component Analysis (ICA)</strong>: Similar to PCA but focuses on maximizing the statistical independence of the components.</li>
+<li class="fragment"><strong>Autoencoders</strong>: A type of neural network used for unsupervised learning, primarily for dimensionality reduction or feature learning.</li>
+<li class="fragment"><strong>t-SNE (t-Distributed Stochastic Neighbor Embedding)</strong>: A nonlinear dimensionality reduction technique primarily used for visualization of high-dimensional data.</li>
+</ul>
 </section>
-<section id="linear-regression-1" class="slide level3" data-auto-animate="true" data-auto-animate-easing="ease-in-out">
-<h3 data-id="quarto-animate-title">Linear regression</h3>
-<!-- $y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \cdots + \beta_n X_n$ {.fragment .fade-in} -->
-<div data-id="equation">
-<p><span class="math inline">\(y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \cdots + \beta_n X_n\)</span></p>
-</div>
-</section></section>
+
+<section id="reinforcement-learning" class="title-slide slide level2 center">
+<h2>Reinforcement Learning</h2>
+<ul>
+<li class="fragment"><strong>Q-Learning</strong>: A value-based reinforcement learning algorithm.</li>
+<li class="fragment"><strong>SARSA (State-Action-Reward-State-Action)</strong>: A modification of Q-Learning.</li>
+<li class="fragment"><strong>Deep Q-Networks (DQN)</strong>: Combines Q-Learning with deep neural networks for environments with large state spaces.</li>
+<li class="fragment"><strong>Policy Gradient Methods</strong>: These directly optimize the policy by adjusting parameters in the direction that improves performance (e.g., REINFORCE algorithm).</li>
+<li class="fragment"><strong>Actor-Critic Methods</strong>: Combines policy gradients and value-based methods to optimize both value functions and policies simultaneously.</li>
+</ul>
+</section>
+</section>
 <section>
 <section id="overview-of-nn-methods" class="title-slide slide level1 center">
 <h1>Overview of NN methods</h1>
 
 </section>
+<section id="feedforward-neural-networks-fnn" class="title-slide slide level2 center">
+<h2>Feedforward Neural Networks (FNN)</h2>
+<p>The most basic type of neural network where information moves in one direction (input to output).</p>
+<ul>
+<li class="fragment"><strong>Fully Connected Networks (Dense Networks)</strong>: Every neuron in one layer is connected to every neuron in the next layer.</li>
+<li class="fragment"><strong>Multilayer Perceptron (MLP)</strong>: A type of fully connected network with one or more hidden layers.</li>
+</ul>
+</section>
+
+<section id="convolutional-neural-networks-cnn" class="title-slide slide level2 center">
+<h2>Convolutional Neural Networks (CNN)</h2>
+<p>Primarily used for image data, where the convolution operation captures spatial hierarchies in the data.</p>
+<ul>
+<li class="fragment"><strong>LeNet</strong>: An early CNN model designed for handwritten digit recognition.</li>
+<li class="fragment"><strong>AlexNet</strong>: A pioneering CNN model in deep learning, which won the ImageNet challenge in 2012.</li>
+<li class="fragment"><strong>VGGNet</strong>: Known for its deep and uniform architecture (e.g., VGG16, VGG19).</li>
+<li class="fragment"><strong>ResNet</strong>: A very deep network with skip connections to avoid vanishing gradients, allowing training of networks with hundreds or thousands of layers.</li>
+<li class="fragment"><strong>Inception Network (GoogLeNet)</strong>: Uses different sized convolution filters in parallel and concatenates their outputs.</li>
+</ul>
+</section>
+
+<section id="recurrent-neural-networks-rnn" class="title-slide slide level2 center">
+<h2>Recurrent Neural Networks (RNN)</h2>
+<p>Used for sequential data like time series, text, or speech, where the network has loops to allow information persistence.</p>
+<ul>
+<li class="fragment"><strong>Simple RNN</strong>: Basic form of RNN where each neuron in the current time step is connected to the previous time step.</li>
+<li class="fragment"><strong>Long Short-Term Memory (LSTM)</strong>: A special type of RNN capable of learning long-term dependencies, overcoming the vanishing gradient problem.</li>
+<li class="fragment"><strong>Gated Recurrent Unit (GRU)</strong>: A simplified version of LSTM with fewer parameters, designed to improve computational efficiency.</li>
+</ul>
+</section>
+
+<section id="transformers" class="title-slide slide level2 center">
+<h2>Transformers</h2>
+<p>Currently the state-of-the-art architecture for natural language processing and other sequential tasks.</p>
+<ul>
+<li class="fragment"><strong>BERT (Bidirectional Encoder Representations from Transformers)</strong>: A transformer model pre-trained for a wide variety of language tasks.</li>
+<li class="fragment"><strong>GPT (Generative Pre-trained Transformer)</strong>: A transformer model designed for generating text, famous for its application in tasks like language modeling and dialogue generation.</li>
+<li class="fragment"><strong>T5 (Text-to-Text Transfer Transformer)</strong>: Converts all NLP tasks into a text-to-text format.</li>
+<li class="fragment"><strong>Vision Transformers (ViT)</strong>: An adaptation of transformers for image data, treating an image as a sequence of patches.</li>
+</ul>
+</section>
+
+<section id="autoencoders" class="title-slide slide level2 center">
+<h2>Autoencoders</h2>
+<p>A type of neural network used for unsupervised learning by learning an efficient encoding of input data.</p>
+<ul>
+<li class="fragment"><strong>Denoising Autoencoders</strong>: Trains the network to remove noise from input data.</li>
+<li class="fragment"><strong>Variational Autoencoders (VAE)</strong>: A generative model that learns to map data to a continuous latent space, allowing generation of new data points.</li>
+</ul>
+</section>
+
+<section id="generative-models" class="title-slide slide level2 center">
+<h2>Generative Models</h2>
+<p>Focused on generating new data from learned distributions.</p>
+<ul>
+<li class="fragment"><strong>Generative Adversarial Networks (GANs)</strong>: Consist of two networks, a generator and a discriminator, which compete in a game to improve each other’s performance.</li>
+<li class="fragment"><strong>Conditional GANs (cGANs)</strong>: GANs conditioned on additional information like class labels.</li>
+<li class="fragment"><strong>StyleGAN</strong>: A GAN variant that generates highly realistic images with control over image style features.</li>
+</ul>
+</section>
+
+<section id="attention-mechanisms" class="title-slide slide level2 center">
+<h2>Attention Mechanisms</h2>
+<p>Attention mechanisms are often embedded into neural networks, especially in natural language processing and vision tasks.</p>
+<ul>
+<li class="fragment"><strong>Self-Attention</strong>: A mechanism in which every part of an input sequence interacts with every other part, learning which parts to focus on (core to transformers).</li>
+<li class="fragment"><strong>Attention in RNNs</strong>: Used to allow the network to focus on certain parts of a sequence when making predictions.</li>
+</ul>
+</section>
+
+<section id="neural-architecture-search-nas" class="title-slide slide level2 center">
+<h2>Neural Architecture Search (NAS)</h2>
+<p>Automated methods to discover optimal neural network architectures.</p>
+<ul>
+<li class="fragment"><strong>EfficientNet</strong>: A family of models designed using NAS techniques, which balance model complexity and performance.</li>
+</ul>
+</section>
 <section id="playground" class="slide level3 no-scrollable">
 <h3>Playground</h3>
 <p><a href="https://playground.tensorflow.org/">Playground</a></p>
-</section></section>
+</section>
+</section>
 <section>
 <section id="challenges" class="title-slide slide level1 center">
 <h1>Challenges</h1>
@@ -591,12 +687,12 @@ Alexandre Bry
 <section id="numpy" class="slide level3">
 <h3>NumPy</h3>
 <div class="fragment">
-<div id="c8605f70" class="cell" data-execution_count="1">
+<div id="3b244f16" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div class="fragment">
-<div id="45fdb777" class="cell" data-execution_count="2">
+<div id="f57989fc" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="" aria-hidden="true" tabindex="-1"></a>array <span class="op">=</span> np.array([[<span class="dv">0</span>, <span class="dv">1</span>], [<span class="dv">2</span>, <span class="dv">3</span>]])</span>
 <span id="cb2-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(array)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -606,7 +702,7 @@ Alexandre Bry
 </div>
 </div>
 <div class="fragment">
-<div id="45ae5197" class="cell" data-execution_count="3">
+<div id="c218b0c5" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="dv">5</span> <span class="op">*</span> array)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[[ 0  5]
@@ -615,7 +711,7 @@ Alexandre Bry
 </div>
 </div>
 <div class="fragment">
-<div id="daa0a730" class="cell" data-execution_count="4">
+<div id="086222f9" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.<span class="bu">pow</span>(array, <span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[[ 0  1]
@@ -624,7 +720,7 @@ Alexandre Bry
 </div>
 </div>
 <div class="fragment">
-<div id="e1101633" class="cell" data-execution_count="5">
+<div id="4ccae8c3" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(array <span class="op">@</span> array)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[[ 2  3]
@@ -633,7 +729,7 @@ Alexandre Bry
 </div>
 </div>
 <div class="fragment">
-<div id="2b566c42" class="cell" data-execution_count="6">
+<div id="55eda0aa" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.where(array <span class="op">&lt;</span> <span class="dv">2</span>, <span class="dv">10</span> <span class="op">-</span> array, array))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[[10  9]
@@ -645,13 +741,13 @@ Alexandre Bry
 <section id="pandas" class="slide level3">
 <h3>Pandas</h3>
 <div class="fragment">
-<div id="380ff06f" class="cell" data-execution_count="7">
+<div id="6b05d71d" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb12-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy.random <span class="im">as</span> npr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div class="fragment">
-<div id="1bda35a3" class="cell" data-execution_count="8">
+<div id="04c57bd7" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame([</span>
 <span id="cb13-2"><a href="" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"Pi"</span>, <span class="fl">3.14159</span>, npr.randint(<span class="op">-</span><span class="dv">100</span>, <span class="dv">101</span>, (<span class="dv">2</span>, <span class="dv">2</span>))],</span>
 <span id="cb13-3"><a href="" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"Euler's number"</span>, <span class="fl">2.71828</span>, npr.randint(<span class="op">-</span><span class="dv">100</span>, <span class="dv">101</span>, (<span class="dv">2</span>, <span class="dv">2</span>))],</span>
@@ -660,29 +756,29 @@ Alexandre Bry
 <span id="cb13-6"><a href="" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            Names   Values Random numbers because why not
-0              Pi  3.14159          [[-26, 0], [-1, -26]]
-1  Euler's number  2.71828         [[-93, 13], [-2, -61]]
-2    Golden ratio  1.61803           [[-60, -3], [65, 5]]</code></pre>
+0              Pi  3.14159            [[61, 46], [33, 1]]
+1  Euler's number  2.71828       [[-11, -53], [-40, -37]]
+2    Golden ratio  1.61803         [[99, -10], [99, -73]]</code></pre>
 </div>
 </div>
 </div>
 <div class="fragment">
-<div id="773e2287" class="cell" data-execution_count="9">
+<div id="390760ad" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df[df[<span class="st">"Values"</span>] <span class="op">&gt;</span> <span class="dv">2</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            Names   Values Random numbers because why not
-0              Pi  3.14159          [[-26, 0], [-1, -26]]
-1  Euler's number  2.71828         [[-93, 13], [-2, -61]]</code></pre>
+0              Pi  3.14159            [[61, 46], [33, 1]]
+1  Euler's number  2.71828       [[-11, -53], [-40, -37]]</code></pre>
 </div>
 </div>
 </div>
 <div class="fragment">
-<div id="ef708a39" class="cell" data-execution_count="10">
+<div id="4ffd31dc" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df[df[<span class="st">"Names"</span>].<span class="bu">str</span>.contains(<span class="st">"n"</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            Names   Values Random numbers because why not
-1  Euler's number  2.71828         [[-93, 13], [-2, -61]]
-2    Golden ratio  1.61803           [[-60, -3], [65, 5]]</code></pre>
+1  Euler's number  2.71828       [[-11, -53], [-40, -37]]
+2    Golden ratio  1.61803         [[99, -10], [99, -73]]</code></pre>
 </div>
 </div>
 </div>
