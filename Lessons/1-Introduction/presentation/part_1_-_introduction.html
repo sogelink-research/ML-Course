@@ -447,17 +447,102 @@ Alexandre Bry
 </section>
 <section id="supervised-learning" class="title-slide slide level2 center">
 <h2>Supervised Learning</h2>
+
+</section>
+<section id="linear-regression" class="slide level3">
+<h3>Linear Regression</h3>
+<p>Used for predicting continuous values:</p>
 <ul>
-<li class="fragment"><strong>Linear Regression</strong>: Used for predicting continuous values.</li>
-<li class="fragment"><strong>Logistic Regression</strong>: Used for binary classification problems.</li>
-<li class="fragment"><strong>Decision Trees</strong>: A tree-like structure used for both classification and regression.</li>
-<li class="fragment"><strong>Random Forests</strong>: An ensemble method that combines multiple decision trees.</li>
-<li class="fragment"><strong>Support Vector Machines (SVM)</strong>: Used for classification and regression, effective in high-dimensional spaces.</li>
-<li class="fragment"><strong>K-Nearest Neighbors (KNN)</strong>: A non-parametric method for classification and regression.</li>
-<li class="fragment"><strong>Naive Bayes</strong>: A probabilistic classifier based on Bayes’ theorem, often used for text classification.</li>
-<li class="fragment"><strong>Gradient Boosting (e.g., XGBoost, LightGBM)</strong>: Boosting technique that combines weak learners (usually decision trees) to form a stronger model.</li>
+<li class="fragment"><strong>Simple</strong>: <span class="math inline">\(y = \alpha + \beta x\)</span></li>
+<li class="fragment"><strong>Multiple</strong>: <span class="math inline">\(y = \alpha + \beta_1 x_1 + \beta_2 x_2 + \cdots + \beta_n x_n\)</span></li>
+<li class="fragment"><strong>Polynomial</strong>: <span class="math inline">\(y = \alpha + \beta_1 x + \beta_2 x^2 + \cdots + \beta_n x^n\)</span></li>
+<li class="fragment">and many others…</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/Linear_regression.svg" height="300"></p>
+<figcaption>Simple Linear Regression<a href="#/footnotes" class="footnote-ref" id="fnref1" role="doc-noteref" data-footnote-href="#/fn1" onclick=""><sup>1</sup></a></figcaption>
+</figure>
+</div>
+<aside></aside></section>
+<section id="logistic-regression" class="slide level3">
+<h3>Logistic Regression</h3>
+<p>Used for binary classification problems:</p>
+<ul>
+<li class="fragment"><strong>Binomial</strong>: only two possible categories</li>
+<li class="fragment"><strong>Multinomial</strong>: three or more possible categories</li>
+<li class="fragment"><strong>Ordinal</strong>: three or more possible categories which are ordered</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/Logistic_regression.svg" height="350"></p>
+<figcaption>Binomial Logistic Regression<a href="#/footnotes" class="footnote-ref" id="fnref2" role="doc-noteref" data-footnote-href="#/fn2" onclick=""><sup>2</sup></a></figcaption>
+</figure>
+</div>
+<aside></aside></section>
+<section id="decision-trees" class="slide level3">
+<h3>Decision Trees</h3>
+<p>A tree-like structure used for both classification and regression</p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/Decision_tree.png" height="500"></p>
+<figcaption>Decision Tree<a href="#/footnotes" class="footnote-ref" id="fnref3" role="doc-noteref" data-footnote-href="#/fn3" onclick=""><sup>3</sup></a></figcaption>
+</figure>
+</div>
+<aside></aside></section>
+<section id="random-forests" class="slide level3">
+<h3>Random Forests</h3>
+<p>An ensemble method that combines multiple decision trees:</p>
+<ul>
+<li class="fragment">Train independently <span class="math inline">\(B\)</span> trees using:
+<ul>
+<li class="fragment"><strong>Bagging</strong>: each tree is fitted on a random subset of the training set</li>
+<li class="fragment"><strong>Feature bagging</strong>: each split in the decision tree (i.e.&nbsp;each node) is chosen among a subset of the features</li>
+</ul></li>
+<li class="fragment">Take a decision by aggregating individual decisions of each tree</li>
 </ul>
 </section>
+<section id="boosting" class="slide level3">
+<h3>Boosting</h3>
+<p>An ensemble method that combines weak learners (usually decision trees) to form a stronger model:</p>
+<ul>
+<li class="fragment">Choose a simple <strong>base learner</strong> (e.g.&nbsp;small decision trees with fixed number of leaves)</li>
+<li class="fragment">Repeatedly:
+<ul>
+<li class="fragment">Train a new base learner on the weighted training set</li>
+<li class="fragment">Add this new learner to the ensemble</li>
+<li class="fragment">Give more weight in the training set to misclassified data</li>
+</ul></li>
+</ul>
+</section>
+<section id="k-nearest-neighbors-knn" class="slide level3">
+<h3>k-Nearest Neighbors (KNN)</h3>
+<p>A non-parametric method for classification and regression</p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/KnnClassification.svg" height="500"></p>
+<figcaption>k-NN Classification<a href="#/footnotes" class="footnote-ref" id="fnref4" role="doc-noteref" data-footnote-href="#/fn4" onclick=""><sup>4</sup></a></figcaption>
+</figure>
+</div>
+<aside></aside></section>
+<section id="naive-bayes" class="slide level3">
+<h3>Naive Bayes</h3>
+<p>A probabilistic classifier based on Bayes’ theorem</p>
+</section>
+<section id="support-vector-machines-svm" class="slide level3">
+<h3>Support Vector Machines (SVM)</h3>
+<p>Used for classification and regression, effective in high-dimensional spaces:</p>
+<ul>
+<li class="fragment">Separate the feature space using optimal hyperplanes</li>
+<li class="fragment">Features are mapped in a higher dimensional space to allow to fit non-linearly in the original feature space</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/SVM_Kernel_Machine.svg" height="350"></p>
+<figcaption>SVM kernel trick: map features to a higher dimensional space to be able to separate classes using a hyperplane<a href="#/footnotes" class="footnote-ref" id="fnref5" role="doc-noteref" data-footnote-href="#/fn5" onclick=""><sup>5</sup></a></figcaption>
+</figure>
+</div>
+<aside></aside></section>
 
 <section id="unsupervised-learning" class="title-slide slide level2 center">
 <h2>Unsupervised Learning</h2>
@@ -602,6 +687,7 @@ Alexandre Bry
 <section id="model-evaluation" class="title-slide slide level2 center">
 <h2>Model evaluation</h2>
 <ul>
+<li class="fragment">Loss selection</li>
 <li class="fragment">Cross-validation</li>
 <li class="fragment">Hyperparameter tuning</li>
 </ul>
@@ -702,12 +788,12 @@ Alexandre Bry
 <section id="numpy" class="slide level3">
 <h3>NumPy</h3>
 <div class="fragment">
-<div id="44092a36" class="cell" data-execution_count="1">
+<div id="029c6be1" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div class="fragment">
-<div id="a183626a" class="cell" data-execution_count="2">
+<div id="baf3ffaa" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="" aria-hidden="true" tabindex="-1"></a>array <span class="op">=</span> np.array([[<span class="dv">0</span>, <span class="dv">1</span>], [<span class="dv">2</span>, <span class="dv">3</span>]])</span>
 <span id="cb2-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(array)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -717,7 +803,7 @@ Alexandre Bry
 </div>
 </div>
 <div class="fragment">
-<div id="0af5b42c" class="cell" data-execution_count="3">
+<div id="5ebb0bc7" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="dv">5</span> <span class="op">*</span> array)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[[ 0  5]
@@ -726,7 +812,7 @@ Alexandre Bry
 </div>
 </div>
 <div class="fragment">
-<div id="6e915d16" class="cell" data-execution_count="4">
+<div id="65cfd272" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.<span class="bu">pow</span>(array, <span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[[ 0  1]
@@ -735,7 +821,7 @@ Alexandre Bry
 </div>
 </div>
 <div class="fragment">
-<div id="80d9b908" class="cell" data-execution_count="5">
+<div id="ac206148" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(array <span class="op">@</span> array)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[[ 2  3]
@@ -744,7 +830,7 @@ Alexandre Bry
 </div>
 </div>
 <div class="fragment">
-<div id="fb63e8a6" class="cell" data-execution_count="6">
+<div id="f1fd9c00" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.where(array <span class="op">&lt;</span> <span class="dv">2</span>, <span class="dv">10</span> <span class="op">-</span> array, array))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[[10  9]
@@ -756,13 +842,13 @@ Alexandre Bry
 <section id="pandas" class="slide level3">
 <h3>Pandas</h3>
 <div class="fragment">
-<div id="2e7310f7" class="cell" data-execution_count="7">
+<div id="8fb0ee3d" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb12-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy.random <span class="im">as</span> npr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div class="fragment">
-<div id="6220dd8a" class="cell" data-execution_count="8">
+<div id="79915ed4" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame([</span>
 <span id="cb13-2"><a href="" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"Pi"</span>, <span class="fl">3.14159</span>, npr.randint(<span class="op">-</span><span class="dv">100</span>, <span class="dv">101</span>, (<span class="dv">2</span>, <span class="dv">2</span>))],</span>
 <span id="cb13-3"><a href="" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"Euler's number"</span>, <span class="fl">2.71828</span>, npr.randint(<span class="op">-</span><span class="dv">100</span>, <span class="dv">101</span>, (<span class="dv">2</span>, <span class="dv">2</span>))],</span>
@@ -771,29 +857,29 @@ Alexandre Bry
 <span id="cb13-6"><a href="" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            Names   Values Random numbers because why not
-0              Pi  3.14159           [[27, 52], [54, 89]]
-1  Euler's number  2.71828          [[93, -25], [15, 17]]
-2    Golden ratio  1.61803         [[85, -93], [29, -61]]</code></pre>
+0              Pi  3.14159        [[-85, -79], [-26, 44]]
+1  Euler's number  2.71828         [[-83, -47], [75, 26]]
+2    Golden ratio  1.61803           [[56, 65], [87, 67]]</code></pre>
 </div>
 </div>
 </div>
 <div class="fragment">
-<div id="0109c82b" class="cell" data-execution_count="9">
+<div id="88cb7fcc" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df[df[<span class="st">"Values"</span>] <span class="op">&gt;</span> <span class="dv">2</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            Names   Values Random numbers because why not
-0              Pi  3.14159           [[27, 52], [54, 89]]
-1  Euler's number  2.71828          [[93, -25], [15, 17]]</code></pre>
+0              Pi  3.14159        [[-85, -79], [-26, 44]]
+1  Euler's number  2.71828         [[-83, -47], [75, 26]]</code></pre>
 </div>
 </div>
 </div>
 <div class="fragment">
-<div id="971109bc" class="cell" data-execution_count="10">
+<div id="d32e84bb" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df[df[<span class="st">"Names"</span>].<span class="bu">str</span>.contains(<span class="st">"n"</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            Names   Values Random numbers because why not
-1  Euler's number  2.71828          [[93, -25], [15, 17]]
-2    Golden ratio  1.61803         [[85, -93], [29, -61]]</code></pre>
+1  Euler's number  2.71828         [[-83, -47], [75, 26]]
+2    Golden ratio  1.61803           [[56, 65], [87, 67]]</code></pre>
 </div>
 </div>
 </div>
@@ -847,6 +933,16 @@ Alexandre Bry
 </div>
 </div>
 </section>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document smaller scrollable" role="doc-endnotes"><h3>Footnotes</h3>
+
+<ol>
+<li id="fn1"><p>By Anscombe.svg: Schutz(label using subscripts): Avenue - Anscombe.svg, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=9838454</p></li>
+<li id="fn2"><p>By Canley - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=116449187</p></li>
+<li id="fn3"><p>Black Dragon https://stackoverflow.com/questions/31786347/how-to-make-python-decision-tree-more-understandable</p></li>
+<li id="fn4"><p>By Antti Ajanki AnAj - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=2170282</p></li>
+<li id="fn5"><p>By Original: Alisneaky Vector: Zirguezi - Own work based on: Kernel Machine.png, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=47868867</p></li>
+</ol>
 </section>
     </div>
   </div>

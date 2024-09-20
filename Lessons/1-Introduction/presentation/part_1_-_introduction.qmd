@@ -51,14 +51,71 @@ Feeding **data** into a computer **algorithm** in order to learn **patterns** an
 
 ## Supervised Learning
 
-- **Linear Regression**: Used for predicting continuous values.
-- **Logistic Regression**: Used for binary classification problems.
-- **Decision Trees**: A tree-like structure used for both classification and regression.
-- **Random Forests**: An ensemble method that combines multiple decision trees.
-- **Support Vector Machines (SVM)**: Used for classification and regression, effective in high-dimensional spaces.
-- **K-Nearest Neighbors (KNN)**: A non-parametric method for classification and regression.
-- **Naive Bayes**: A probabilistic classifier based on Bayes' theorem, often used for text classification.
-- **Gradient Boosting (e.g., XGBoost, LightGBM)**: Boosting technique that combines weak learners (usually decision trees) to form a stronger model.
+### Linear Regression
+
+Used for predicting continuous values:
+
+- **Simple**: $y = \alpha + \beta x$
+- **Multiple**: $y = \alpha + \beta_1 x_1 + \beta_2 x_2 + \cdots + \beta_n x_n$
+- **Polynomial**: $y = \alpha + \beta_1 x + \beta_2 x^2 + \cdots + \beta_n x^n$
+- and many others...
+
+![Simple Linear Regression^[By Anscombe.svg: Schutz(label using subscripts): Avenue - Anscombe.svg, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=9838454]](images/Linear_regression.svg){height="300px"}
+
+
+### Logistic Regression
+
+Used for binary classification problems:
+
+- **Binomial**: only two possible categories
+- **Multinomial**: three or more possible categories
+- **Ordinal**: three or more possible categories which are ordered
+
+![Binomial Logistic Regression^[By Canley - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=116449187]](images/Logistic_regression.svg){height="350px"}
+
+### Decision Trees
+
+A tree-like structure used for both classification and regression
+
+![Decision Tree^[Black Dragon https://stackoverflow.com/questions/31786347/how-to-make-python-decision-tree-more-understandable]](images/Decision_tree.png){height="500px"}
+
+### Random Forests
+
+An ensemble method that combines multiple decision trees:
+
+- Train independently $B$ trees using:
+  - **Bagging**: each tree is fitted on a random subset of the training set
+  - **Feature bagging**: each split in the decision tree (i.e. each node) is chosen among a subset of the features
+- Take a decision by aggregating individual decisions of each tree
+
+### Boosting
+
+An ensemble method that combines weak learners (usually decision trees) to form a stronger model:
+
+- Choose a simple **base learner** (e.g. small decision trees with fixed number of leaves)
+- Repeatedly:
+  - Train a new base learner on the weighted training set
+  - Add this new learner to the ensemble
+  - Give more weight in the training set to misclassified data
+
+### k-Nearest Neighbors (KNN)
+
+A non-parametric method for classification and regression
+
+![k-NN Classification^[By Antti Ajanki AnAj - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=2170282]](images/KnnClassification.svg){height="500px"}
+
+### Naive Bayes
+
+A probabilistic classifier based on Bayes' theorem
+
+### Support Vector Machines (SVM)
+
+Used for classification and regression, effective in high-dimensional spaces:
+
+- Separate the feature space using optimal hyperplanes
+- Features are mapped in a higher dimensional space to allow to fit non-linearly in the original feature space
+
+![SVM kernel trick: map features to a higher dimensional space to be able to separate classes using a hyperplane^[By Original: Alisneaky Vector: Zirguezi - Own work based on: Kernel Machine.png, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=47868867]](images/SVM_Kernel_Machine.svg){height="350px"}
 
 ## Unsupervised Learning
 
@@ -165,6 +222,7 @@ Automated methods to discover optimal neural network architectures.
 
 ## Model evaluation
 
+- Loss selection
 - Cross-validation
 - Hyperparameter tuning
 
