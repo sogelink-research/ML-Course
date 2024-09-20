@@ -7,15 +7,15 @@ reference-location: document
 include-after-body: include-after-body.html
 format:
   revealjs:
-    transition: slide
     # theme: [default, _extensions/grantmcdermott/clean/clean.scss]
+    smaller: true
+    # scrollable: true
     theme: simple
     slide-number: true
     show-slide-number: all
     css: [styles.css]
     code-overflow: wrap
     code-line-numbers: false
-    scrollable: true
 execute: 
   echo: true
 ---
@@ -159,7 +159,7 @@ Automated methods to discover optimal neural network architectures.
 
 - **EfficientNet**: A family of models designed using NAS techniques, which balance model complexity and performance.
 
-### Playground {.no-scrollable}
+### Playground
 
 [Playground](https://playground.tensorflow.org/)
 
