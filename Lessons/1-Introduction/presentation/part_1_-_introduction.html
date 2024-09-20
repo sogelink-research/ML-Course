@@ -591,12 +591,12 @@ Alexandre Bry
 <section id="numpy" class="slide level3">
 <h3>NumPy</h3>
 <div class="fragment">
-<div id="1246ca15" class="cell" data-execution_count="1">
+<div id="c8605f70" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div class="fragment">
-<div id="cc83336d" class="cell" data-execution_count="2">
+<div id="45fdb777" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="" aria-hidden="true" tabindex="-1"></a>array <span class="op">=</span> np.array([[<span class="dv">0</span>, <span class="dv">1</span>], [<span class="dv">2</span>, <span class="dv">3</span>]])</span>
 <span id="cb2-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(array)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -606,7 +606,7 @@ Alexandre Bry
 </div>
 </div>
 <div class="fragment">
-<div id="99df494d" class="cell" data-execution_count="3">
+<div id="45ae5197" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="dv">5</span> <span class="op">*</span> array)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[[ 0  5]
@@ -615,7 +615,7 @@ Alexandre Bry
 </div>
 </div>
 <div class="fragment">
-<div id="aa48d70b" class="cell" data-execution_count="4">
+<div id="daa0a730" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.<span class="bu">pow</span>(array, <span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[[ 0  1]
@@ -624,7 +624,7 @@ Alexandre Bry
 </div>
 </div>
 <div class="fragment">
-<div id="4d72bbd1" class="cell" data-execution_count="5">
+<div id="e1101633" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(array <span class="op">@</span> array)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[[ 2  3]
@@ -633,7 +633,7 @@ Alexandre Bry
 </div>
 </div>
 <div class="fragment">
-<div id="ff9cb41e" class="cell" data-execution_count="6">
+<div id="2b566c42" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.where(array <span class="op">&lt;</span> <span class="dv">2</span>, <span class="dv">10</span> <span class="op">-</span> array, array))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[[10  9]
@@ -645,13 +645,13 @@ Alexandre Bry
 <section id="pandas" class="slide level3">
 <h3>Pandas</h3>
 <div class="fragment">
-<div id="3d153890" class="cell" data-execution_count="7">
+<div id="380ff06f" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb12-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy.random <span class="im">as</span> npr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div class="fragment">
-<div id="b2215aee" class="cell" data-execution_count="8">
+<div id="1bda35a3" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame([</span>
 <span id="cb13-2"><a href="" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"Pi"</span>, <span class="fl">3.14159</span>, npr.randint(<span class="op">-</span><span class="dv">100</span>, <span class="dv">101</span>, (<span class="dv">2</span>, <span class="dv">2</span>))],</span>
 <span id="cb13-3"><a href="" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"Euler's number"</span>, <span class="fl">2.71828</span>, npr.randint(<span class="op">-</span><span class="dv">100</span>, <span class="dv">101</span>, (<span class="dv">2</span>, <span class="dv">2</span>))],</span>
@@ -660,29 +660,29 @@ Alexandre Bry
 <span id="cb13-6"><a href="" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            Names   Values Random numbers because why not
-0              Pi  3.14159          [[-89, 51], [24, 48]]
-1  Euler's number  2.71828       [[-15, -11], [-23, -59]]
-2    Golden ratio  1.61803         [[-13, -24], [54, 35]]</code></pre>
+0              Pi  3.14159          [[-26, 0], [-1, -26]]
+1  Euler's number  2.71828         [[-93, 13], [-2, -61]]
+2    Golden ratio  1.61803           [[-60, -3], [65, 5]]</code></pre>
 </div>
 </div>
 </div>
 <div class="fragment">
-<div id="360f1b8e" class="cell" data-execution_count="9">
+<div id="773e2287" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df[df[<span class="st">"Values"</span>] <span class="op">&gt;</span> <span class="dv">2</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            Names   Values Random numbers because why not
-0              Pi  3.14159          [[-89, 51], [24, 48]]
-1  Euler's number  2.71828       [[-15, -11], [-23, -59]]</code></pre>
+0              Pi  3.14159          [[-26, 0], [-1, -26]]
+1  Euler's number  2.71828         [[-93, 13], [-2, -61]]</code></pre>
 </div>
 </div>
 </div>
 <div class="fragment">
-<div id="d75c74b2" class="cell" data-execution_count="10">
+<div id="ef708a39" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df[df[<span class="st">"Names"</span>].<span class="bu">str</span>.contains(<span class="st">"n"</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            Names   Values Random numbers because why not
-1  Euler's number  2.71828       [[-15, -11], [-23, -59]]
-2    Golden ratio  1.61803         [[-13, -24], [54, 35]]</code></pre>
+1  Euler's number  2.71828         [[-93, 13], [-2, -61]]
+2    Golden ratio  1.61803           [[-60, -3], [65, 5]]</code></pre>
 </div>
 </div>
 </div>
