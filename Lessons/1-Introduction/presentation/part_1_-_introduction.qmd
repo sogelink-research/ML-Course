@@ -47,23 +47,6 @@ Feeding **data** into a computer **algorithm** in order to learn **patterns** an
 - Regression: assigning one (or multiple) value(s) chosen from a continuous set of values
 - Clustering: create categories by grouping together similar inputs
 
-# Usual pipeline
-
-- Data acquisition
-- Data preprocessing
-  - Outliers
-  - Missing data
-  - Formatting
-  - Normalization
-- Model selection
-  - Type of model
-  - Complexity
-  - Parameters
-- Model evaluation
-  - Cross-validation
-  - Hyperparameter tuning
-- Final model training
-
 # Overview of ML methods
 
 ## Supervised Learning
@@ -162,6 +145,30 @@ Automated methods to discover optimal neural network architectures.
 ### Playground
 
 [Playground](https://playground.tensorflow.org/)
+
+# Usual pipeline
+
+## Data acquisition
+
+## Data preprocessing
+
+- Outliers
+- Missing data
+- Formatting
+- Normalization
+
+## Model selection
+
+- Type of model
+- Complexity
+- Parameters
+
+## Model evaluation
+
+- Cross-validation
+- Hyperparameter tuning
+
+## Final model training
 
 # Challenges
 
