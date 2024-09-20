@@ -1,0 +1,411 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Part 1 - Introduction to Machine Learning\"\n",
+        "author: \"Alexandre Bry\"\n",
+        "incremental: true\n",
+        "slide-level: 3\n",
+        "reference-location: document\n",
+        "include-after-body: include-after-body.html\n",
+        "format:\n",
+        "  revealjs:\n",
+        "    transition: slide\n",
+        "    # theme: [default, _extensions/grantmcdermott/clean/clean.scss]\n",
+        "    theme: simple\n",
+        "    slide-number: true\n",
+        "    show-slide-number: all\n",
+        "    css: [styles.css]\n",
+        "    code-overflow: wrap\n",
+        "    code-line-numbers: false\n",
+        "    scrollable: true\n",
+        "execute: \n",
+        "  echo: true\n",
+        "---\n",
+        "\n",
+        "\n",
+        "# Introduction\n",
+        "\n",
+        "### Definition\n",
+        "\n",
+        "::: {.definition-block}\n",
+        "Machine Learning (ML)\n",
+        "\n",
+        "Feeding **data** into a computer **algorithm** in order to learn **patterns** and make **predictions** in new and different **situations**.\n",
+        ":::\n",
+        "\n",
+        "### Dataset\n",
+        "\n",
+        "\n",
+        "\n",
+        "# Categories of ML\n",
+        "\n",
+        "### Available data\n",
+        "\n",
+        "- Supervised: for each input in the dataset, the expected output is also part of the dataset\n",
+        "- Unsupervised: for each input in the dataset, the expected output is **not** part of the dataset\n",
+        "- Semi-supervised: only a portion of the inputs of the dataset have their expected output in the dataset\n",
+        "- Reinforcement: there is no predefined dataset, but an environment giving feedback to the model when it takes actions\n",
+        "\n",
+        "### Output\n",
+        "\n",
+        "- Classification: assigning one (or multiple) label(s) chosen from a given list of classes to each element of the input\n",
+        "- Regression: assigning one (or multiple) value(s) chosen from a continuous set of values\n",
+        "- Clustering: create categories by grouping together similar inputs\n",
+        "\n",
+        "# Usual pipeline\n",
+        "\n",
+        "- Data acquisition\n",
+        "- Data preprocessing\n",
+        "  - Outliers\n",
+        "  - Missing data\n",
+        "  - Formatting\n",
+        "  - Normalization\n",
+        "- Model selection\n",
+        "  - Type of model\n",
+        "  - Complexity\n",
+        "  - Parameters\n",
+        "- Model evaluation\n",
+        "  - Cross-validation\n",
+        "  - Hyperparameter tuning\n",
+        "- Final model training\n",
+        "\n",
+        "# Overview of ML methods\n",
+        "\n",
+        "- Linear Regression\n",
+        "- Decision Tree\n",
+        "- Random Forest\n",
+        "- Bagging?\n",
+        "- Maximum Likelihood Estimation\n",
+        "\n",
+        "### Linear regression {auto-animate=\"true\" auto-animate-easing=\"ease-in-out\"}\n",
+        "\n",
+        "::: {data-id=\"equation\"}\n",
+        "$y = \\beta_0 + \\beta_1 X$\n",
+        ":::\n",
+        " <!-- .fragment .fade-out -->\n",
+        "\n",
+        "### Linear regression {auto-animate=\"true\" auto-animate-easing=\"ease-in-out\"}\n",
+        "\n",
+        "<!-- $y = \\beta_0 + \\beta_1 X_1 + \\beta_2 X_2 + \\cdots + \\beta_n X_n$ {.fragment .fade-in} -->\n",
+        "::: {data-id=\"equation\"}\n",
+        "$y = \\beta_0 + \\beta_1 X_1 + \\beta_2 X_2 + \\cdots + \\beta_n X_n$\n",
+        ":::\n",
+        "\n",
+        "\n",
+        "# Overview of NN methods\n",
+        "\n",
+        "### Playground {.no-scrollable}\n",
+        "\n",
+        "[Playground](https://playground.tensorflow.org/)\n",
+        "\n",
+        "# Challenges\n",
+        "\n",
+        "## Data\n",
+        "\n",
+        "- Quality\n",
+        "- Diversity\n",
+        "- Biases and fairness (example of crime prediction)\n",
+        "\n",
+        "## Underfitting and Overfitting\n",
+        "\n",
+        "- Cross-validation\n",
+        "- Feature selection\n",
+        "- Regularization\n",
+        "- Ensemble methods\n",
+        "- Model complexity (increase if high bias and reduce if high variance)\n",
+        "- Early stopping (overfitting)\n",
+        "- Training data size (underfitting)\n",
+        "\n",
+        "## Interpretable and Explainable\n",
+        "\n",
+        "## Bias and variance (stability)\n",
+        "\n",
+        "### Definitions\n",
+        "\n",
+        "::: {.definition-block}\n",
+        "Interpretable\n",
+        "\n",
+        "Qualifies a ML model which decision-making process is straightforward and **transparent**, making it directly **understandable** by humans. This requires to restrict the model **complexity**.\n",
+        ":::\n",
+        "\n",
+        "::: {.definition-block}\n",
+        "Explainable\n",
+        "\n",
+        "Qualifies a ML model which decision-making process can be partly interpreted afterwards using **post hoc interpretation techniques**. \n",
+        ":::\n",
+        "\n",
+        "### Examples\n",
+        "\n",
+        "- Example of the model detecting fishes using human hands\n",
+        "- Depends a lot on the technique that is used\n",
+        "\n",
+        "# Python libraries\n",
+        "\n",
+        "## Data manipulation\n",
+        "\n",
+        "### Libraries\n",
+        "\n",
+        "::: {.fragment .nonincremental}\n",
+        "- [NumPy](https://numpy.org/)\n",
+        "  - Fast numerical operations\n",
+        "  - Matrices with any number of dimensions (called arrays)\n",
+        "  - Lots of convenient operators on arrays\n",
+        ":::\n",
+        "::: {.fragment .nonincremental}\n",
+        "- [Pandas](https://pandas.pydata.org/)\n",
+        "  - Can store any type of data\n",
+        "  - 1D or 2D tables (called DataFrames)\n",
+        "  - Lots of convenient operators on DataFrames\n",
+        ":::\n",
+        "\n",
+        "### NumPy\n",
+        "\n",
+        "::: {.fragment}"
+      ],
+      "id": "de28ed55"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import numpy as np"
+      ],
+      "id": "af0de80c",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ":::\n",
+        "::: {.fragment}"
+      ],
+      "id": "d091b463"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "array = np.array([[0, 1], [2, 3]])\n",
+        "print(array)"
+      ],
+      "id": "0ba82e11",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ":::\n",
+        "::: {.fragment}"
+      ],
+      "id": "117ffb8c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "print(5 * array)"
+      ],
+      "id": "00a1560e",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ":::\n",
+        "::: {.fragment}"
+      ],
+      "id": "64665e01"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "print(np.pow(array, 3))"
+      ],
+      "id": "eab42f2d",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ":::\n",
+        "::: {.fragment}"
+      ],
+      "id": "b3909779"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "print(array @ array)"
+      ],
+      "id": "49cb9833",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ":::\n",
+        "::: {.fragment}"
+      ],
+      "id": "ecbe7a62"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "print(np.where(array < 2, 10 - array, array))"
+      ],
+      "id": "f6dea6b3",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ":::\n",
+        "\n",
+        "### Pandas\n",
+        "\n",
+        "::: {.fragment}"
+      ],
+      "id": "87a871f6"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import pandas as pd\n",
+        "import numpy.random as npr"
+      ],
+      "id": "da0f57ab",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ":::\n",
+        "\n",
+        "::: {.fragment}"
+      ],
+      "id": "1f543b71"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "df = pd.DataFrame([\n",
+        "    [\"Pi\", 3.14159, npr.randint(-100, 101, (2, 2))],\n",
+        "    [\"Euler's number\", 2.71828, npr.randint(-100, 101, (2, 2))],\n",
+        "    [\"Golden ratio\", 1.61803, npr.randint(-100, 101, (2, 2))]\n",
+        "  ], columns = [\"Names\", \"Values\", \"Random numbers because why not\"])\n",
+        "print(df)"
+      ],
+      "id": "7ba998f9",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ":::\n",
+        "\n",
+        "::: {.fragment}"
+      ],
+      "id": "d5dbcd8b"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "print(df[df[\"Values\"] > 2])"
+      ],
+      "id": "93135bce",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ":::\n",
+        "\n",
+        "::: {.fragment}"
+      ],
+      "id": "8d99c570"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "print(df[df[\"Names\"].str.contains(\"n\")])"
+      ],
+      "id": "75901c77",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ":::\n",
+        "\n",
+        "## ML\n",
+        "\n",
+        "- [SciPy](https://scipy.org/)\n",
+        "- [scikit-learn](https://scikit-learn.org/stable/index.html)\n",
+        "\n",
+        "## NN\n",
+        "\n",
+        "- [PyTorch](https://pytorch.org/)\n",
+        "- [TensorFlow](https://www.tensorflow.org/)\n",
+        "- [Keras](https://keras.io/)\n",
+        "\n",
+        "## Visualization\n",
+        "\n",
+        "- [Matplotlib](https://matplotlib.org/)\n",
+        "- [Plotly](https://plotly.com/python/)\n",
+        "- [Seaborn](https://seaborn.pydata.org/index.html)\n",
+        "\n",
+        "# Resources\n",
+        "\n",
+        "## Machine Learning\n",
+        "\n",
+        "- GeeksforGeeks:\n",
+        "  - [GeeksforGeeks Introduction to Machine Learning](https://www.geeksforgeeks.org/introduction-machine-learning/)\n",
+        "  - [GeeksforGeeks 7 Major ML Challenges](https://www.geeksforgeeks.org/7-major-challenges-faced-by-machine-learning-professionals/)\n",
+        "  - [GeeksforGeeks Explainable and Interpretable](https://www.geeksforgeeks.org/what-is-the-difference-between-explainable-and-interpretable-machine-learning/)\n",
+        "- [Interpretable Machine Learning, Christoph Molnar](https://christophm.github.io/interpretable-ml-book/)"
+      ],
+      "id": "59990ac1"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "dldiy",
+      "language": "python",
+      "display_name": "dldiy",
+      "path": "/home/alexandre/.local/share/jupyter/kernels/dldiy"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

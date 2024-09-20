@@ -1,0 +1,13 @@
+quarto
+jupyter
+ipykernel
+
+numpy
+pandas
+
+scipy
+scikit-learn
+
+matplotlib
+plotly
+seaborn

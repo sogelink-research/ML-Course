@@ -4,6 +4,7 @@ author: "Alexandre Bry"
 incremental: true
 slide-level: 3
 reference-location: document
+include-after-body: include-after-body.html
 format:
   revealjs:
     transition: slide
@@ -71,6 +72,7 @@ Feeding **data** into a computer **algorithm** in order to learn **patterns** an
 - Decision Tree
 - Random Forest
 - Bagging?
+- Maximum Likelihood Estimation
 
 ### Linear regression {auto-animate="true" auto-animate-easing="ease-in-out"}
 
@@ -88,6 +90,10 @@ $y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \cdots + \beta_n X_n$
 
 
 # Overview of NN methods
+
+### Playground {.no-scrollable}
+
+[Playground](https://playground.tensorflow.org/)
 
 # Challenges
 
