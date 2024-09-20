@@ -1,5 +1,5 @@
 ---
-title: "Part 1 - Introduction to Machine Learning"
+title: "ML Course Part 1 - Introduction to Machine Learning"
 author: "Alexandre Bry"
 incremental: true
 slide-level: 3
@@ -7,6 +7,7 @@ reference-location: document
 include-after-body: include-after-body.html
 format:
   revealjs:
+    slideHeaders: true
     # theme: [default, _extensions/grantmcdermott/clean/clean.scss]
     smaller: true
     # scrollable: true
@@ -16,8 +17,12 @@ format:
     css: [styles.css]
     code-overflow: wrap
     code-line-numbers: false
+    header: "Introduction to Machine Learning"
+    sc-sb-title	: true
 execute: 
   echo: true
+filters:
+  - reveal-header
 ---
 
 # Introduction
