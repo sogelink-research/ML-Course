@@ -1,6 +1,8 @@
 ---
 title: "ML Course Part 1 - Introduction to Machine Learning"
 author: "Alexandre Bry"
+bibliography: references.bib
+csl: numeric-superscript.csl
 incremental: true
 slide-level: 3
 reference-location: document
@@ -19,6 +21,8 @@ format:
     code-line-numbers: false
     header: "Introduction to Machine Learning"
     sc-sb-title	: true
+    embed-resources: true
+    incremental: false
 execute: 
   echo: true
 filters:
@@ -35,22 +39,70 @@ Machine Learning (ML)
 Feeding **data** into a computer **algorithm** in order to learn **patterns** and make **predictions** in new and different **situations**.
 :::
 
+::: {.definition-block}
+ML Model
+
+**Computer object** implementing a **ML algorithm**, trained on a **set of data** to perform a **given task**.
+:::
+
+# Definitions
+
+## Categories of ML
+
+### Type of dataset
+
+- **Supervised**: for each input in the dataset, the expected output is also part of the dataset
+- **Unsupervised**: for each input in the dataset, the expected output is **not** part of the dataset
+- **Semi-supervised**: only a portion of the inputs of the dataset have their expected output in the dataset
+- **Reinforcement**: there is no predefined dataset, but an environment giving feedback to the model when it takes actions
+
+### Type of output
+
+- **Classification**: assigning one (or multiple) label(s) chosen from a given list of classes to each element of the input
+- **Regression**: assigning one (or multiple) value(s) chosen from a continuous set of values
+- **Clustering**: create categories by grouping together similar inputs
+
+## Dataset
+
 ### Dataset
 
-# Categories of ML
+::: {.definition-block}
+Dataset
 
-### Available data
+A collection of data used to train, validate and test ML models. 
+:::
 
-- Supervised: for each input in the dataset, the expected output is also part of the dataset
-- Unsupervised: for each input in the dataset, the expected output is **not** part of the dataset
-- Semi-supervised: only a portion of the inputs of the dataset have their expected output in the dataset
-- Reinforcement: there is no predefined dataset, but an environment giving feedback to the model when it takes actions
+### Content
 
-### Output
+::: {.definition-block}
+Instance (or sample)
 
-- Classification: assigning one (or multiple) label(s) chosen from a given list of classes to each element of the input
-- Regression: assigning one (or multiple) value(s) chosen from a continuous set of values
-- Clustering: create categories by grouping together similar inputs
+An instance is one individual entry of the dataset.
+:::
+
+::: {.definition-block}
+Feature (or attribute or variable)
+
+A feature is a type of information stored in the dataset about each instance.
+:::
+
+::: {.definition-block}
+Label (or target or output or class)
+
+A label is a piece of information that the model must learn to predict.
+:::
+
+### Subsets
+
+::: {.definition-block}
+Dataset subsets
+
+A ML dataset is usually subdivided into three disjoint subsets, with distinctive role in the training process:
+
+- **Training set**: used during training to train the model,
+- **Validation set**: used during training to assess the generalization capability of the model, tune hyperparameters and prevent overfitting,
+- **Test set**: used after training to evaluate the performance of the model on new data it has not encountered before.
+:::
 
 # Overview of ML methods
 
@@ -103,7 +155,7 @@ An ensemble method that combines weak learners (usually decision trees) to form 
   - Add this new learner to the ensemble
   - Give more weight in the training set to misclassified data
 
-### k-Nearest Neighbors (KNN)
+### $k$-Nearest Neighbors (KNN)
 
 A non-parametric method for classification and regression
 
@@ -124,89 +176,350 @@ Used for classification and regression, effective in high-dimensional spaces:
 
 ## Unsupervised Learning
 
-- **K-Means Clustering**: A method for partitioning data into K clusters.
-- **Hierarchical Clustering**: Builds a hierarchy of clusters using either agglomerative or divisive methods.
-- **DBSCAN (Density-Based Spatial Clustering of Applications with Noise)**: Clustering based on the density of data points.
-- **Principal Component Analysis (PCA)**: Dimensionality reduction technique to project data into lower dimensions.
-- **Independent Component Analysis (ICA)**: Similar to PCA but focuses on maximizing the statistical independence of the components.
-- **Autoencoders**: A type of neural network used for unsupervised learning, primarily for dimensionality reduction or feature learning.
-- **t-SNE (t-Distributed Stochastic Neighbor Embedding)**: A nonlinear dimensionality reduction technique primarily used for visualization of high-dimensional data.
+### $k$-Means Clustering
+
+A method for partitioning data into $k$ clusters:
+
+- $k$ must be chosen before
+- Create clusters around iteratively improved center points
+- Classical method with lots of variation
+
+![$k$-Means Clustering convergence process^[By Chire - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=59409335]](images/K-means_convergence.gif){height="300px"}
+
+### Hierarchical Clustering
+
+Builds a hierarchy of clusters using either agglomerative or divisive methods:
+
+- Build a full hierarchy top-down (divisive) or bottom-up (agglomerative)
+- Create any number of clusters by cutting the tree
+
+![Hierarchical Clustering^[By [[:File:Hierarchical_clustering_diagram.png#file|]]: Stathis Sideris on 10/02/2005derivative work: Mhbrugman (talk) - [[:File:Hierarchical_clustering_diagram.png#file|]], CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=7344806]](images/Hierarchical_clustering_simple_diagram.svg){height="350px"}
+
+### Density-Based Spatial Clustering of Applications with Noise (DBSCAN)
+
+Clustering based on the density of data points:
+
+- Divides points in 4 categories: core points (in red below), directly reachable (yellow), reachable and outliers (blue)
+- Only two parameters: radius size ($\epsilon$) and number of neighbors to be core ($min_{pts}$)
+
+::: {.columns}
+::: {.column}
+![DBSCAN Illustration^[By Chire - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=17045963]](images/DBSCAN-Illustration.svg){height="250px"}
+:::
+::: {.column}
+![DBSCAN Result^[By Chire - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=17085332]](images/DBSCAN-Result.svg){height="250px"}
+:::
+:::
+
+### Principal Component Analysis (PCA)
+
+Dimensionality reduction technique to project data into lower dimensions:
+
+- Project data into a space of lower dimension
+- Keep as much variance (so as much information) as possible 
+
+![PCA Illustration^[By Nicoguaro - Own work, CC BY 4.0, https://commons.wikimedia.org/w/index.php?curid=46871195]](images/GaussianScatterPCA.svg){height="350px"}
+
+### t-Distributed Stochastic Neighbor Embedding (t-SNE)
+
+A nonlinear dimensionality reduction technique primarily used for visualization of high-dimensional data
+
+![t-SNE Result on MNIST dataset^[By Kyle McDonald - https://www.flickr.com/photos/kylemcdonald/26620503329/, CC BY 2.0, https://commons.wikimedia.org/w/index.php?curid=115726949]](images/T-SNE_Embedding_of_MNIST.png){height="400px"}
 
 ## Reinforcement Learning
 
-- **Q-Learning**: A value-based reinforcement learning algorithm.
-- **SARSA (State-Action-Reward-State-Action)**: A modification of Q-Learning.
-- **Deep Q-Networks (DQN)**: Combines Q-Learning with deep neural networks for environments with large state spaces.
-- **Policy Gradient Methods**: These directly optimize the policy by adjusting parameters in the direction that improves performance (e.g., REINFORCE algorithm).
-- **Actor-Critic Methods**: Combines policy gradients and value-based methods to optimize both value functions and policies simultaneously.
+### Definitions
 
-# Overview of NN methods
+![Reinforcement Learning Framework^[By Megajuice - Own work, CC0, https://commons.wikimedia.org/w/index.php?curid=57895741]](images/Reinforcement_learning_diagram.svg)
 
-## Feedforward Neural Networks (FNN)
+### Q-Learning
 
-The most basic type of neural network where information moves in one direction (input to output).
+:::: {.columns}
+::: {.column}
+A value-based reinforcement learning algorithm:
 
-- **Fully Connected Networks (Dense Networks)**: Every neuron in one layer is connected to every neuron in the next layer.
-- **Multilayer Perceptron (MLP)**: A type of fully connected network with one or more hidden layers.
+- Learn the expected output of each action in each situation
+- Limited to discrete and simple environments
+- Neural Network variants (like **Deep Q-Learning**) allow to handle more complex environments
+:::
+::: {.column}
+![Q-Learning Table^[By LearnDataSci - Own work - Article, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=69947708]](images/Q-Learning_Matrix_Initialized_and_After_Training.png)
+:::
+::::
 
-## Convolutional Neural Networks (CNN)
+### State-Action-Reward-State-Action (SARSA)
 
-Primarily used for image data, where the convolution operation captures spatial hierarchies in the data.
+The *On Policy* version of Q-Learning (which is *Off Policy*). On Policy and Off Policy differ on the policy that is used during training to take the decisions:
 
-- **LeNet**: An early CNN model designed for handwritten digit recognition.
-- **AlexNet**: A pioneering CNN model in deep learning, which won the ImageNet challenge in 2012.
-- **VGGNet**: Known for its deep and uniform architecture (e.g., VGG16, VGG19).
-- **ResNet**: A very deep network with skip connections to avoid vanishing gradients, allowing training of networks with hundreds or thousands of layers.
-- **Inception Network (GoogLeNet)**: Uses different sized convolution filters in parallel and concatenates their outputs.
+- The exact same policy that is currently learnt for *On Policy*
+- Another policy for *Off Policy*
 
-## Recurrent Neural Networks (RNN)
+### Policy Gradient Methods
 
-Used for sequential data like time series, text, or speech, where the network has loops to allow information persistence.
+Optimize the policy by adjusting parameters in the direction that improves performance (e.g., REINFORCE algorithm)
 
-- **Simple RNN**: Basic form of RNN where each neuron in the current time step is connected to the previous time step.
-- **Long Short-Term Memory (LSTM)**: A special type of RNN capable of learning long-term dependencies, overcoming the vanishing gradient problem.
-- **Gated Recurrent Unit (GRU)**: A simplified version of LSTM with fewer parameters, designed to improve computational efficiency.
-  
-## Transformers
+### Actor-Critic Methods
 
-Currently the state-of-the-art architecture for natural language processing and other sequential tasks.
+Combination of an *Actor* and a *Critic* learning simultaneously:
 
-- **BERT (Bidirectional Encoder Representations from Transformers)**: A transformer model pre-trained for a wide variety of language tasks.
-- **GPT (Generative Pre-trained Transformer)**: A transformer model designed for generating text, famous for its application in tasks like language modeling and dialogue generation.
-- **T5 (Text-to-Text Transfer Transformer)**: Converts all NLP tasks into a text-to-text format.
-- **Vision Transformers (ViT)**: An adaptation of transformers for image data, treating an image as a sequence of patches.
+- The Actor learns the policy through a parametrized function
+- The Critic estimates the value of each action and gives feedback to the Actor
 
-## Autoencoders
+# Introduction to Neural Networks (NN)
 
-A type of neural network used for unsupervised learning by learning an efficient encoding of input data.
+### Definition
 
-- **Denoising Autoencoders**: Trains the network to remove noise from input data.
-- **Variational Autoencoders (VAE)**: A generative model that learns to map data to a continuous latent space, allowing generation of new data points.
+::: {.definition-block}
+Neural Network (NN)
 
-## Generative Models
+**Subtype of ML model** inspired from *brains*. Composed of several **interconnected layers** of nodes capable of **processing** and **passing** information.
+:::
 
-Focused on generating new data from learned distributions.
+## Structure of a NN model
 
-- **Generative Adversarial Networks (GANs)**: Consist of two networks, a generator and a discriminator, which compete in a game to improve each other’s performance.
-- **Conditional GANs (cGANs)**: GANs conditioned on additional information like class labels.
-- **StyleGAN**: A GAN variant that generates highly realistic images with control over image style features.
+### Basic Elements
 
-## Attention Mechanisms
+::: {.definition-block}
+Neuron
 
-Attention mechanisms are often embedded into neural networks, especially in natural language processing and vision tasks.
+Takes multiple inputs, sums them with weights and passes the result as output.
+:::
 
-- **Self-Attention**: A mechanism in which every part of an input sequence interacts with every other part, learning which parts to focus on (core to transformers).
-- **Attention in RNNs**: Used to allow the network to focus on certain parts of a sequence when making predictions.
+::: {.definition-block}
+Layer
 
-## Neural Architecture Search (NAS)
+Set of similar neurons taking different inputs and/or having different weights.
+:::
 
-Automated methods to discover optimal neural network architectures.
+::: {.definition-block}
+Neural Network (NN)
 
-- **EfficientNet**: A family of models designed using NAS techniques, which balance model complexity and performance.
+Sequence of layers.
+:::
+
+### Linear Functions
+
+::: {.definition-block}
+Linear Function
+
+Function that can be written like this:
+$$
+f(\alpha_1, \cdots, \alpha_n) = (\beta_{1,1} \alpha_1 + \cdots + \beta_{1,n} \alpha_n, \cdots, \beta_{m,1} \alpha_1 + \cdots + \beta_{m,n} \alpha_n)
+$$
+:::
+
+::: {.theorem-block}
+Composition of Linear Functions
+
+The composition of any number of linear functions is a linear function.
+:::
+
+### Activation Functions - Definition
+
+::: {.definition-block}
+Activation Function
+
+Function applied to the output of a NN layer (i.e. to the output of each of its neurons) to introduce **non-linearity** to the model.
+:::
+
+Activation functions allow to approximate much more complex functions, using a sequence of intertwined affine layers and activation layers.
+
+### Activation Functions - Examples
+
+::: {layout="[[1, 1], [1, 1]]"}
+
+![Rectified linear unit (ReLU)^[By Laughsinthestocks - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=44920600]](images/Activation_rectified_linear.svg){width="450px"}
+
+![Hyperbolic tangent (tanh)^[By Laughsinthestocks - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=44920568]](images/Activation_tanh.svg){width="450px"}
+
+![Logistic, sigmoid, or soft step^[By Laughsinthestocks - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=44920533]](images/Activation_logistic.svg){width="450px"}
+
+![Leaky rectified linear unit (Leaky ReLU)^[By Laughsinthestocks - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=46839644]](images/Activation_leaky_relu.svg){width="450px"}
+
+:::
+
+## Affine layers
+
+### Fully Connected
+
+The most basic layer, in which each output is a linear combination of each input (before the activation layer)
+
+::: {layout="[60, 40]" layout-valign="center"}
+
+![Fully Connected Layer^[Diego Unzueta https://builtin.com/machine-learning/fully-connected-layer]](images/fully-connected-layer.jpg)
+
+![Fully Connected Layer^[Diego Unzueta https://builtin.com/machine-learning/fully-connected-layer]](images/fully-connected-layer_0.jpg)
+
+:::
+
+### Convolutional
+
+A layer combining geographically close features, used a lot to process rasters.
+
+::: {layout="[50, 50]" layout-valign="center"}
+
+![2D Convolutional Layer^[Diego Unzueta https://builtin.com/machine-learning/fully-connected-layer]](images/convolutional-layer.jpg)
+
+![2D Convolutional Layer^[Diego Unzueta https://builtin.com/machine-learning/fully-connected-layer]](images/convolutional-layer_0.jpg)
+
+:::
+
+### Recurrent
+
+Type of layers designed to process sequential data such as text, time series data, speech or audio. Works by combining input data and the state of the previous time step.
+
+The two main variants of recurrent layers are:
+
+::: {layout-ncol=2}
+
+![Long Short-Term Memory (LSTM)^[By fdeloche - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=60149410]](images/Long_Short-Term_Memory.svg)
+
+![Gated Recurrent Unit (GRU)^[By fdeloche - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=60466441]](images/Gated_Recurrent_Unit.svg)
+
+:::
+
+Nowadays, transformer architectures are however preferred to process sequential data.
+
+### Pooling
+
+A type of layers used to reduce the number of features by merging multiple features into one. There are multiple kinds of pooling layers, the most simple ones being Maximum Pooling and Average Pooling.
+
+![Max Pooling Example^[By Daniel Voigt Godoy - https://github.com/dvgodoy/dl-visuals/, CC BY 4.0, https://commons.wikimedia.org/w/index.php?curid=150823502]](images/Convolutional_neural_network_maxpooling.png)
+
+### Residual
+
+A Residual Block aims at stabilizing training and convergence of deep neural networks (with a large number of layers), by adding the input of a given layer to the output of another layer further down in the architecture.
+
+![Residual Block skipping two layers^[By LunarLullaby - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=131458370]](images/ResBlock.png){height="400px"}
+
+### Attention
+
+Attention aims at determining relative importance of each part of the input to make better predictions. It is used a lot in natural language processing (NLP) and image processing.
+
+![Attention mechanism in seq2seq with RNN^[By Google - https://github.com/google/seq2seq, Apache License 2.0, https://commons.wikimedia.org/w/index.php?curid=150802792]](images/Seq2seq_with_RNN_and_attention_mechanism.gif)
+
+### And a lot more...
+
+- **Dropout**: randomly drop out some of the nodes during training to reduce overfitting
+- **Batch Normalization**: normalize the input of each layer across the batch to improve training stability and speed
+- **Layer Normalization**: normalize the input of each layer across the features to improve training stability and speed
+- **Embedding**: transforms discrete input data into continuous vectors with lower-dimensional space
+- **Flatten**: convert multi-dimensional data into 1D data that can be fed into fully connected layers
+- ...
+
+## NN training
+
+### Loss Function - Definition
+
+A loss function is a mathematical function that quantifies the difference between the network's predicted output and the actual target values. The goal during training is to minimize this loss by adjusting the model's weights, using gradient descent.
+
+The most common loss functions are:
+
+- Mean Squares Error (MSE) for regression
+- Cross-entropy Loss for classification
+
+### Loss Function - Differentiable
+
+To be able to perform gradient descent, the loss function must be differentiable, which means continuous (no jump) and smooth (no sudden change of direction).
+
+::: {layout-ncol=2}
+
+![Examples of differentiable functions [@kwiatkowski2020]](images/Differentiable_functions.webp)
+
+![Examples of non-differentiable functions [@kwiatkowski2020]](images/Not_differentiable_functions.webp)
+
+:::
+
+### Loss Function - Convex
+
+To get the best results when performing gradient descent, it is also better if the function is convex. The simplest definition of convexity is that if you trace a straight line between two points on the curve, the curve will be below the segment between the two points.
+
+![Example of convex and non-convex functions [@kwiatkowski2020]](images/Convex_functions.webp)
+
+### Gradient Descent - Definition
+
+::: {.definition-block}
+Gradient Descent
+
+The process of iteratively computing and following the direction of the gradient of a function to (hopefully) reach the minimum value of the function (if it exists).
+:::
+
+Gradient Descent works because at any point in the definition space of the function, the gradient points in the direction of the steepest angle. So locally, following this direction is the quickest way to get to the lower value of the function. If we come back to the requirements listed before:
+
+- Differentiable functions are functions where the gradient exists everywhere
+- Convex functions are convenient for gradient descent because they have only one minimum value and slowly going down the function will always lead to the minimum value.
+
+### Gradient Descent - Algorithm
+
+Gradient Descent boils down to iteratively:
+
+1. Compute the gradient of the loss function at the current point
+2. Make a step towards the direction of the gradient to a new point
+3. Repeat step 1 until we stop
+
+In this process, the three things that have to be defined are:
+
+- The starting point (weights initialization)
+- The size of the steps (learning rate)
+- The condition to stop
+
+### Gradient Descent - Weights initialization
+
+The starting point is defined by the first output of the model, and therefore by the initial values of the weights of the model. There are numerous methods to initialize the weights, but the most common one is to randomly initialize them using a **centered and normalize Gaussian distribution**.
+
+### Gradient Descent - Learning rate
+
+The gradient gives us a direction and a norm, but this norm is arbitrary and has to be rescaled using what we call the **learning rate**. The learning rate doesn't define the size of the steps, but the scalar factor to apply to the gradient's norm, which means that the norm still plays a crucial role.
+
+The choice of the learning rate is crucial to hopefully converge **quickly** to the **global** minimum loss.
+
+![Example of gradient descent on the same function with different learning rates [@kwiatkowski2020]](images/Gradient_descent_different_learning_rates.webp)
+
+### Gradient Descent - Stop condition
+
+The stop condition determines when you decide to stop the algorithm. An easy solution is to choose a number of steps before launching the algorithm, but this will either imply useless computations after the algorithm has reached a final point, or stopping too early and not get the best results possible.
+
+Therefore, although there are more complex methods, the most common and simple process is to monitor the value of the loss, memorize the lowest value ever reached, and stop when there has been a given number of steps without any improvement to the best value. Then, we usually keep the model weights corresponding to this best value.
+
+### Gradient Descent - Unlucky examples
+
+![Examples with a saddle point [@kwiatkowski2020]](images/Gradient_descent_different_learning_rates_saddle.webp){height="200px"}
+
+![Animated example with a saddle point [@kwiatkowski2020]](images/Gradient_descent_unlucky_example.gif){height="250px"}
+
+### Backpropagation
+
+Gradient Descent is beautiful, but right now, we only know in which direction (the gradient) the **output** of the model should go. To transmit this information to the weights of the layers of the model, we use backpropagation.
+
+::: {.definition-block}
+Backpropagation
+
+The process of computing the gradient of the weights of each layer of the model and modify them accordingly. The name comes from the process starting with the last layer of the model and propagating incrementally to the first layer.
+:::
+
+## Architectures of NN
+
+### Feedforward Neural Networks (FNNs)
+
+### Convolutional Neural Networks (CNNs)
+
+### Recurrent Neural Networks (RNNs)
+
+### Generative Adversarial Networks (GANs)
+
+### Autoencoder Networks
+
+### Transformer Networks
+
+## Miscellaneous
 
 ### Playground
 
 [Playground](https://playground.tensorflow.org/)
+
+### YOLOv8 Model
+
+![The architecture of YOLOv8 ([https://github.com/ultralytics/ultralytics/issues/189](https://github.com/ultralytics/ultralytics/issues/189))](images/YOLOv8-architecture.jpg){height=500px}
 
 # Usual pipeline
 

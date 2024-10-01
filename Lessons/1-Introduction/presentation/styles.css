@@ -1,21 +1,36 @@
-.definition-block {
-    background-color: #e0f7fa; /* Light blue background */
-    border-left: 6px solid #00acc1; /* Darker blue border */
+/* Common styles for both blocks */
+.definition-block, .theorem-block, .example-block {
     padding: 10px;
     margin: 40px 0 10px 0;
+    border-left: 6px solid;
     border-radius: 5px;
 }
 
-.definition-block p {
+.definition-block p, .theorem-block p, .example-block p {
     margin: 0; /* Remove the top margin from paragraphs */
 }
 
-.definition-block > :first-child {
+.definition-block > :first-child, .theorem-block > :first-child, .example-block > :first-child {
     font-weight: 800;
     font-style: italic;
-    margin-bottom: 5px; /* Slight space between the title and the definition */
+    margin-bottom: 5px; /* Slight space between the title and the content */
 }
 
-.definition-block > :not(:first-child) {
-    padding-left: 30px; /* Slight space between the title and the definition */
+.definition-block > :not(:first-child), .theorem-block > :not(:first-child), .example-block > :not(:first-child) {
+    padding-left: 30px; /* Slight space between the title and the content */
+}
+
+.definition-block {
+    background-color: #e0f7fa; /* Light blue background */
+    border-left-color: #00acc1; /* Darker blue border */
+}
+
+.theorem-block {
+    background-color: #ffebee; /* Light red background */
+    border-left-color: #d32f2f; /* Darker red border */
+}
+
+.example-block {
+    background-color: #eeffeb; /* Light red background */
+    border-left-color: #3dd32f; /* Darker red border */
 }

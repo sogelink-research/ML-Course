@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<style xmlns="http://purl.org/net/xbiblio/csl" class="in-text" version="1.0">
+  <info>
+    <title>Simple Numeric Superscript</title>
+    <id>http://www.zotero.org/styles/numeric-superscript</id>
+    <category citation-format="numeric"/>
+    <updated>2024-01-01T00:00:00+00:00</updated>
+  </info>
+
+  <!-- Citation format -->
+  <citation>
+    <layout prefix="[" suffix="]" vertical-align="sup" delimiter=",">
+      <text variable="citation-number"/>
+    </layout>
+  </citation>
+
+  <!-- Bibliography format -->
+  <bibliography>
+    <layout suffix=".">
+      <text variable="citation-number" prefix="[" suffix="] "/>
+      <group delimiter=". ">
+        <names variable="author">
+          <name form="long"/>
+        </names>
+        <text variable="title" quotes="true" suffix=". "/>
+        <text variable="container-title" prefix="In: " suffix=". "/>
+        <text variable="issued" prefix="(" suffix="). "/>
+        <text variable="URL" prefix="Available at: " suffix="."/>
+      </group>
+    </layout>
+  </bibliography>
+</style>
