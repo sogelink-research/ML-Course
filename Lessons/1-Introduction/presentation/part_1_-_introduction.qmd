@@ -523,38 +523,91 @@ The process of computing the gradient of the weights of each layer of the model 
 
 # Usual pipeline
 
-## Data acquisition
+### Overview
+
+1. Data acquisition
+2. Data preprocessing
+3. Model selection
+4. Model evaluation
+5. Final model training
+
+### Data acquisition
+
+Gather the data, potentially from multiple different sources. Choosing the right sources can also depend on the choices made in the next steps.
 
 ## Data preprocessing
 
-- Outliers
-- Missing data
-- Formatting
-- Normalization
+### Different issues
 
-## Model selection
+Multiple sources of issues and steps to perform:
+1. Handle different formats
+2. Remove outliers (mostly for raw data)
+3. (Optionally) extract features
+4. Handle missing data
+5. Normalize
 
-- Type of model
-- Complexity
-- Parameters
+### Why normalization?
 
-## Model evaluation
+:::{example-block}
+Idea
 
-- Loss selection
-- Cross-validation
-- Hyperparameter tuning
+*A priori* all features have the same importance, so none of them should have an advantage. Therefore, having features with larger values than others would be detrimental.
+:::
 
-## Final model training
+Usually, all features are individually normalized over the whole dataset, to obtain a distribution with an average of 0 and a standard deviation of 1:
+
+$$
+\begin{align*}
+\hat{X} & = \sum\limits_{j=0}^n X_j \\
+\sigma_X & = \sum\limits_{j=0}^n (X_j - \hat{X})^2 \\
+\forall k \in [0, \cdots, n ], X_k & = \frac{X_k - \hat{X}}{\sigma_X}
+\end{align*}
+$$
+
+### Model selection
+
+- Type of model (ML, NN, DL, ...)
+- Complexity:
+  - Number of features
+  - Type of output
+  - Size of the layers (for NN)
+  - Number of layers (for NN)
+- Hyperparameters
+
+### Model training
+
+- Loss selection: depends on the task, the objectives, the specific issues to solve
+- Training process selection (lots of different tweaks and improvements can be implemented in NN training)
+- Hyperparameter tuning, by repeatedly:
+  - Selecting one or multiple configurations of hyperparameters
+  - Training the model one or multiple times
+  - Determining the best hyperpatameters
+
+### Model evaluation
+
+- Criteria selection among the many possible ones:
+  - For classification: Accuracy, Precision, Recall, F1-Score...
+  - For regression: Mean Absolute Error, Mean Square Error (MSE)...
+  - ...
+- **Cross-validation** to estimate real performance of the model:
+  1. Split the dataset in multiple parts (usually 5)
+  2. Using different combinations of these parts (usually 5), train and evaluate the model
+
+![Cross-validation^[By Gufosowa - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=82298768]](https://en.wikipedia.org/wiki/Cross-validation_(statistics)#/media/File:K-fold_cross_validation_EN.svg)
+
+### Final model training
+
+Once the data is preprocessed, the model is selected, the hyperparameters chosen and optimized, the final model can be trained multiple times to keep the best one.
 
 # Challenges
 
-## Data
+### Data
 
 - Quality
 - Diversity
 - Biases and fairness (example of crime prediction)
 
-## Underfitting and Overfitting
+### Underfitting and Overfitting
 
 - Cross-validation
 - Feature selection
@@ -564,9 +617,9 @@ The process of computing the gradient of the weights of each layer of the model 
 - Early stopping (overfitting)
 - Training data size (underfitting)
 
-## Interpretable and Explainable
+### Bias and variance (stability)
 
-## Bias and variance (stability)
+### Interpretable and Explainable
 
 ### Definitions
 
