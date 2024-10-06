@@ -34,3 +34,8 @@
     background-color: #eeffeb; /* Light red background */
     border-left-color: #3dd32f; /* Darker red border */
 }
+
+iframe.full {
+    width: 100%;
+    height: 600px;
+}
