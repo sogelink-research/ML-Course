@@ -3,7 +3,6 @@ title: "ML Course Part 1 - Introduction to Machine Learning"
 author: "Alexandre Bry"
 bibliography: references.bib
 csl: numeric-superscript.csl
-incremental: true
 slide-level: 3
 reference-location: document
 include-after-body: include-after-body.html
@@ -19,8 +18,9 @@ format:
     code-line-numbers: false
     header: "Introduction to Machine Learning"
     sc-sb-title	: true
-    incremental: true
-    embed-resources: true
+    incremental: false
+    embed-resources: false
+    # scrollable: true
 execute: 
   echo: true
 filters:
@@ -110,29 +110,32 @@ A ML dataset is usually subdivided into three disjoint subsets, with distinctive
 
 Used for predicting continuous values:
 
+::: {.nonincremental}
 - **Simple**: $y = \alpha + \beta x$
 - **Multiple**: $y = \alpha + \beta_1 x_1 + \beta_2 x_2 + \cdots + \beta_n x_n$
 - **Polynomial**: $y = \alpha + \beta_1 x + \beta_2 x^2 + \cdots + \beta_n x^n$
 - and many others...
+:::
 
-![Simple Linear Regression^[By Anscombe.svg: Schutz(label using subscripts): Avenue - Anscombe.svg, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=9838454]](images/Linear_regression.svg){height="300px"}
-
+![Simple Linear Regression [@anscombe2011]](images/Linear_regression.svg){height="300px"}
 
 ### Logistic Regression
 
-Used for binary classification problems:
+Used for classification problems:
 
+::: {.nonincremental}
 - **Binomial**: only two possible categories
 - **Multinomial**: three or more possible categories
 - **Ordinal**: three or more possible categories which are ordered
+:::
 
-![Binomial Logistic Regression^[By Canley - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=116449187]](images/Logistic_regression.svg){height="350px"}
+![Binomial Logistic Regression [@canley2021]](images/Logistic_regression.svg){height="350px"}
 
 ### Decision Trees
 
 A tree-like structure used for both classification and regression
 
-![Decision Tree^[Black Dragon https://stackoverflow.com/questions/31786347/how-to-make-python-decision-tree-more-understandable]](images/Decision_tree.png){height="500px"}
+![Decision Tree [@blackdragon2015]](images/Decision_tree.png){height="500px"}
 
 ### Random Forests
 
@@ -149,63 +152,83 @@ An ensemble method that combines weak learners (usually decision trees) to form 
 
 - Choose a simple **base learner** (e.g. small decision trees with fixed number of leaves)
 - Repeatedly:
-  - Train a new base learner on the weighted training set
-  - Add this new learner to the ensemble
-  - Give more weight in the training set to misclassified data
+  1. Train a new base learner on the weighted training set
+  2. Add this new learner to the ensemble
+  3. Evaluate the performance of the ensemble
+  4. Give more weight in the training set to misclassified data
 
-### $k$-Nearest Neighbors (KNN)
+### K-Nearest Neighbors (KNN)
 
 A non-parametric method for classification and regression
 
-![k-NN Classification^[By Antti Ajanki AnAj - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=2170282]](images/KnnClassification.svg){height="500px"}
+![K-NN Classification [@ajanki2008]](images/KnnClassification.svg){height="500px"}
 
 ### Naive Bayes
 
-A probabilistic classifier based on Bayes' theorem
+A probabilistic classifier based on Bayes' theorem.
 
 ### Support Vector Machines (SVM)
 
 Used for classification and regression, effective in high-dimensional spaces:
 
+::: {.nonincremental}
 - Separate the feature space using optimal hyperplanes
 - Features are mapped in a higher dimensional space to allow to fit non-linearly in the original feature space
+:::
 
-![SVM kernel trick: map features to a higher dimensional space to be able to separate classes using a hyperplane^[By Original: Alisneaky Vector: Zirguezi - Own work based on: Kernel Machine.png, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=47868867]](images/SVM_Kernel_Machine.svg){height="350px"}
+![SVM kernel trick: map features to a higher dimensional space to be able to separate classes using a hyperplane [@zirguezi2015]](images/SVM_Kernel_Machine.svg){height="350px"}
 
 ## Unsupervised Learning
 
-### $k$-Means Clustering
+### K-Means Clustering
+
+:::: {.columns}
+::: {.column}
 
 A method for partitioning data into $k$ clusters:
 
-- $k$ must be chosen before
-- Create clusters around iteratively improved center points
+::: {.nonincremental}
+- $k$ must be chosen a priori
+- The principle is to start with random centroids and then iteratively:
+  1. Classify points using the closest centroid
+  2. Move each centroid to the real centroid of its class
 - Classical method with lots of variation
+:::
 
-![$k$-Means Clustering convergence process^[By Chire - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=59409335]](images/K-means_convergence.gif){height="300px"}
+:::
+::: {.column}
+
+![$k$-Means Clustering convergence process [@chire_kmeans]](images/K-means_convergence.gif){height="500px"}
+
+:::
+::::
 
 ### Hierarchical Clustering
 
 Builds a hierarchy of clusters using either agglomerative or divisive methods:
 
+::: {.nonincremental}
 - Build a full hierarchy top-down (divisive) or bottom-up (agglomerative)
 - Create any number of clusters by cutting the tree
+:::
 
-![Hierarchical Clustering^[By [[:File:Hierarchical_clustering_diagram.png#file|]]: Stathis Sideris on 10/02/2005derivative work: Mhbrugman (talk) - [[:File:Hierarchical_clustering_diagram.png#file|]], CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=7344806]](images/Hierarchical_clustering_simple_diagram.svg){height="350px"}
+![Hierarchical Clustering [@sideris2005]](images/Hierarchical_clustering_simple_diagram.svg){height="350px"}
 
 ### Density-Based Spatial Clustering of Applications with Noise (DBSCAN)
 
 Clustering based on the density of data points:
 
+::: {.nonincremental}
 - Divides points in 4 categories: core points (in red below), directly reachable (yellow), reachable and outliers (blue)
 - Only two parameters: radius size ($\epsilon$) and number of neighbors to be core ($min_{pts}$)
+:::
 
 ::: {.columns}
 ::: {.column}
-![DBSCAN Illustration^[By Chire - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=17045963]](images/DBSCAN-Illustration.svg){height="250px"}
+![DBSCAN Illustration [@chire_dbscan_illustration]](images/DBSCAN-Illustration.svg){height="250px"}
 :::
 ::: {.column}
-![DBSCAN Result^[By Chire - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=17085332]](images/DBSCAN-Result.svg){height="250px"}
+![DBSCAN Result [@chire_dbscan_result]](images/DBSCAN-Result.svg){height="250px"}
 :::
 :::
 
@@ -213,48 +236,75 @@ Clustering based on the density of data points:
 
 Dimensionality reduction technique to project data into lower dimensions:
 
+::: {.nonincremental}
 - Project data into a space of lower dimension
-- Keep as much variance (so as much information) as possible 
+- Keep as much variance (so as much information) as possible
+:::
 
-![PCA Illustration^[By Nicoguaro - Own work, CC BY 4.0, https://commons.wikimedia.org/w/index.php?curid=46871195]](images/GaussianScatterPCA.svg){height="350px"}
+![PCA Illustration [@nicoguaro2015]](images/GaussianScatterPCA.svg){height="350px"}
 
 ### t-Distributed Stochastic Neighbor Embedding (t-SNE)
 
 A nonlinear dimensionality reduction technique primarily used for visualization of high-dimensional data
 
-![t-SNE Result on MNIST dataset^[By Kyle McDonald - https://www.flickr.com/photos/kylemcdonald/26620503329/, CC BY 2.0, https://commons.wikimedia.org/w/index.php?curid=115726949]](images/T-SNE_Embedding_of_MNIST.png){height="400px"}
+![t-SNE Result on MNIST dataset [@mcdonald2017]](images/T-SNE_Embedding_of_MNIST.png){height="400px"}
 
 ## Reinforcement Learning
 
 ### Definitions
 
-![Reinforcement Learning Framework^[By Megajuice - Own work, CC0, https://commons.wikimedia.org/w/index.php?curid=57895741]](images/Reinforcement_learning_diagram.svg)
+![Reinforcement Learning Framework [@megajuice2017]](images/Reinforcement_learning_diagram.svg){height="500px"}
 
-### Q-Learning
+### Definitions
+
+::: {.definition-block}
+Policy (in RL)
+
+Function that returns an action given the state of the environment.
+:::
+
+::: {.definition-block}
+On-Policy vs. Off-Policy
+
+Refers to the policy that is used to update the knowledge during training. On-Policy uses the learnt policy, while Off-Policy uses the optimal policy.
+:::
+
+### Q-Learning / SARSA - Similarities
 
 :::: {.columns}
 ::: {.column}
 A value-based reinforcement learning algorithm:
 
-- Learn the expected output of each action in each situation
+- Iteratively learn the expected output of each action in each situation
 - Limited to discrete and simple environments
 - Neural Network variants (like **Deep Q-Learning**) allow to handle more complex environments
 :::
 ::: {.column}
-![Q-Learning Table^[By LearnDataSci - Own work - Article, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=69947708]](images/Q-Learning_Matrix_Initialized_and_After_Training.png)
+![Q-Learning Table [@learndatasci2018]](images/Q-Learning_Matrix_Initialized_and_After_Training.png)
 :::
 ::::
 
-### State-Action-Reward-State-Action (SARSA)
+### Q-Learning / SARSA - Differences
 
-The *On Policy* version of Q-Learning (which is *Off Policy*). On Policy and Off Policy differ on the policy that is used during training to take the decisions:
+The two methods differ by the estimation of the reward that is used to update the Q-table:
 
-- The exact same policy that is currently learnt for *On Policy*
-- Another policy for *Off Policy*
+::: {.nonincremental}
+- Q-Learning (Off-Policy) uses the best possible reward: $Q(s,a) \leftarrow Q(s,a) + \alpha(r + \gamma Q(s',a') - Q(s,a))$
+- SARSA (On-Policy) uses the reward of the next action: $Q(s,a) \leftarrow Q(s,a) + \alpha(r + \gamma \max_{a''} Q(s',a'') - Q(s,a))$
+:::
+
+where:
+
+::: {.nonincremental}
+- $a$ is the action taken while the environment is in state $s$, leading to state $s'$ where action $a'$ will be taken
+- $\alpha$ is the learning rate
+- $r$ is the reward received after taking action $a$ in state $s$ and arriving in state $s'$
+- $\gamma$ is the discount factor defining how much we value long-term rewards relatively to short-term rewards
+:::
 
 ### Policy Gradient Methods
 
-Optimize the policy by adjusting parameters in the direction that improves performance (e.g., REINFORCE algorithm)
+Given a model defined with a certain number of parameters, optimize the policy by adjusting these parameters in the direction that improves performance (e.g., REINFORCE algorithm)
 
 ### Actor-Critic Methods
 
@@ -325,15 +375,13 @@ Activation functions allow to approximate much more complex functions, using a s
 ### Activation Functions - Examples
 
 ::: {layout="[[1, 1], [1, 1]]"}
+![Rectified linear unit (ReLU) [@laughsinthestocks_relu]](images/Activation_rectified_linear.svg){height="200px"}
 
-![Rectified linear unit (ReLU)^[By Laughsinthestocks - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=44920600]](images/Activation_rectified_linear.svg){width="450px"}
+![Hyperbolic tangent (tanh) [@laughsinthestocks_tanh]](images/Activation_tanh.svg){height="200px"}
 
-![Hyperbolic tangent (tanh)^[By Laughsinthestocks - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=44920568]](images/Activation_tanh.svg){width="450px"}
+![Logistic, sigmoid, or soft step [@laughsinthestocks_logistic]](images/Activation_logistic.svg){height="200px"}
 
-![Logistic, sigmoid, or soft step^[By Laughsinthestocks - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=44920533]](images/Activation_logistic.svg){width="450px"}
-
-![Leaky rectified linear unit (Leaky ReLU)^[By Laughsinthestocks - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=46839644]](images/Activation_leaky_relu.svg){width="450px"}
-
+![Leaky rectified linear unit (Leaky ReLU) [@laughsinthestocks_leaky_relu]](images/Activation_leaky_relu.svg){height="200px"}
 :::
 
 ## Affine layers
@@ -343,11 +391,9 @@ Activation functions allow to approximate much more complex functions, using a s
 The most basic layer, in which each output is a linear combination of each input (before the activation layer)
 
 ::: {layout="[60, 40]" layout-valign="center"}
+![Fully Connected Layer [@unzueta_fully_connected]](images/fully-connected-layer.jpg)
 
-![Fully Connected Layer^[Diego Unzueta https://builtin.com/machine-learning/fully-connected-layer]](images/fully-connected-layer.jpg)
-
-![Fully Connected Layer^[Diego Unzueta https://builtin.com/machine-learning/fully-connected-layer]](images/fully-connected-layer_0.jpg)
-
+![Fully Connected Layer [@unzueta_fully_connected]](images/fully-connected-layer_0.jpg)
 :::
 
 ### Convolutional
@@ -355,11 +401,9 @@ The most basic layer, in which each output is a linear combination of each input
 A layer combining geographically close features, used a lot to process rasters.
 
 ::: {layout="[50, 50]" layout-valign="center"}
+![2D Convolutional Layer [@unzueta_convolutional]](images/convolutional-layer.jpg)
 
-![2D Convolutional Layer^[Diego Unzueta https://builtin.com/machine-learning/fully-connected-layer]](images/convolutional-layer.jpg)
-
-![2D Convolutional Layer^[Diego Unzueta https://builtin.com/machine-learning/fully-connected-layer]](images/convolutional-layer_0.jpg)
-
+![2D Convolutional Layer [@unzueta_convolutional]](images/convolutional-layer_0.jpg)
 :::
 
 ### Recurrent
@@ -368,12 +412,10 @@ Type of layers designed to process sequential data such as text, time series dat
 
 The two main variants of recurrent layers are:
 
-::: {layout-ncol=2}
+::: {layout="[50, 50]" layout-valign="center"}
+![Long Short-Term Memory (LSTM) [@fdeloche_lstm]](images/Long_Short-Term_Memory.svg)
 
-![Long Short-Term Memory (LSTM)^[By fdeloche - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=60149410]](images/Long_Short-Term_Memory.svg)
-
-![Gated Recurrent Unit (GRU)^[By fdeloche - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=60466441]](images/Gated_Recurrent_Unit.svg)
-
+![Gated Recurrent Unit (GRU) [@fdeloche_gru]](images/Gated_Recurrent_Unit.svg)
 :::
 
 Nowadays, transformer architectures are however preferred to process sequential data.
@@ -382,19 +424,19 @@ Nowadays, transformer architectures are however preferred to process sequential 
 
 A type of layers used to reduce the number of features by merging multiple features into one. There are multiple kinds of pooling layers, the most simple ones being Maximum Pooling and Average Pooling.
 
-![Max Pooling Example^[By Daniel Voigt Godoy - https://github.com/dvgodoy/dl-visuals/, CC BY 4.0, https://commons.wikimedia.org/w/index.php?curid=150823502]](images/Convolutional_neural_network_maxpooling.png)
+![Max Pooling Example [@godoy2023]](images/Convolutional_neural_network_maxpooling.png)
 
 ### Residual
 
 A Residual Block aims at stabilizing training and convergence of deep neural networks (with a large number of layers), by adding the input of a given layer to the output of another layer further down in the architecture.
 
-![Residual Block skipping two layers^[By LunarLullaby - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=131458370]](images/ResBlock.png){height="400px"}
+![Residual Block skipping two layers [@lunarLullaby2023]](images/ResBlock.png){height="400px"}
 
 ### Attention
 
 Attention aims at determining relative importance of each part of the input to make better predictions. It is used a lot in natural language processing (NLP) and image processing.
 
-![Attention mechanism in seq2seq with RNN^[By Google - https://github.com/google/seq2seq, Apache License 2.0, https://commons.wikimedia.org/w/index.php?curid=150802792]](images/Seq2seq_with_RNN_and_attention_mechanism.gif)
+![Attention mechanism in seq2seq with RNN [@google2023]](images/Seq2seq_with_RNN_and_attention_mechanism.gif)
 
 ### And a lot more...
 
@@ -495,20 +537,6 @@ Backpropagation
 The process of computing the gradient of the weights of each layer of the model and modify them accordingly. The name comes from the process starting with the last layer of the model and propagating incrementally to the first layer.
 :::
 
-## Architectures of NN
-
-### Feedforward Neural Networks (FNNs)
-
-### Convolutional Neural Networks (CNNs)
-
-### Recurrent Neural Networks (RNNs)
-
-### Generative Adversarial Networks (GANs)
-
-### Autoencoder Networks
-
-### Transformer Networks
-
 ## Miscellaneous
 
 ### Playground
@@ -517,7 +545,7 @@ The process of computing the gradient of the weights of each layer of the model 
 
 ### YOLOv8 Model
 
-![The architecture of YOLOv8 ([https://github.com/ultralytics/ultralytics/issues/189](https://github.com/ultralytics/ultralytics/issues/189))](images/YOLOv8-architecture.jpg){height=500px}
+![The architecture of YOLOv8 [@kwiatkowski2020]](images/YOLOv8-architecture.jpg){height=500px}
 
 # Usual pipeline
 
@@ -546,7 +574,7 @@ Multiple sources of issues and steps to perform:
 
 ### Why normalization?
 
-:::{.example-block}
+::: {.example-block}
 Idea
 
 *A priori* all features have the same importance, so none of them should have an advantage. Therefore, having features with larger values than others would be detrimental.
@@ -579,7 +607,7 @@ $$
 - Hyperparameter tuning, by repeatedly:
   - Selecting one or multiple configurations of hyperparameters
   - Training the model one or multiple times
-  - Determining the best hyperpatameters
+  - Determining the best hyperparameters
 
 ### Model evaluation - Criteria
 
@@ -610,7 +638,7 @@ Method to estimate real performance of the model by:
   2. For different combinations of these parts (usually 5), training and evaluating the model
 :::
 
-![Cross-validation^[By Gufosowa - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=82298768]](images/K-fold_cross_validation_EN.svg)
+![Cross-validation [@gufosowa2019]](images/K-fold_cross_validation_EN.svg)
 
 ### Final model training
 
@@ -651,7 +679,6 @@ When a model is too complex to properly generalize to new data. Happens often wh
 ![Underfitting and overfitting on a regression task [@geeksforgeeksfitting]](images/Underfitting_and_Overfitting_Regression.webp){width="550px"}
 
 ![Underfitting and overfitting on a classification task [@geeksforgeeksfitting]](images/Underfitting_and_Overfitting_Classification.png){width="550px"}
-
 
 ### Solutions
 
@@ -727,7 +754,7 @@ print(array @ array)
 print(np.where(array < 2, 10 - array, array))
 ```
 
-### Pandas
+### Pandas {.scrollable}
 
 ```{python}
 import pandas as pd
@@ -750,7 +777,7 @@ print(df[df["Names"].str.contains("n")])
 
 ## ML
 
-### SciPy
+### SciPy {.scrollable}
 
 Scientific and technical computing based on NumPy. Documentation [here](https://scipy.org/)
 
@@ -777,9 +804,9 @@ result, error = sp.integrate.quad(integrand, 0, np.inf)
 print("Integral of exp(-x**2/2)/sqrt(2*np.pi) from 0 to infinity:", result)
 ```
 
-### scikit-learn
+### scikit-learn {.scrollable}
 
-Documentation [here](https://scikit-learn.org/stable/index.html)
+A lot of tools for ML (except DL). Documentation [here](https://scikit-learn.org/stable/index.html)
 
 ```{python}
 import numpy as np
@@ -813,29 +840,31 @@ print("Accuracy:", accuracy_score(y_test, y_pred))
 
 ## NN
 
-### PyTorch
+### PyTorch / TensorFlow / Keras
 
-### TensorFlow
-
-### Keras
-
-- [PyTorch](https://pytorch.org/)
-- [TensorFlow](https://www.tensorflow.org/)
-- [Keras](https://keras.io/)
+- [PyTorch](https://pytorch.org/):
+  - Flexibility, ease of debugging, beginner-friendly
+  - Favored in academia and by researchers
+- [TensorFlow](https://www.tensorflow.org/):
+  - Scalable, production-ready and easy deployment
+  - Favored in production and industry
+- [Keras](https://keras.io/):
+  - User-friendly, high-level and powerful with TensorFlow integration
+  - Favored for first hands-on experience for beginners and for prototyping
 
 ## Visualization
 
 ### Matplotlib
 
-<iframe class="full" src="https://matplotlib.org/stable/plot_types/index.html#plot-types"></iframe>
+[Examples](https://matplotlib.org/stable/plot_types/index.html#plot-types)
 
 ### Plotly
 
-<iframe class="full" src="https://plotly.com/python/"></iframe>
+[Examples](https://plotly.com/python/)
 
 ### Seaborn
 
-<iframe class="full" src="https://seaborn.pydata.org/examples/index.html"></iframe>
+[Examples](https://seaborn.pydata.org/examples/index.html)
 
 # Resources
 
@@ -845,4 +874,6 @@ print("Accuracy:", accuracy_score(y_test, y_pred))
   - [GeeksforGeeks Introduction to Machine Learning](https://www.geeksforgeeks.org/introduction-machine-learning/)
   - [GeeksforGeeks 7 Major ML Challenges](https://www.geeksforgeeks.org/7-major-challenges-faced-by-machine-learning-professionals/)
   - [GeeksforGeeks Explainable and Interpretable](https://www.geeksforgeeks.org/what-is-the-difference-between-explainable-and-interpretable-machine-learning/)
-- [Interpretable Machine Learning, Christoph Molnar](https://christophm.github.io/interpretable-ml-book/)
+  - [Interpretable Machine Learning, Christoph Molnar](https://christophm.github.io/interpretable-ml-book/)
+
+## References
