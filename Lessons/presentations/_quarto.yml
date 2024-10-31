@@ -1,0 +1,27 @@
+project:
+  type: website
+
+author: "Alexandre Bry"
+csl: shared/numeric-superscript.csl
+slide-level: 3
+reference-location: document
+include-after-body: shared/include-after-body.html
+
+format:
+  revealjs:
+    css: shared/styles.css
+    smaller: true
+    slide-number: true
+    show-slide-number: all
+    code-overflow: wrap
+    code-line-numbers: false
+    slideHeaders: true
+    sc-sb-title	: true
+    incremental: false
+    embed-resources: false
+    # scrollable: true
+
+execute: 
+  echo: true
+filters:
+  - reveal-header

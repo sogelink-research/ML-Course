@@ -1,29 +1,9 @@
 ---
 title: "ML Course Part 2 - Introduction to Deep Learning"
-author: "Alexandre Bry"
 bibliography: references.bib
-csl: ../../numeric-superscript.csl
-slide-level: 3
-reference-location: document
-include-after-body: ../../include-after-body.html
 format:
   revealjs:
-    slideHeaders: true
-    smaller: true
-    slide-number: true
-    show-slide-number: all
-    css: [../../styles.css]
-    code-overflow: wrap
-    code-line-numbers: false
     header: "Introduction to Deep Learning"
-    sc-sb-title	: true
-    incremental: false
-    embed-resources: false
-    scrollable: true
-execute: 
-  echo: true
-filters:
-  - reveal-header
 ---
 
 # Introduction

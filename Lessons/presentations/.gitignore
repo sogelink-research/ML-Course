@@ -1,0 +1,6 @@
+.venv/
+.quarto/
+.vscode/
+slides.quarto_ipynb
+slides_files/
+_site/
