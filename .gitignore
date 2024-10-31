@@ -1,2 +1,2 @@
-**/_extensions/
-**/.quarto/
+.vscode/
+__pycache__/
