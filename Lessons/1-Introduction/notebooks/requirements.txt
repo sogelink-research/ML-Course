@@ -1,6 +1,12 @@
 ipykernel
+ipywidgets
 
 torch
 torchvision
 matplotlib
 numpy
+scikit-learn
+pandas
+seaborn
+
+tqdm

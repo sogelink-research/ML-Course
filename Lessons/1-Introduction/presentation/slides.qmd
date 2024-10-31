@@ -2,25 +2,24 @@
 title: "ML Course Part 1 - Introduction to Machine Learning"
 author: "Alexandre Bry"
 bibliography: references.bib
-csl: numeric-superscript.csl
+csl: ../../numeric-superscript.csl
 slide-level: 3
 reference-location: document
-include-after-body: include-after-body.html
+include-after-body: ../../include-after-body.html
 format:
   revealjs:
     slideHeaders: true
-    # theme: [default, _extensions/grantmcdermott/clean/clean.scss]
     smaller: true
     slide-number: true
     show-slide-number: all
-    css: [styles.css]
+    css: [../../styles.css]
     code-overflow: wrap
     code-line-numbers: false
     header: "Introduction to Machine Learning"
     sc-sb-title	: true
     incremental: false
     embed-resources: false
-    # scrollable: true
+    scrollable: true
 execute: 
   echo: true
 filters:
@@ -313,240 +312,6 @@ Combination of an *Actor* and a *Critic* learning simultaneously:
 - The Actor learns the policy through a parametrized function
 - The Critic estimates the value of each action and gives feedback to the Actor
 
-# Introduction to Neural Networks (NN)
-
-### Definition
-
-::: {.definition-block}
-Neural Network (NN)
-
-**Subtype of ML model** inspired from *brains*. Composed of several **interconnected layers** of nodes capable of **processing** and **passing** information.
-:::
-
-## Structure of a NN model
-
-### Basic Elements
-
-::: {.definition-block}
-Neuron
-
-Takes multiple inputs, sums them with weights and passes the result as output.
-:::
-
-::: {.definition-block}
-Layer
-
-Set of similar neurons taking different inputs and/or having different weights.
-:::
-
-::: {.definition-block}
-Neural Network (NN)
-
-Sequence of layers.
-:::
-
-### Linear Functions
-
-::: {.definition-block}
-Linear Function
-
-Function that can be written like this:
-$$
-f(\alpha_1, \cdots, \alpha_n) = (\beta_{1,1} \alpha_1 + \cdots + \beta_{1,n} \alpha_n, \cdots, \beta_{m,1} \alpha_1 + \cdots + \beta_{m,n} \alpha_n)
-$$
-:::
-
-::: {.theorem-block}
-Composition of Linear Functions
-
-The composition of any number of linear functions is a linear function.
-:::
-
-### Activation Functions - Definition
-
-::: {.definition-block}
-Activation Function
-
-Function applied to the output of a NN layer (i.e. to the output of each of its neurons) to introduce **non-linearity** to the model.
-:::
-
-Activation functions allow to approximate much more complex functions, using a sequence of intertwined affine layers and activation layers.
-
-### Activation Functions - Examples
-
-::: {layout="[[1, 1], [1, 1]]"}
-![Rectified linear unit (ReLU) [@laughsinthestocks_relu]](images/Activation_rectified_linear.svg){height="200px"}
-
-![Hyperbolic tangent (tanh) [@laughsinthestocks_tanh]](images/Activation_tanh.svg){height="200px"}
-
-![Logistic, sigmoid, or soft step [@laughsinthestocks_logistic]](images/Activation_logistic.svg){height="200px"}
-
-![Leaky rectified linear unit (Leaky ReLU) [@laughsinthestocks_leaky_relu]](images/Activation_leaky_relu.svg){height="200px"}
-:::
-
-## Affine layers
-
-### Fully Connected
-
-The most basic layer, in which each output is a linear combination of each input (before the activation layer)
-
-::: {layout="[60, 40]" layout-valign="center"}
-![Fully Connected Layer [@unzueta_fully_connected]](images/fully-connected-layer.jpg)
-
-![Fully Connected Layer [@unzueta_fully_connected]](images/fully-connected-layer_0.jpg)
-:::
-
-### Convolutional
-
-A layer combining geographically close features, used a lot to process rasters.
-
-::: {layout="[50, 50]" layout-valign="center"}
-![2D Convolutional Layer [@unzueta_convolutional]](images/convolutional-layer.jpg)
-
-![2D Convolutional Layer [@unzueta_convolutional]](images/convolutional-layer_0.jpg)
-:::
-
-### Recurrent
-
-Type of layers designed to process sequential data such as text, time series data, speech or audio. Works by combining input data and the state of the previous time step.
-
-The two main variants of recurrent layers are:
-
-::: {layout="[50, 50]" layout-valign="center"}
-![Long Short-Term Memory (LSTM) [@fdeloche_lstm]](images/Long_Short-Term_Memory.svg)
-
-![Gated Recurrent Unit (GRU) [@fdeloche_gru]](images/Gated_Recurrent_Unit.svg)
-:::
-
-Nowadays, transformer architectures are however preferred to process sequential data.
-
-### Pooling
-
-A type of layers used to reduce the number of features by merging multiple features into one. There are multiple kinds of pooling layers, the most simple ones being Maximum Pooling and Average Pooling.
-
-![Max Pooling Example [@godoy2023]](images/Convolutional_neural_network_maxpooling.png)
-
-### Residual
-
-A Residual Block aims at stabilizing training and convergence of deep neural networks (with a large number of layers), by adding the input of a given layer to the output of another layer further down in the architecture.
-
-![Residual Block skipping two layers [@lunarLullaby2023]](images/ResBlock.png){height="400px"}
-
-### Attention
-
-Attention aims at determining relative importance of each part of the input to make better predictions. It is used a lot in natural language processing (NLP) and image processing.
-
-![Attention mechanism in seq2seq with RNN [@google2023]](images/Seq2seq_with_RNN_and_attention_mechanism.gif)
-
-### And a lot more...
-
-- **Dropout**: randomly drop out some of the nodes during training to reduce overfitting
-- **Batch Normalization**: normalize the input of each layer across the batch to improve training stability and speed
-- **Layer Normalization**: normalize the input of each layer across the features to improve training stability and speed
-- **Embedding**: transforms discrete input data into continuous vectors with lower-dimensional space
-- **Flatten**: convert multi-dimensional data into 1D data that can be fed into fully connected layers
-- ...
-
-## NN training
-
-### Loss Function - Definition
-
-A loss function is a mathematical function that quantifies the difference between the network's predicted output and the actual target values. The goal during training is to minimize this loss by adjusting the model's weights, using gradient descent.
-
-The most common loss functions are:
-
-- Mean Squares Error (MSE) for regression
-- Cross-entropy Loss for classification
-
-### Loss Function - Differentiable
-
-To be able to perform gradient descent, the loss function must be differentiable, which means continuous (no jump) and smooth (no sudden change of direction).
-
-::: {layout-ncol=2}
-
-![Examples of differentiable functions [@kwiatkowski2020]](images/Differentiable_functions.webp)
-
-![Examples of non-differentiable functions [@kwiatkowski2020]](images/Not_differentiable_functions.webp)
-
-:::
-
-### Loss Function - Convex
-
-To get the best results when performing gradient descent, it is also better if the function is convex. The simplest definition of convexity is that if you trace a straight line between two points on the curve, the curve will be below the segment between the two points.
-
-![Example of convex and non-convex functions [@kwiatkowski2020]](images/Convex_functions.webp)
-
-### Gradient Descent - Definition
-
-::: {.definition-block}
-Gradient Descent
-
-The process of iteratively computing and following the direction of the gradient of a function to (hopefully) reach the minimum value of the function (if it exists).
-:::
-
-Gradient Descent works because at any point in the definition space of the function, the gradient points in the direction of the steepest angle. So locally, following this direction is the quickest way to get to the lower value of the function. If we come back to the requirements listed before:
-
-- Differentiable functions are functions where the gradient exists everywhere
-- Convex functions are convenient for gradient descent because they have only one minimum value and slowly going down the function will always lead to the minimum value.
-
-### Gradient Descent - Algorithm
-
-Gradient Descent boils down to iteratively:
-
-1. Compute the gradient of the loss function at the current point
-2. Make a step towards the direction of the gradient to a new point
-3. Repeat step 1 until we stop
-
-In this process, the three things that have to be defined are:
-
-- The starting point (weights initialization)
-- The size of the steps (learning rate)
-- The condition to stop
-
-### Gradient Descent - Weights initialization
-
-The starting point is defined by the first output of the model, and therefore by the initial values of the weights of the model. There are numerous methods to initialize the weights, but the most common one is to randomly initialize them using a **centered and normalize Gaussian distribution**.
-
-### Gradient Descent - Learning rate
-
-The gradient gives us a direction and a norm, but this norm is arbitrary and has to be rescaled using what we call the **learning rate**. The learning rate doesn't define the size of the steps, but the scalar factor to apply to the gradient's norm, which means that the norm still plays a crucial role.
-
-The choice of the learning rate is crucial to hopefully converge **quickly** to the **global** minimum loss.
-
-![Example of gradient descent on the same function with different learning rates [@kwiatkowski2020]](images/Gradient_descent_different_learning_rates.webp)
-
-### Gradient Descent - Stop condition
-
-The stop condition determines when you decide to stop the algorithm. An easy solution is to choose a number of steps before launching the algorithm, but this will either imply useless computations after the algorithm has reached a final point, or stopping too early and not get the best results possible.
-
-Therefore, although there are more complex methods, the most common and simple process is to monitor the value of the loss, memorize the lowest value ever reached, and stop when there has been a given number of steps without any improvement to the best value. Then, we usually keep the model weights corresponding to this best value.
-
-### Gradient Descent - Unlucky examples
-
-![Examples with a saddle point [@kwiatkowski2020]](images/Gradient_descent_different_learning_rates_saddle.webp){height="200px"}
-
-![Animated example with a saddle point [@kwiatkowski2020]](images/Gradient_descent_unlucky_example.gif){height="250px"}
-
-### Backpropagation
-
-Gradient Descent is beautiful, but right now, we only know in which direction (the gradient) the **output** of the model should go. To transmit this information to the weights of the layers of the model, we use backpropagation.
-
-::: {.definition-block}
-Backpropagation
-
-The process of computing the gradient of the weights of each layer of the model and modify them accordingly. The name comes from the process starting with the last layer of the model and propagating incrementally to the first layer.
-:::
-
-## Miscellaneous
-
-### Playground
-
-[Playground](https://playground.tensorflow.org/)
-
-### YOLOv8 Model
-
-![The architecture of YOLOv8 [@kwiatkowski2020]](images/YOLOv8-architecture.jpg){height=500px}
-
 # Usual pipeline
 
 ### Overview
@@ -837,20 +602,6 @@ y_pred = clf.predict(X_test)
 
 print("Accuracy:", accuracy_score(y_test, y_pred))
 ```
-
-## NN
-
-### PyTorch / TensorFlow / Keras
-
-- [PyTorch](https://pytorch.org/):
-  - Flexibility, ease of debugging, beginner-friendly
-  - Favored in academia and by researchers
-- [TensorFlow](https://www.tensorflow.org/):
-  - Scalable, production-ready and easy deployment
-  - Favored in production and industry
-- [Keras](https://keras.io/):
-  - User-friendly, high-level and powerful with TensorFlow integration
-  - Favored for first hands-on experience for beginners and for prototyping
 
 ## Visualization
 
