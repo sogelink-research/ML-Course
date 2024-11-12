@@ -16,10 +16,12 @@ notebooks
 │   └── requirements.txt
 ├── 1-introduction/
 │   ├── Demo-Classification_sklearn.ipynb
-│   └── Exercise-Classification_sklearn.ipynb
+│   ├── Exercise-Classification_sklearn.ipynb
+│   └── Solution-Classification_sklearn.ipynb
 ├── 2-neural_networks/
 │   ├── Demo-[...].ipynb
 │   ├── Exercise-[...].ipynb
+│   ├── Solution-[...].ipynb
 │   └── ...
 └── ...
 ```
@@ -27,7 +29,7 @@ notebooks
 A few comments about the structure:
 
 - The `shared` directory contains a `requirements.txt` file with the Python packages needed to run the notebooks. This fle is used to create a virtual environment as explained in the next section [`Setup`](#setup).
-- There are two types of notebooks: `Demo` and `Exercise`. The `Demo` notebooks contain examples and explanations and can be run without any modification. The `Exercise` notebooks contain exercises that require you to solve them, and have a `Exercise-Solution` version containing one solution.
+- There are two types of notebooks: `Demo` and `Exercise`. The `Demo` notebooks contain examples and explanations and can be run without any modification. The `Exercise` notebooks contain exercises that require you to solve them, and have a `Solution` version containing one solution.
 
 ## Setup
 
