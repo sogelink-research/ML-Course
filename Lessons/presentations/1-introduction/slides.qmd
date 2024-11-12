@@ -114,7 +114,7 @@ Used for classification problems:
 
 A tree-like structure used for both classification and regression
 
-![Decision Tree [@blackdragon2015]](images/Decision_tree.png){height="500px"}
+![Decision Tree](images/Decision_tree.png){width="100%"}
 
 ### Random Forests
 
@@ -177,7 +177,7 @@ A method for partitioning data into $k$ clusters:
 :::
 ::: {.column}
 
-![$k$-Means Clustering convergence process [@chire_kmeans]](images/K-means_convergence.gif){height="500px"}
+![$k$-Means Clustering convergence process [@chire_kmeans]](images/K-means_convergence.gif){width="100%"}
 
 :::
 ::::
@@ -379,6 +379,7 @@ Criteria selection among the many possible ones:
 Cross-validation
 
 Method to estimate real performance of the model by:
+
   1. Splitting the dataset in multiple parts (usually 5)
   2. For different combinations of these parts (usually 5), training and evaluating the model
 :::
@@ -393,14 +394,38 @@ Once the data is preprocessed, the model is selected, the hyperparameters chosen
 
 ## Data
 
-- Quality
-- Diversity
-- Biases and fairness (example of crime prediction)
+### Quality
 
-::: {.fragment .example-block}
-Biases and fairness
+Quality of the data is obviously crucial to train well-performing models. Quality encompasses multiple aspects:
 
-Model architecture, training and evaluation also plays a major role in preventing biases, and can sometimes allow to build unbiased models using biased data.
+::: {.incremental}
+- **Raw data** quality: the input data must possess high enough details for the task to be even achievable. Be careful however as more features imply larger models which are longer and harder to train.
+- **Annotations** quality: the annotations must be as precise and correct as possible in the context of the task at hand. Every blunder or outlier in a supervised dataset will slow down training and might result in unexpected behaviors of the trained model.
+:::
+
+### Diversity
+
+Diversity is the most important aspect of a dataset because ML models are great at generalizing but bad at guessing in new scenarios. There are different aspects to diversity to keep in mind:
+
+::: {.incremental}
+- A **well-defined task** is crucial to identify all the various cases that we want our model to handle. Being as *exhaustive* as possible when selecting the training instances will accelerate training and improve the model by a lot
+- **Balancing the dataset** can also improve the training. When training on imbalanced datasets (i.e. when some cases are much more represented than others), the model will focus on the most represented situations as it will be the easiest and quickest way to get better results. There are ways of correcting this phenomenon, but it is always better to avoid it if possible when building the dataset.
+:::
+
+### Biases and fairness
+
+::: {.definition-block}
+Biased
+
+Refers to a model which always makes the same kind of wrong predictions in similar cases.
+:::
+
+::: {.fragment}
+In practice, a model trained on **biased data** will most of the time **repeat the biased results**. This can have major consequences and shouldn't be underestimated: even a cold-hearted ML algorithm is not objective if it wasn't trained on objectively chosen and annotated data.
+:::
+
+::: {.fragment}
+However, there exist model architectures, training and evaluation methods to prevent and detect biases, which can sometimes allow to build unbiased models using biased data. But this needs to be well-thought and won't happen unless 
 :::
 
 ## Underfitting and Overfitting

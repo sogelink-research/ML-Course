@@ -1,0 +1,22 @@
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // Make all images expandable
+    const overlay = document.createElement("div");
+    overlay.classList.add("expand-overlay");
+    document.body.appendChild(overlay);
+
+    const overlayImage = document.createElement("img");
+    overlay.appendChild(overlayImage);
+
+    document.querySelectorAll("img").forEach((img) => {
+      img.addEventListener("click", () => {
+        overlayImage.src = img.src;
+        overlay.style.display = "flex";
+      });
+    });
+
+    overlay.addEventListener("click", () => {
+      overlay.style.display = "none";
+    });
+  });
+</script>

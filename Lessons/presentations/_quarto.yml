@@ -1,15 +1,17 @@
 project:
   type: website
+  output-dir: slides
 
 author: "Alexandre Bry"
 csl: shared/numeric-superscript.csl
 slide-level: 3
 reference-location: document
 include-after-body: shared/include-after-body.html
+css: shared/styles.css
 
 format:
   revealjs:
-    css: shared/styles.css
+    output-file: "slides.html"
     smaller: true
     slide-number: true
     show-slide-number: all
@@ -18,8 +20,24 @@ format:
     slideHeaders: true
     sc-sb-title	: true
     incremental: false
-    embed-resources: false
+    embed-resources: true
     # scrollable: true
+  html:
+    output-file: "website.html"
+    theme: cosmo
+    number-sections: true
+    default-image-extension: svg
+    embed-resources: true
+    toc: true
+    code-links:
+      - text: GitHub repository
+        icon: github
+        href: "https://github.com/sogelink-research/ML-Course"
+    lightbox: true
+    link-external-icon: true
+    link-external-newwindow: true
+    link-external-filter: '^(?!http).*'
+
 
 execute: 
   echo: true
