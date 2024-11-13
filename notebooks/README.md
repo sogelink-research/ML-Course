@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This directory contains Jupyter notebooks with the same organization as the [`presentation`](../presentation) directory. The notebooks are intended to provide an environment and tips to explore some of the techniques mentioned in the presentations.
+This directory contains Jupyter notebooks with the same organization as the [`presentations`](../presentations) directory. The notebooks are intended to provide an environment and tips to explore some of the techniques mentioned in the presentations.
 
 ## Organization
 

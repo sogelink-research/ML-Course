@@ -311,6 +311,7 @@ Gather the data, potentially from multiple different sources. Choosing the right
 ### Different issues
 
 Multiple sources of issues and steps to perform:
+
 1. Handle different formats
 2. Remove outliers (mostly for raw data)
 3. (Optionally) extract features

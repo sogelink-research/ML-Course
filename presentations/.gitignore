@@ -1,6 +1,11 @@
 .quarto/
 slides.quarto_ipynb
 slides_files/
-slides/
 _extensions/
 /.quarto/
+
+slides/*
+!slides/*-*
+slides/*-*/*
+!slides/*-*/slides.html
+!slides/*-*/website.html
