@@ -6,23 +6,21 @@ format:
     header: "Introduction to Machine Learning"
 ---
 
-# Introduction
+# Definitions
 
-### Definition
+### Machine Learning
 
-::: {.definition-block}
+::: {.definition-block .fragment}
 Machine Learning (ML)
 
 Feeding **data** into a computer **algorithm** in order to learn **patterns** and make **predictions** in new and different **situations**.
 :::
 
-::: {.definition-block}
+::: {.definition-block .fragment}
 ML Model
 
 **Computer object** implementing a **ML algorithm**, trained on a **set of data** to perform a **given task**.
 :::
-
-# Definitions
 
 ## Categories of ML
 
@@ -32,12 +30,13 @@ ML Model
 - **Unsupervised**: for each input in the dataset, the expected output is **not** part of the dataset
 - **Semi-supervised**: only a portion of the inputs of the dataset have their expected output in the dataset
 - **Reinforcement**: there is no predefined dataset, but an environment giving feedback to the model when it takes actions
+dataset
 
 ### Type of output
 
-- **Classification**: assigning one (or multiple) label(s) chosen from a given list of classes to each element of the input
-- **Regression**: assigning one (or multiple) value(s) chosen from a continuous set of values
-- **Clustering**: create categories by grouping together similar inputs
+- **Classification**: assigning one (or multiple) **label(s)** chosen from a given list of classes to each element of the input
+- **Regression**: assigning one (or multiple) **value(s)** chosen from a **continuous** set of values
+- **Clustering**: create **categories** by grouping together similar inputs
 
 ## Dataset
 
@@ -69,6 +68,10 @@ Label (or target or output or class)
 A label is a piece of information that the model must learn to predict.
 :::
 
+::: {.notes}
+Imagine a table
+:::
+
 ### Subsets
 
 ::: {.definition-block}
@@ -81,6 +84,10 @@ A ML dataset is usually subdivided into three disjoint subsets, with distinctive
 - **Test set**: used after training to evaluate the performance of the model on new data it has not encountered before.
 :::
 
+::: {.notes}
+Metaphor of studies: exercises, past years exams and real exam
+:::
+
 # Overview of ML methods
 
 ## Supervised Learning
@@ -89,12 +96,10 @@ A ML dataset is usually subdivided into three disjoint subsets, with distinctive
 
 Used for predicting continuous values:
 
-::: {.nonincremental}
 - **Simple**: $y = \alpha + \beta x$
 - **Multiple**: $y = \alpha + \beta_1 x_1 + \beta_2 x_2 + \cdots + \beta_n x_n$
 - **Polynomial**: $y = \alpha + \beta_1 x + \beta_2 x^2 + \cdots + \beta_n x^n$
 - and many others...
-:::
 
 ![Simple Linear Regression [@anscombe2011]](images/Linear_regression.svg){height="300px"}
 
@@ -102,11 +107,9 @@ Used for predicting continuous values:
 
 Used for classification problems:
 
-::: {.nonincremental}
 - **Binomial**: only two possible categories
 - **Multinomial**: three or more possible categories
 - **Ordinal**: three or more possible categories which are ordered
-:::
 
 ![Binomial Logistic Regression [@canley2021]](images/Logistic_regression.svg){height="350px"}
 
@@ -150,10 +153,8 @@ A probabilistic classifier based on Bayes' theorem.
 
 Used for classification and regression, effective in high-dimensional spaces:
 
-::: {.nonincremental}
 - Separate the feature space using optimal hyperplanes
 - Features are mapped in a higher dimensional space to allow to fit non-linearly in the original feature space
-:::
 
 ![SVM kernel trick: map features to a higher dimensional space to be able to separate classes using a hyperplane [@zirguezi2015]](images/SVM_Kernel_Machine.svg){height="350px"}
 
@@ -166,13 +167,11 @@ Used for classification and regression, effective in high-dimensional spaces:
 
 A method for partitioning data into $k$ clusters:
 
-::: {.nonincremental}
 - $k$ must be chosen a priori
 - The principle is to start with random centroids and then iteratively:
   1. Classify points using the closest centroid
   2. Move each centroid to the real centroid of its class
 - Classical method with lots of variation
-:::
 
 :::
 ::: {.column}
@@ -197,10 +196,8 @@ Builds a hierarchy of clusters using either agglomerative or divisive methods:
 
 Clustering based on the density of data points:
 
-::: {.nonincremental}
 - Divides points in 4 categories: core points (in red below), directly reachable (yellow), reachable and outliers (blue)
 - Only two parameters: radius size ($\epsilon$) and number of neighbors to be core ($min_{pts}$)
-:::
 
 ::: {.columns}
 ::: {.column}
@@ -215,10 +212,8 @@ Clustering based on the density of data points:
 
 Dimensionality reduction technique to project data into lower dimensions:
 
-::: {.nonincremental}
 - Project data into a space of lower dimension
 - Keep as much variance (so as much information) as possible
-:::
 
 ![PCA Illustration [@nicoguaro2015]](images/GaussianScatterPCA.svg){height="350px"}
 
@@ -267,19 +262,15 @@ A value-based reinforcement learning algorithm:
 
 The two methods differ by the estimation of the reward that is used to update the Q-table:
 
-::: {.nonincremental}
 - Q-Learning (Off-Policy) uses the best possible reward: $Q(s,a) \leftarrow Q(s,a) + \alpha(r + \gamma Q(s',a') - Q(s,a))$
 - SARSA (On-Policy) uses the reward of the next action: $Q(s,a) \leftarrow Q(s,a) + \alpha(r + \gamma \max_{a''} Q(s',a'') - Q(s,a))$
-:::
 
 where:
 
-::: {.nonincremental}
 - $a$ is the action taken while the environment is in state $s$, leading to state $s'$ where action $a'$ will be taken
 - $\alpha$ is the learning rate
 - $r$ is the reward received after taking action $a$ in state $s$ and arriving in state $s'$
 - $\gamma$ is the discount factor defining how much we value long-term rewards relatively to short-term rewards
-:::
 
 ### Policy Gradient Methods
 
@@ -359,7 +350,7 @@ $$
 
 Criteria selection among the many possible ones:
 
-::: {.fragment .nonincremental}
+::: {.fragment}
 - For classification:
   - Accuracy: for balanced datasets
   - Precision: when false positives are costly
@@ -367,7 +358,7 @@ Criteria selection among the many possible ones:
   - F1-Score: when class distribution is unbalanced
   - ...
 :::
-::: {.fragment .nonincremental}
+::: {.fragment}
 - For regression:
   - Mean Absolute Error (MAE)
   - Mean Square Error (MSE): more sensitive to large errors than MAE
@@ -488,22 +479,14 @@ Qualifies a ML model which decision-making process can be partly interpreted aft
 
 ## Data manipulation
 
-### Libraries
+### NumPy - Strengths
 
-::: {.fragment .nonincremental}
 - [NumPy](https://numpy.org/)
   - Fast numerical operations
   - Matrices with any number of dimensions (called arrays)
   - Lots of convenient operators on arrays
-:::
-::: {.fragment .nonincremental}
-- [Pandas](https://pandas.pydata.org/)
-  - Can store any type of data
-  - 1D or 2D tables (called DataFrames)
-  - Lots of convenient operators on DataFrames
-:::
 
-### NumPy
+### NumPy - Examples
 
 ```{python}
 import numpy as np
@@ -525,7 +508,18 @@ print(array @ array)
 print(np.where(array < 2, 10 - array, array))
 ```
 
-### Pandas {.scrollable}
+::: {.notes}
+Similar functionalities in PyTorch
+:::
+
+### Pandas - Strengths
+
+- [Pandas](https://pandas.pydata.org/)
+  - Can store any type of data
+  - 1D or 2D tables (called DataFrames)
+  - Lots of convenient operators on DataFrames
+
+### Pandas - Examples {.scrollable}
 
 ```{python}
 import pandas as pd
@@ -537,13 +531,13 @@ df = pd.DataFrame([
     ["Euler's number", 2.71828, npr.randint(-100, 101, (2, 2))],
     ["Golden ratio", 1.61803, npr.randint(-100, 101, (2, 2))]
   ], columns = ["Names", "Values", "Random numbers because why not"])
-print(df)
+display(df)
 ```
 ```{python}
-print(df[df["Values"] > 2])
+display(df[df["Values"] > 2])
 ```
 ```{python}
-print(df[df["Names"].str.contains("n")])
+display(df[df["Names"].str.contains("n")])
 ```
 
 ## ML
@@ -563,7 +557,7 @@ b = np.array([6, 8])
 
 # Solve the system
 x = sp.linalg.solve(A, b)
-print("Solution to the linear system Ax = b:", x)
+print(f"Solution to the linear system Ax = b:", x)
 ```
 ```{python}
 # Define a function to integrate
@@ -618,6 +612,10 @@ print("Accuracy:", accuracy_score(y_test, y_pred))
 ### Plotly
 
 [Examples](https://plotly.com/python/)
+
+:::{.notes}
+Interactive charts.
+:::
 
 ### Seaborn
 
