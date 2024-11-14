@@ -149,6 +149,9 @@ A non-parametric method for classification and regression
 
 A probabilistic classifier based on Bayes' theorem.
 
+![Naive Bayes Classifier [@bertolotti2019]](images/Naive_Bayes_Classifier.gif){height="500px"}
+
+
 ### Support Vector Machines (SVM)
 
 Used for classification and regression, effective in high-dimensional spaces:
