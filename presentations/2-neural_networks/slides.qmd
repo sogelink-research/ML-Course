@@ -8,7 +8,7 @@ format:
 
 # Introduction
 
-# Definitions
+# Definitions (Reminders of Previous Session)
 
 ## Categories of ML
 
@@ -67,14 +67,35 @@ A ML dataset is usually subdivided into three disjoint subsets, with distinctive
 - **Test set**: used after training to evaluate the performance of the model on new data it has not encountered before.
 :::
 
-# Introduction to Neural Networks (NN)
+# Structure of NN
 
-### Definition
+## Definitions
+
+### Neural Network
+
+:::: {.columns}
+::: {.column width=50%}
 
 ::: {.definition-block}
 Neural Network (NN)
 
 **Subtype of ML model** inspired from *brains*. Composed of several **interconnected layers** of nodes capable of **processing** and **passing** information.
+:::
+
+:::
+::: {.column width=50%}
+
+![Common representation of a neural network [@wiso_neural_network]](images/Neural_network_example.svg){width="400px"}
+
+:::
+::::
+
+### Deep Learning
+
+::: {.definition-block}
+Deep Learning (DL)
+
+**Subcategory of Machine Learning**. Consists in using **large NN models** (i.e. with a high number of layers) to solve complex problems.
 :::
 
 ## Structure of a NN model
@@ -203,21 +224,98 @@ Attention aims at determining relative importance of each part of the input to m
 
 ## Architectures of NN
 
-### Feedforward Neural Networks (FNNs)
+### Fully Connected Network (FCN)
 
-### Convolutional Neural Networks (CNNs)
+![Fully connected network [@10.3389/fgene.2021.607471]](images/Fully_Connected_Network.jpg){width="600px"}
 
-### Recurrent Neural Networks (RNNs)
+::: {.notes}
+Most simple kind of NN models, quite general.
 
-### Generative Adversarial Networks (GANs)
+In more complex models, FC layers are often used at the end of the model to put together extracted features and get the final predictions.
+:::
 
-### Autoencoder Networks
 
-### Transformer Networks
+### Convolutional Neural Network (CNN)
 
-## NN training
+Standard for image processing, with 2D convolutional layers followed by fully connected layers.
 
-### Loss Function - Definition
+![1D convolutional neural network [@oyanedel2023]](images/1D_Convolutional_Neural_Network_feed_forward_example.png){width="600px"}
+
+::: {.notes}
+Idea: extract bigger and bigger patterns incrementally by processing together nearby cells.
+
+Can also be used for videos, audio or text
+
+Requires lots of data to train.
+:::
+
+### A Lot More
+
+- Recurrent Neural Network (RNN)
+- Generative Adversarial Network (GAN)
+- Autoencoder Network
+- Transformer Network
+
+## Examples
+
+### Model
+
+![Example of fully connected network made with [NN-SVG](https://alexlenail.me/NN-SVG/index.html)](images/Example_NN_diagram-cropped.svg){width="600px"}
+
+
+### PyTorch
+
+```python
+import torch
+import torch.nn as nn
+
+# Simple fully connected model with 2 hidden layers
+class SimpleMLP(nn.Module):
+    def __init__(self):
+        super(SimpleMLP, self).__init__()
+        self.fc1 = nn.Linear(2, 20)   # Input layer to 1st hidden layer
+        self.fc2 = nn.Linear(20, 10)  # 1st hidden layer to 2nd hidden layer
+        self.fc3 = nn.Linear(10, 1)   # 2nd hidden layer to output layer
+
+    def forward(self, x):
+        x = torch.relu(self.fc1(x))   # ReLU activation after first layer
+        x = torch.relu(self.fc2(x))   # ReLU activation after second layer
+        x = self.fc3(x)               # Output layer (no activation for regression tasks)
+        return x
+```
+
+### Tensorflow + Keras
+
+```python
+import tensorflow as tf
+from tensorflow.keras import layers, Model
+
+# Simple fully connected model with 2 hidden layers
+class SimpleMLP(Model):
+    def __init__(self):
+        super(SimpleMLP, self).__init__()
+        self.fc1 = layers.Dense(20, activation='relu')  # Input layer to 1st hidden layer
+        self.fc2 = layers.Dense(10, activation='relu')  # 1st hidden layer to 2nd hidden layer
+        self.fc3 = layers.Dense(1)  # 2nd hidden layer to output layer (no activation for regression)
+
+    def call(self, inputs):
+        x = self.fc1(inputs)
+        x = self.fc2(x)
+        return self.fc3(x)
+```
+
+# Optimization
+
+### Why Optimization?
+
+The number of possible combinations of parameters is huge, even with small NN models. To (hopefully) find the best possible combination, we need two things:
+
+- A way to evaluate any combination
+- A way to find well-performing combinations
+
+## Loss Function
+
+### Definition
 
 A loss function is a mathematical function that quantifies the difference between the network's predicted output and the actual target values. The goal during training is to minimize this loss by adjusting the model's weights, using gradient descent.
 
@@ -226,7 +324,7 @@ The most common loss functions are:
 - Mean Squares Error (MSE) for regression
 - Cross-entropy Loss for classification
 
-### Loss Function - Differentiable
+### Differentiable
 
 To be able to perform gradient descent, the loss function must be differentiable, which means continuous (no jump) and smooth (no sudden change of direction).
 
@@ -238,13 +336,15 @@ To be able to perform gradient descent, the loss function must be differentiable
 
 :::
 
-### Loss Function - Convex
+### Convex
 
 To get the best results when performing gradient descent, it is also better if the function is convex. The simplest definition of convexity is that if you trace a straight line between two points on the curve, the curve will be below the segment between the two points.
 
 ![Example of convex and non-convex functions [@kwiatkowski2020]](images/Convex_functions.webp)
 
-### Gradient Descent - Definition
+## Gradient Descent
+
+### Definition
 
 ::: {.definition-block}
 Gradient Descent
@@ -257,7 +357,7 @@ Gradient Descent works because at any point in the definition space of the funct
 - Differentiable functions are functions where the gradient exists everywhere
 - Convex functions are convenient for gradient descent because they have only one minimum value and slowly going down the function will always lead to the minimum value.
 
-### Gradient Descent - Algorithm
+### Algorithm
 
 Gradient Descent boils down to iteratively:
 
@@ -271,11 +371,11 @@ In this process, the three things that have to be defined are:
 - The size of the steps (learning rate)
 - The condition to stop
 
-### Gradient Descent - Weights initialization
+### Weights initialization
 
 The starting point is defined by the first output of the model, and therefore by the initial values of the weights of the model. There are numerous methods to initialize the weights, but the most common one is to randomly initialize them using a **centered and normalize Gaussian distribution**.
 
-### Gradient Descent - Learning rate
+### Learning rate
 
 The gradient gives us a direction and a norm, but this norm is arbitrary and has to be rescaled using what we call the **learning rate**. The learning rate doesn't define the size of the steps, but the scalar factor to apply to the gradient's norm, which means that the norm still plays a crucial role.
 
@@ -283,27 +383,223 @@ The choice of the learning rate is crucial to hopefully converge **quickly** to 
 
 ![Example of gradient descent on the same function with different learning rates [@kwiatkowski2020]](images/Gradient_descent_different_learning_rates.webp)
 
-### Gradient Descent - Stop condition
+### Stop condition
 
 The stop condition determines when you decide to stop the algorithm. An easy solution is to choose a number of steps before launching the algorithm, but this will either imply useless computations after the algorithm has reached a final point, or stopping too early and not get the best results possible.
 
 Therefore, although there are more complex methods, the most common and simple process is to monitor the value of the loss, memorize the lowest value ever reached, and stop when there has been a given number of steps without any improvement to the best value. Then, we usually keep the model weights corresponding to this best value.
 
-### Gradient Descent - Unlucky examples
+### Unlucky examples
 
 ![Examples with a saddle point [@kwiatkowski2020]](images/Gradient_descent_different_learning_rates_saddle.webp){height="190px"}
 
 ![Animated example with a saddle point [@kwiatkowski2020]](images/Gradient_descent_unlucky_example.gif){height="250px"}
 
-### Backpropagation
+## Backpropagation
+
+### Why?
 
 Gradient Descent is beautiful, but right now, we only know in which direction (the gradient) the **output** of the model should go. To transmit this information to the weights of the layers of the model, we use backpropagation.
+
+### Definition
 
 ::: {.definition-block}
 Backpropagation
 
 The process of computing the gradient of the weights of each layer of the model and modify them accordingly. The name comes from the process starting with the last layer of the model and propagating incrementally to the first layer.
 :::
+
+### How?
+
+Backpropagation involves a lot of computations of partial derivatives, which are individually not difficult but very bothersome. Happily, NN libraries handle backpropagation automatically by calling only one function, so no need to worry about it.
+
+## Examples
+
+### PyTorch
+
+```python
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
+
+# Generate some simple data
+X = torch.randn(100, 2)  # 100 samples, 2 features
+y = (2 * X[:, 0]**3 + 0.5 * X[:, 1]**2 + torch.randn(100) * 0.5).unsqueeze(1)
+
+# Create a DataLoader for batching
+batch_size = 32
+dataloader = DataLoader(TensorDataset(X, y), batch_size=batch_size, shuffle=True)
+
+# Instantiate the model
+model = SimpleMLP()  # A simple model that is assumed to be defined before
+
+# Define a loss function and optimizer
+criterion = nn.MSELoss()  # Mean Squared Error Loss
+optimizer = optim.SGD(model.parameters(), lr=0.01)  # Stochastic Gradient Descent
+
+# Training loop
+epochs = 1000
+epoch_losses = []  # List to store average loss at each epoch
+
+for epoch in range(epochs):
+    epoch_loss = 0.0  # Accumulate loss for this epoch
+    for batch_X, batch_y in dataloader:
+        # Forward pass
+        predictions = model(batch_X)  # Compute the model's predictions
+        batch_loss = criterion(predictions, batch_y)  # Compare predictions to true values
+        
+        # Backward pass and optimization
+        optimizer.zero_grad()  # Reset gradient
+        batch_loss.backward()  # Backward pass
+        optimizer.step()  # Update parameters
+
+        # Accumulate weighted loss for the batch
+        epoch_loss += batch_loss.item() * batch_X.size(0)
+    
+    epoch_loss /= len(dataloader.dataset)  # Normalize by dataset size to get average epoch loss
+    epoch_losses.append(epoch_loss)  # Store the epoch's total loss
+
+    # Print loss every 10 epochs
+    if (epoch + 1) % 100 == 0:
+        print(f"Epoch {epoch + 1:>4}/{epochs}, Loss: {epoch_loss:.4f}")
+```
+
+### Tensorflow + Keras
+
+```python
+import tensorflow as tf
+from tensorflow.keras import layers, Model
+import numpy as np
+
+# Generate some simple data
+X = np.random.randn(100, 2).astype(np.float32)  # 100 samples, 2 features
+y = (2 * X[:, 0]**3 + 0.5 * X[:, 1]**2 + np.random.randn(100) * 0.5).astype(np.float32)
+y = y.reshape(-1, 1)  # Reshape y to (100, 1)
+
+# Create a Dataset for batching
+batch_size = 32
+dataset = tf.data.Dataset.from_tensor_slices((X, y)).batch(batch_size)
+
+# Instantiate the model
+model = SimpleMLP()  # A simple model that is assumed to be defined before
+
+# Define a loss function and optimizer
+loss_fn = tf.keras.losses.MeanSquaredError()  # Mean Squared Error Loss
+optimizer = tf.keras.optimizers.SGD(learning_rate=0.01)  # Stochastic Gradient Descent
+
+# Training loop
+epochs = 1000
+epoch_losses = []  # List to store average loss at each epoch
+
+for epoch in range(epochs):
+    epoch_loss = 0.0  # Accumulate loss for this epoch
+    for batch_X, batch_y in dataset:
+        # Forward pass
+        with tf.GradientTape() as tape:
+            predictions = model(batch_X)  # Compute the model's predictions
+            batch_loss = loss_fn(batch_y, predictions)  # Compare predictions to true values
+        
+        # Backward pass and optimization
+        gradients = tape.gradient(loss, model.trainable_variables)  # Backward pass
+        optimizer.apply_gradients(zip(gradients, model.trainable_variables))  # Update parameters
+
+        # Accumulate weighted loss for the batch
+        epoch_loss += batch_loss.numpy() * len(batch_X)
+    
+    epoch_loss /= len(X)  # Normalize by dataset size to get average epoch loss
+    epoch_losses.append(epoch_loss)  # Store the epoch's total loss
+
+    # Print loss every 10 epochs
+    if (epoch + 1) % 100 == 0:
+        print(f"Epoch {epoch + 1:>4}/{epochs}, Loss: {epoch_loss:.4f}")
+```
+
+# Transfer Learning
+
+## Introduction
+
+### Principle
+
+::: {.example-block}
+Start Closer to the Goal
+
+The basic idea of Transfer Learning is to use a model that was pre-trained on a similar task. This initial model should have learnt basic knowledge that is common to its initial task and our new task, making it capable of learning the new task faster.
+:::
+
+::: {.notes}
+It is easier to learn German knowing French compared to not knowing any language.
+But it's easier to learn German knowing Dutch compared to knowing French.
+And it's even easier if you know Dutch, English, French and 15 other languages.
+:::
+
+### Reasons
+
+- Limited amount of data for the new task
+- New task is similar to old task
+- Training a model is very costly
+- Better final performance with less overfitting
+
+### Applications
+
+Two major applications:
+
+- Computer Vision
+- Natural Language Processing
+
+::: {.notes}
+Because CV and NLP are two domains with:
+
+- Very complex tasks and therefore deep models
+- A lot of attention and therefore lots of good pre-trained models
+:::
+
+## Categories
+
+### Fine-tuning
+
+::: {.definition-block}
+Idea
+
+Take a pre-trained model *as is*, freeze some of the layers (usually the first layers) and continue the training where it was stopped with our new dataset.
+:::
+
+::: {.example-block}
+Challenges
+
+- Find a good pre-trained model
+- Have a proper dataset (even if fine-tuning works with smaller datasets)
+- Freeze the right number of layers (more if the tasks are similar)
+- Train the model properly (useful to know how it was pre-trained)
+:::
+
+### Feature Extraction
+
+### Multitask Learning
+
+### Knowledge Distillation
+
+# Python Libraries
+
+### PyTorch
+
+- [Website](https://pytorch.org/):
+- Flexibility, ease of debugging, beginner-friendly
+- Favored in academia and by researchers
+
+### TensorFlow
+
+- [Website](https://www.tensorflow.org/):
+- Scalable, production-ready and easy deployment
+- Favored in production and industry
+
+### Keras
+
+- [Website](https://keras.io/):
+- User-friendly, high-level and powerful with TensorFlow integration
+- Favored for first hands-on experience for beginners and for prototyping
+
+# Resources
 
 ## Miscellaneous
 
@@ -314,97 +610,5 @@ The process of computing the gradient of the weights of each layer of the model 
 ### YOLOv8 Model
 
 ![The architecture of YOLOv8 [@ultralytics_yolov8]](images/YOLOv8-architecture.jpg){height=500px}
-
-# Python libraries
-
-## Data manipulation
-
-### Libraries
-
-::: {.fragment .nonincremental}
-- [NumPy](https://numpy.org/)
-  - Fast numerical operations
-  - Matrices with any number of dimensions (called arrays)
-  - Lots of convenient operators on arrays
-:::
-::: {.fragment .nonincremental}
-- [Pandas](https://pandas.pydata.org/)
-  - Can store any type of data
-  - 1D or 2D tables (called DataFrames)
-  - Lots of convenient operators on DataFrames
-:::
-
-### NumPy
-
-```{python}
-import numpy as np
-```
-```{python}
-array = np.array([[0, 1], [2, 3]])
-print(array)
-```
-```{python}
-print(5 * array)
-```
-```{python}
-print(np.pow(array, 3))
-```
-```{python}
-print(array @ array)
-```
-```{python}
-print(np.where(array < 2, 10 - array, array))
-```
-
-### Pandas {.scrollable}
-
-```{python}
-import pandas as pd
-import numpy.random as npr
-```
-```{python}
-df = pd.DataFrame([
-    ["Pi", 3.14159, npr.randint(-100, 101, (2, 2))],
-    ["Euler's number", 2.71828, npr.randint(-100, 101, (2, 2))],
-    ["Golden ratio", 1.61803, npr.randint(-100, 101, (2, 2))]
-  ], columns = ["Names", "Values", "Random numbers because why not"])
-print(df)
-```
-```{python}
-print(df[df["Values"] > 2])
-```
-```{python}
-print(df[df["Names"].str.contains("n")])
-```
-
-## NN
-
-### PyTorch / TensorFlow / Keras
-
-- [PyTorch](https://pytorch.org/):
-  - Flexibility, ease of debugging, beginner-friendly
-  - Favored in academia and by researchers
-- [TensorFlow](https://www.tensorflow.org/):
-  - Scalable, production-ready and easy deployment
-  - Favored in production and industry
-- [Keras](https://keras.io/):
-  - User-friendly, high-level and powerful with TensorFlow integration
-  - Favored for first hands-on experience for beginners and for prototyping
-
-## Visualization
-
-### Matplotlib
-
-[Examples](https://matplotlib.org/stable/plot_types/index.html#plot-types)
-
-### Plotly
-
-[Examples](https://plotly.com/python/)
-
-### Seaborn
-
-[Examples](https://seaborn.pydata.org/examples/index.html)
-
-# Resources
 
 ## References
