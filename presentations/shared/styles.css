@@ -1,38 +1,50 @@
-/* Common styles for both blocks */
-.definition-block, .theorem-block, .example-block {
+/* Apply common styles to all content blocks */
+.content-block {
     padding: 10px;
     margin: 40px 0 10px 0;
     border-left: 6px solid;
     border-radius: 5px;
 }
 
-.definition-block p, .theorem-block p, .example-block p {
-    margin: 0; /* Remove the top margin from paragraphs */
+.content-block p {
+    margin: 0;
 }
 
-.definition-block > :first-child, .theorem-block > :first-child, .example-block > :first-child {
+/* Style the first child (title) */
+.content-block> :first-child {
     font-weight: 800;
     font-style: italic;
-    margin-bottom: 5px; /* Slight space between the title and the content */
+    margin-bottom: 5px;
 }
 
-.definition-block > :not(:first-child), .theorem-block > :not(:first-child), .example-block > :not(:first-child) {
-    padding-left: 30px; /* Slight space between the title and the content */
+/* Indent all content except the first child */
+.content-block> :not(:first-child) {
+    padding-left: 30px;
+}
+
+.content-block {
+    background-color: #f5f5f5;
+    border-left-color: #333;
 }
 
 .definition-block {
-    background-color: #e0f7fa; /* Light blue background */
-    border-left-color: #00acc1; /* Darker blue border */
+    background-color: #e0f7fa;
+    border-left-color: #00acc1;
 }
 
 .theorem-block {
-    background-color: #ffebee; /* Light red background */
-    border-left-color: #d32f2f; /* Darker red border */
+    background-color: #ffebee;
+    border-left-color: #d32f2f;
 }
 
 .example-block {
-    background-color: #eeffeb; /* Light red background */
-    border-left-color: #3dd32f; /* Darker red border */
+    background-color: #eeffeb;
+    border-left-color: #3dd32f;
+}
+
+.remark-block {
+    background-color: #fff9c4;
+    border-left-color: #fbc02d;
 }
 
 iframe.full {

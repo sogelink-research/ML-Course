@@ -10,13 +10,13 @@ format:
 
 ### Machine Learning
 
-::: {.definition-block .fragment}
+::: {.content-block .definition-block .fragment}
 Machine Learning (ML)
 
 Feeding **data** into a computer **algorithm** in order to learn **patterns** and make **predictions** in new and different **situations**.
 :::
 
-::: {.definition-block .fragment}
+::: {.content-block .definition-block .fragment}
 ML Model
 
 **Computer object** implementing a **ML algorithm**, trained on a **set of data** to perform a **given task**.
@@ -30,7 +30,6 @@ ML Model
 - **Unsupervised**: for each input in the dataset, the expected output is **not** part of the dataset
 - **Semi-supervised**: only a portion of the inputs of the dataset have their expected output in the dataset
 - **Reinforcement**: there is no predefined dataset, but an environment giving feedback to the model when it takes actions
-dataset
 
 ### Type of output
 
@@ -42,7 +41,7 @@ dataset
 
 ### Definition
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Dataset
 
 A collection of data used to train, validate and test ML models. 
@@ -50,19 +49,19 @@ A collection of data used to train, validate and test ML models.
 
 ### Content
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Instance (or sample)
 
 An instance is one individual entry of the dataset.
 :::
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Feature (or attribute or variable)
 
 A feature is a type of information stored in the dataset about each instance.
 :::
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Label (or target or output or class)
 
 A label is a piece of information that the model must learn to predict.
@@ -74,7 +73,7 @@ Imagine a table
 
 ### Subsets
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Dataset subsets
 
 A ML dataset is usually subdivided into three disjoint subsets, with distinctive role in the training process:
@@ -234,13 +233,13 @@ A nonlinear dimensionality reduction technique primarily used for visualization 
 
 ### Definitions
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Policy (in RL)
 
 Function that returns an action given the state of the environment.
 :::
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 On-Policy vs. Off-Policy
 
 Refers to the policy that is used to update the knowledge during training. On-Policy uses the learnt policy, while Off-Policy uses the optimal policy.
@@ -314,7 +313,7 @@ Multiple sources of issues and steps to perform:
 
 ### Why normalization?
 
-::: {.example-block}
+::: {.content-block .example-block}
 Idea
 
 *A priori* all features have the same importance, so none of them should have an advantage. Therefore, having features with larger values than others would be detrimental.
@@ -370,7 +369,7 @@ Criteria selection among the many possible ones:
 
 ### Model evaluation - Cross-validation
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Cross-validation
 
 Method to estimate real performance of the model by:
@@ -409,7 +408,7 @@ Diversity is the most important aspect of a dataset because ML models are great 
 
 ### Biases and fairness
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Biased
 
 Refers to a model which always makes the same kind of wrong predictions in similar cases.
@@ -427,13 +426,13 @@ However, there exist model architectures, training and evaluation methods to pre
 
 ### Definitions
 
-::: {.fragment .definition-block}
+::: {.fragment .content-block .definition-block}
 Underfitting
 
 When a model is too simple to properly extract information from a complex task. Can also be explained by key information missing in the input features.
 :::
 
-::: {.fragment .definition-block}
+::: {.fragment .content-block .definition-block}
 Overfitting
 
 When a model is too complex to properly generalize to new data. Happens often when a NN is trained too long on a dataset that is not diverse enough and learns the noise in the data.
@@ -466,13 +465,13 @@ General strategies:
 
 ### Definitions
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Interpretable
 
 Qualifies a ML model which decision-making process is straightforward and **transparent**, making it directly **understandable** by humans. This requires to restrict the model **complexity**.
 :::
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Explainable
 
 Qualifies a ML model which decision-making process can be partly interpreted afterwards using **post hoc interpretation techniques**. These techniques are often used on models which are too complex to be interpreted.
@@ -625,13 +624,5 @@ Interactive charts.
 [Examples](https://seaborn.pydata.org/examples/index.html)
 
 # Resources
-
-## Machine Learning
-
-- GeeksforGeeks:
-  - [GeeksforGeeks Introduction to Machine Learning](https://www.geeksforgeeks.org/introduction-machine-learning/)
-  - [GeeksforGeeks 7 Major ML Challenges](https://www.geeksforgeeks.org/7-major-challenges-faced-by-machine-learning-professionals/)
-  - [GeeksforGeeks Explainable and Interpretable](https://www.geeksforgeeks.org/what-is-the-difference-between-explainable-and-interpretable-machine-learning/)
-  - [Interpretable Machine Learning, Christoph Molnar](https://christophm.github.io/interpretable-ml-book/)
 
 ## References

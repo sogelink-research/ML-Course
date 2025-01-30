@@ -1,0 +1,611 @@
+---
+title: "ML Course Part 1 - Introduction to Machine Learning"
+bibliography: references.bib
+format:
+  revealjs:
+    header: "Introduction to Machine Learning"
+---
+
+# Definitions
+
+### Machine Learning (ML)
+
+::: {.content-block .definition-block .fragment}
+Machine Learning (ML)
+
+Feeding **data** into a computer **algorithm** in order to learn **patterns** and make **predictions** in new and different **situations**.
+:::
+
+::: {.content-block .definition-block .fragment}
+ML Model
+
+**Computer object** implementing a **ML algorithm**, trained on a **set of data** to perform a **given task**.
+:::
+
+::: {.notes}
+ML is really about learning to make extrapolations on a given task.
+:::
+
+### Neural Network (NN)
+
+:::: {.columns}
+::: {.column width=50%}
+
+::: {.content-block .definition-block .fragment}
+Neural Network (NN)
+
+**Subtype of ML model** inspired from *brains*. Composed of several **interconnected layers** of nodes capable of **processing** and **passing** information.
+:::
+
+::: {.content-block .definition-block .fragment}
+Deep Learning (DL)
+
+**Subcategory of Machine Learning**. Consists in using **large NN models** (i.e. with a high number of layers) to solve complex problems.
+:::
+
+:::
+::: {.column width=50% .fragment}
+
+![Common representation of a neural network [@wiso_neural_network]](images/Neural_network_example.svg){width="400px"}
+
+:::
+::::
+
+## Categories of ML
+
+### Type of dataset
+
+The four main categories of ML are based on the type of dataset used to train the model:
+
+| | **Supervised** | **Unsupervised** | **Semi-supervised** | **Reinforcement** |
+| -- | -------------- | ---------------- | ------------------- | ----------------- |
+| **Input** | Data | Data | Data | Environment |
+| **Ground-truth** | Yes | No | Partial | No (reward) |
+| **Examples** | Classification, Regression | Clustering | Anomaly detection | Game playing |
+
+::: {.notes}
+- **Supervised**: for each input in the dataset, the expected output is also part of the dataset
+- **Unsupervised**: for each input in the dataset, the expected output is **not** part of the dataset
+- **Semi-supervised**: only a portion of the inputs of the dataset have their expected output in the dataset
+- **Reinforcement**: there is no predefined dataset, but an environment giving feedback to the model when it takes actions
+:::
+
+### Type of output {.scrollable}
+
+Another way to categorize ML models is based on the type of output they produce:
+
+| **Category** | **Description** | **Example Outputs** | **Example Use Cases** |
+|------------------------|-------------------------------------------------------------------|-----------------------------|---------------------------|
+| **Classification** | Assign one (or multiple) **label(s)** chosen from a given list of classes to each element of the input. | "Cat", "Dog", "Bird" | Spam detection, Image recognition |
+| **Regression** | Assign one (or multiple) **value(s)** chosen from a **continuous** set of values. | 3.5, 7.2, 15.8 | Stock price prediction, Age estimation |
+| **Clustering** | Create **categories** by grouping together similar inputs. | Cluster 1, Cluster 2 | Customer segmentation, Image compression |
+| **Anomaly Detection** | Detect **outliers** in the dataset. | Normal, Outlier | Fraud detection, Fault detection |
+| **Generative Models** | Generate new data similar to the training data. | Image, Text, Audio | Image generation, Text completion |
+| **Ranking** | Arrange items in order of **relevance** or importance. | Rank 1, Rank 2, Rank 3 | Search engine, Recommendation system |
+| **Reinforcement Learning** | Learn a policy to maximize long-term **rewards** through interaction with an environment. | Policy, Action sequence | Game playing, Robotics control |
+| **Dimensionality Reduction** | Reduce the number of features while retaining meaningful information. | 2D or 3D projection | Visualization, Data compression |
+
+## Dataset
+
+### Dataset - Definition
+
+::: {.content-block .definition-block}
+Dataset
+
+A collection of data used to train, validate and test ML models. 
+:::
+
+### Dataset - Example
+
+::: {.content-block .example-block}
+Dataset example
+
+```{python}
+#| echo: false
+import pandas as pd
+from sklearn import datasets
+
+dataset = datasets.load_iris()
+# Load the dataset into a DataFrame, without the (cm) at the end of the feature names
+df_iris = pd.DataFrame(dataset.data, columns=map(lambda name: name [:-5], dataset.feature_names))
+df_iris['species'] = dataset.target
+# Randomly shuffle the dataset
+df_iris = df_iris.sample(frac=1).reset_index(drop=True)
+pd.set_option('display.max_rows', 6)
+display(df_iris)
+```
+:::
+
+### Content - Definitions
+
+::: {.content-block .definition-block}
+Instance (or sample)
+
+An instance is one individual entry of the dataset (a row).
+:::
+
+::: {.content-block .definition-block}
+Feature (or attribute or variable)
+
+A feature is a piece of information that the model uses to make predictions.
+:::
+
+::: {.content-block .definition-block}
+Label (or target or output or class)
+
+A label is a piece of information that the model is trying to predict.
+:::
+
+::: {.content-block .remark-block}
+Feature vs. Label
+
+Features and labels are simply different columns in the dataset with different roles.
+:::
+
+### Content - Example
+
+::: {.content-block .example-block}
+Instances, features and labels
+
+```{python}
+#| echo: false
+# Rename all the columns except the last one
+df_iris_renamed = df_iris.copy()
+df_iris_new_columns = [f'Feature {i+1}' for i in range(df_iris_renamed.shape[1] - 1)]
+df_iris_new_columns = list(df_iris_new_columns) + ['Label']
+df_iris_renamed.columns = df_iris_new_columns
+
+df_iris_renamed.index = df_iris_renamed.index.map(lambda x: f'Instance {x}')
+pd.set_option('display.max_rows', 6)
+display(df_iris_renamed)
+```
+:::
+
+### Subset
+
+::: {.content-block .definition-block}
+Dataset subsets
+
+A ML dataset is usually subdivided into three disjoint subsets, with distinctive role in the training process:
+
+- **Training set**: used during training to train the model,
+- **Validation set**: used during training to assess the generalization capability of the model, tune hyperparameters and prevent overfitting,
+- **Test set**: used after training to evaluate the performance of the model on new data it has not encountered before.
+:::
+
+::: {.notes}
+Metaphor of studies: exercises, past years exams and real exam
+:::
+
+# Overview of ML methods
+
+## Supervised Learning
+
+### Decision Trees
+
+A tree-like structure used for both classification and regression
+
+```{python}
+#| echo: false
+from utils import ModelEvaluation, IrisData
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+import matplotlib.pyplot as plt
+
+iris_data_0_1 = IrisData((0, 1))
+tree_evaluation = ModelEvaluation(
+    DecisionTreeClassifier(random_state=0, max_depth=2),
+    iris_data_0_1,
+)
+
+plt.figure(figsize=(9, 5))
+plot_tree(tree_evaluation.model)
+plt.show()
+```
+
+### Decision Trees - Example
+
+```{python}
+#| echo: false
+tree_evaluation.plot_decision_boundaries_all((12, 5))
+
+plt.show()
+```
+
+### Random Forests
+
+An ensemble method that combines multiple decision trees:
+
+- Train independently $B$ trees using:
+  - **Bagging**: each tree is fitted on a random subset of the training set
+  - **Feature bagging**: each split in the decision tree (i.e. each node) is chosen among a subset of the features
+- Take a decision by aggregating individual decisions of each tree
+
+### Random Forests - Example
+
+```{python}
+#| echo: false
+from sklearn.ensemble import RandomForestClassifier
+
+forest_evaluation = ModelEvaluation(
+    RandomForestClassifier(random_state=0, n_estimators=100, max_depth=3, max_samples=0.2),
+    iris_data_0_1,
+)
+forest_evaluation.plot_decision_boundaries_all((12, 5))
+```
+
+### Support Vector Machines (SVM)
+
+Used for classification and regression, effective in high-dimensional spaces:
+
+- Separate the feature space using optimal hyperplanes
+- Features are mapped in a higher dimensional space to allow to fit non-linearly in the original feature space
+
+![SVM: map features to a higher dimensional space to be able to separate classes using a hyperplane [@zirguezi2015]](images/SVM_Kernel_Machine.svg){height="350px"}
+
+::: {.notes}
+The kernel trick is a way to map the features in a higher dimensional space without actually computing the new features.
+:::
+
+### Support Vector Machines (SVM) - Example
+
+```{python}
+#| echo: false
+from sklearn.svm import SVC
+
+svm_evaluation = ModelEvaluation(
+    SVC(kernel='rbf'),
+    iris_data_0_1,
+)
+
+svm_evaluation.plot_decision_boundaries_all((12, 5))
+```
+
+### Other methods
+
+Other methods for supervised learning include:
+
+| Method | Description |
+| ------ | ----------- |
+| Linear Regression | Predicts a continuous value with a linear model |
+| Logistic Regression | Predicts a binary value with a linear model |
+| K-Nearest Neighbors (KNN) | Non-parametric method for classification and regression |
+| Boosting | Ensemble method (like Random Forests) that combines weak learners to form a strong model |
+| Naive Bayes | Probabilistic classifier based on Bayes' theorem |
+
+## Unsupervised Learning
+
+### K-Means Clustering
+
+:::: {.columns}
+::: {.column}
+
+A method for partitioning data into $k$ clusters:
+
+- $k$ must be chosen a priori
+- The principle is to start with random centroids and then iteratively:
+  1. Classify points using the closest centroid
+  2. Move each centroid to the real centroid of its class
+- Classical method with lots of variation
+
+:::
+::: {.column}
+
+![$k$-Means Clustering convergence process [@chire_kmeans]](images/K-means_convergence.gif){width="100%"}
+
+:::
+::::
+
+### Hierarchical Clustering
+
+Builds a hierarchy of clusters using either agglomerative or divisive methods:
+
+::: {.nonincremental}
+- Build a full hierarchy top-down (divisive) or bottom-up (agglomerative)
+- Create any number of clusters by cutting the tree
+:::
+
+![Hierarchical Clustering [@sideris2005]](images/Hierarchical_clustering_simple_diagram.svg){height="350px"}
+
+### Density-Based Spatial Clustering of Applications with Noise (DBSCAN)
+
+Clustering based on the density of data points:
+
+- Divides points in 4 categories: core points (in red below), directly reachable (yellow), reachable and outliers (blue)
+- Only two parameters: radius size ($\epsilon$) and number of neighbors to be core ($min_{pts}$)
+
+::: {.columns}
+::: {.column}
+![DBSCAN Illustration [@chire_dbscan_illustration]](images/DBSCAN-Illustration.svg){height="250px"}
+:::
+::: {.column}
+![DBSCAN Result [@chire_dbscan_result]](images/DBSCAN-Result.svg){height="250px"}
+:::
+:::
+
+### Other methods
+
+Other methods for unsupervised learning include:
+
+| Method | Description |
+|--------|-------------|
+| K-Means | Partition data into $k$ clusters |
+| Hierarchical Clustering | Build a hierarchy of clusters |
+| DBSCAN | Density-based clustering that groups points closely packed together |
+| Gaussian Mixture Models (GMM) | Probabilistic clustering assuming data is generated from multiple Gaussian distributions |
+| Principal Component Analysis (PCA) | Reduce dimensionality by finding principal components that explain variance |
+| t-SNE | Nonlinear dimensionality reduction for visualizing high-dimensional data |
+| Autoencoders | Neural networks that learn efficient representations of data in an unsupervised manner |
+| Self-Organizing Maps (SOM) | Neural network-based method for clustering and visualization |
+
+## Dimensionality Reduction
+
+### Principal Component Analysis (PCA)
+
+Dimensionality reduction technique to project data into lower dimensions:
+
+- Project data into a space of lower dimension
+- Keep as much variance (so as much information) as possible
+
+![PCA Illustration [@nicoguaro2015]](images/GaussianScatterPCA.svg){height="350px"}
+
+### t-Distributed Stochastic Neighbor Embedding (t-SNE)
+
+A nonlinear dimensionality reduction technique primarily used for visualization of high-dimensional data
+
+![t-SNE Result on MNIST dataset [@mcdonald2017]](images/T-SNE_Embedding_of_MNIST.png){height="400px"}
+
+# Neural Networks
+
+### Main points
+
+- **Neural networks** are a type of ML model inspired by the brain
+- A NN is composed of **layers** of **nodes** (or neurons)
+- Each node takes inputs, sums them up with weights and applies an activation function to produce an output
+- There are many kinds of layers, the main ones being:
+  - **Dense** (or fully connected)
+  - **Convolutional**
+  - **Recurrent**
+  - **Pooling**
+  - ...
+- What defines a NN is:
+  - Its **architecture** ie the succession of layers and their parameters
+  - Its **weights** ie the values used to sum the inputs
+- The weights are learned during the training process, which consists in:
+  - **Forward pass**: compute the output of the model
+  - **Backward pass**: compute the gradient of the loss function with respect to the weights
+  - **Optimization**: update the weights using the gradient
+  - **Repeat** until the model performs well (on a validation set)
+  - **Evaluate** the model on a test set
+- Training a NN can be very long and complex and requires a lot of data -> transfer learning
+
+# Usual pipeline
+
+### Overview
+
+1. Data acquisition
+2. Data preprocessing
+3. Model selection
+4. Model evaluation
+5. Final model training
+
+### Data acquisition
+
+Gather the data, potentially from multiple different sources. Choosing the right sources can also depend on the choices made in the next steps.
+
+## Data preprocessing
+
+### Different issues
+
+Multiple sources of issues and steps to perform:
+
+1. Handle different formats
+2. Remove outliers (mostly for raw data)
+3. (Optionally) extract features
+4. Handle missing data
+5. Normalize
+
+### Why normalization?
+
+::: {.content-block .example-block}
+Idea
+
+*A priori* all features have the same importance, so none of them should have an advantage. Therefore, having features with larger values than others would be detrimental.
+:::
+
+Usually, all features are individually normalized over the whole dataset, to obtain a distribution with an average of 0 and a standard deviation of 1:
+
+$$
+\begin{align*}
+\hat{X} & = \sum\limits_{j=0}^n X_j \\
+\sigma_X & = \sum\limits_{j=0}^n (X_j - \hat{X})^2 \\
+\forall k \in [0, \cdots, n ], X_k & = \frac{X_k - \hat{X}}{\sigma_X}
+\end{align*}
+$$
+
+### Model selection
+
+- Type of model (ML, NN, DL, ...)
+- Complexity:
+  - Number of features
+  - Type of output
+  - Size of the layers (for NN)
+  - Number of layers (for NN)
+- Hyperparameters
+
+### Model optimization/training
+
+- Loss selection: depends on the task, the objectives, the specific issues to solve
+- Training process selection (lots of different tweaks and improvements can be implemented in NN training)
+- Hyperparameter tuning, by repeatedly:
+  - Selecting one or multiple configurations of hyperparameters
+  - Training the model one or multiple times
+  - Determining the best hyperparameters
+
+### Model evaluation - Criteria
+
+Criteria selection among the many possible ones:
+
+::: {.fragment}
+- For classification:
+  - Accuracy: for balanced datasets
+  - Precision: when false positives are costly
+  - Recall: when false negatives are costly
+  - F1-Score: when class distribution is unbalanced
+  - ...
+:::
+::: {.fragment}
+- For regression:
+  - Mean Absolute Error (MAE)
+  - Mean Square Error (MSE): more sensitive to large errors than MAE
+  - ...
+:::
+
+### Model evaluation - Cross-validation
+
+::: {.content-block .definition-block}
+Cross-validation
+
+Method to estimate real performance of the model by:
+
+  1. Splitting the dataset in multiple parts (usually 5)
+  2. For different combinations of these parts (usually 5), training and evaluating the model
+:::
+
+![Cross-validation [@gufosowa2019]](images/K-fold_cross_validation_EN.svg)
+
+### Final model training
+
+Once the data is preprocessed, the model is selected, the hyperparameters chosen and optimized, the final model can be trained multiple times to keep the best one.
+
+# Challenges
+
+## Data
+
+### Quality
+
+Quality of the data is obviously crucial to train well-performing models. Quality encompasses multiple aspects:
+
+::: {.incremental}
+- **Raw data** quality: the input data must possess high enough details for the task to be even achievable. Be careful however as more features imply larger models which are longer and harder to train.
+- **Annotations** quality: the annotations must be as precise and correct as possible in the context of the task at hand. Every blunder or outlier in a supervised dataset will slow down training and might result in unexpected behaviors of the trained model.
+:::
+
+### Diversity
+
+Diversity is the most important aspect of a dataset because ML models are great at generalizing but bad at guessing in new scenarios. There are different aspects to diversity to keep in mind:
+
+::: {.incremental}
+- A **well-defined task** is crucial to identify all the various cases that we want our model to handle. Being as *exhaustive* as possible when selecting the training instances will accelerate training and improve the model by a lot
+- **Balancing the dataset** can also improve the training. When training on imbalanced datasets (i.e. when some cases are much more represented than others), the model will focus on the most represented situations as it will be the easiest and quickest way to get better results. There are ways of correcting this phenomenon, but it is always better to avoid it if possible when building the dataset.
+:::
+
+### Biases and fairness
+
+::: {.content-block .definition-block}
+Biased
+
+Refers to a model which always makes the same kind of wrong predictions in similar cases.
+:::
+
+::: {.fragment}
+In practice, a model trained on **biased data** will most of the time **repeat the biased results**. This can have major consequences and shouldn't be underestimated: even a cold-hearted ML algorithm is not objective if it wasn't trained on objectively chosen and annotated data.
+:::
+
+::: {.fragment}
+However, there exist model architectures, training and evaluation methods to prevent and detect biases, which can sometimes allow to build unbiased models using biased data. But this needs to be well-thought and won't happen unless 
+:::
+
+## Underfitting and Overfitting
+
+### Definitions
+
+::: {.fragment .content-block .definition-block}
+Underfitting
+
+When a model is too simple to properly extract information from a complex task. Can also be explained by key information missing in the input features.
+:::
+
+::: {.fragment .content-block .definition-block}
+Overfitting
+
+When a model is too complex to properly generalize to new data. Happens often when a NN is trained too long on a dataset that is not diverse enough and learns the noise in the data.
+:::
+
+### Illustrations
+
+![Underfitting and overfitting on a regression task [@geeksforgeeksfitting]](images/Underfitting_and_Overfitting_Regression.webp){width="550px"}
+
+![Underfitting and overfitting on a classification task [@geeksforgeeksfitting]](images/Underfitting_and_Overfitting_Classification.png){width="550px"}
+
+### Solutions
+
+| Solution | Underfitting | Overfitting |
+| -------- | ------------ | ----------- |
+| Complexity | Increase | Reduce |
+| Number of features | Increase | Reduce |
+| Regularization | Reduce | Increase |
+| Training time | Increase | Reduce |
+
+::: {.fragment}
+General strategies:
+
+- Cross-validation to identify problems
+- Grid search/random search to tune hyperparameters and balance between underfitting and overfitting
+- Ensemble methods to reduce overfitting by using many smaller models instead of one big
+:::
+
+## Interpretable and Explainable
+
+### Definitions
+
+::: {.content-block .definition-block}
+Interpretable
+
+Qualifies a ML model which decision-making process is straightforward and **transparent**, making it directly **understandable** by humans. This requires to restrict the model **complexity**.
+:::
+
+::: {.content-block .definition-block}
+Explainable
+
+Qualifies a ML model which decision-making process can be partly interpreted afterwards using **post hoc interpretation techniques**. These techniques are often used on models which are too complex to be interpreted.
+:::
+
+# Python libraries
+
+### Data manipulation
+
+- [NumPy](https://numpy.org/)
+  - Fast numerical operations
+  - Matrices with any number of dimensions (called arrays)
+  - Lots of convenient operators on arrays
+- [Pandas](https://pandas.pydata.org/)
+  - Can store any type of data
+  - 1D or 2D tables (called DataFrames)
+  - Lots of convenient operators on DataFrames
+
+### ML
+
+- [SciPy](https://scipy.org/)
+  - Scientific and technical computing based on NumPy
+  - Lots of tools for optimization, integration, interpolation, etc.
+- [scikit-learn](https://scikit-learn.org/stable/index.html)
+  - Simple and efficient tools for data mining and data analysis
+  - Built on NumPy, SciPy and matplotlib
+
+### Visualization
+
+- [Matplotlib](https://matplotlib.org/)
+  - 2D plotting library (3D also possible)
+  - Can create plots, histograms, power spectra, bar charts, error charts, scatterplots, etc.
+  - [Gallery](https://matplotlib.org/stable/gallery/index.html)
+- [Plotly](https://plotly.com/python/)
+  - Similar to Matplotlib but with interactive plots
+  - [Gallery](https://plotly.com/python/)
+- [Seaborn](https://seaborn.pydata.org/)
+  - Data visualization library based on Matplotlib and Pandas
+  - Very powerful for statistical data visualization
+  - [Gallery](https://seaborn.pydata.org/examples/index.html)
+
+# Resources
+
+## References

@@ -29,7 +29,7 @@ format:
 
 ### Dataset
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Dataset
 
 A collection of data used to train, validate and test ML models. 
@@ -37,19 +37,19 @@ A collection of data used to train, validate and test ML models.
 
 ### Content
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Instance (or sample)
 
 An instance is one individual entry of the dataset.
 :::
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Feature (or attribute or variable)
 
 A feature is a type of information stored in the dataset about each instance.
 :::
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Label (or target or output or class)
 
 A label is a piece of information that the model must learn to predict.
@@ -57,7 +57,7 @@ A label is a piece of information that the model must learn to predict.
 
 ### Subsets
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Dataset subsets
 
 A ML dataset is usually subdivided into three disjoint subsets, with distinctive role in the training process:
@@ -76,7 +76,7 @@ A ML dataset is usually subdivided into three disjoint subsets, with distinctive
 :::: {.columns}
 ::: {.column width=50%}
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Neural Network (NN)
 
 **Subtype of ML model** inspired from *brains*. Composed of several **interconnected layers** of nodes capable of **processing** and **passing** information.
@@ -92,7 +92,7 @@ Neural Network (NN)
 
 ### Deep Learning
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Deep Learning (DL)
 
 **Subcategory of Machine Learning**. Consists in using **large NN models** (i.e. with a high number of layers) to solve complex problems.
@@ -102,19 +102,19 @@ Deep Learning (DL)
 
 ### Basic Elements
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Neuron
 
 Takes multiple inputs, sums them with weights and passes the result as output.
 :::
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Layer
 
 Set of similar neurons taking different inputs and/or having different weights.
 :::
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Neural Network (NN)
 
 Sequence of layers.
@@ -122,7 +122,7 @@ Sequence of layers.
 
 ### Linear Functions
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Linear Function
 
 Function that can be written like this:
@@ -131,7 +131,7 @@ f(\alpha_1, \cdots, \alpha_n) = (\beta_{1,1} \alpha_1 + \cdots + \beta_{1,n} \al
 $$
 :::
 
-::: {.theorem-block}
+::: {.content-block .theorem-block}
 Composition of Linear Functions
 
 The composition of any number of linear functions is a linear function.
@@ -139,7 +139,7 @@ The composition of any number of linear functions is a linear function.
 
 ### Activation Functions - Definition
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Activation Function
 
 Function applied to the output of a NN layer (i.e. to the output of each of its neurons) to introduce **non-linearity** to the model.
@@ -346,7 +346,7 @@ To get the best results when performing gradient descent, it is also better if t
 
 ### Definition
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Gradient Descent
 
 The process of iteratively computing and following the direction of the gradient of a function to (hopefully) reach the minimum value of the function (if it exists).
@@ -403,7 +403,7 @@ Gradient Descent is beautiful, but right now, we only know in which direction (t
 
 ### Definition
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Backpropagation
 
 The process of computing the gradient of the weights of each layer of the model and modify them accordingly. The name comes from the process starting with the last layer of the model and propagating incrementally to the first layer.
@@ -521,7 +521,7 @@ for epoch in range(epochs):
 
 ### Principle
 
-::: {.example-block}
+::: {.content-block .example-block}
 Start Closer to the Goal
 
 The basic idea of Transfer Learning is to use a model that was pre-trained on a similar task. This initial model should have learnt basic knowledge that is common to its initial task and our new task, making it capable of learning the new task faster.
@@ -558,13 +558,13 @@ Because CV and NLP are two domains with:
 
 ### Fine-tuning
 
-::: {.definition-block}
+::: {.content-block .definition-block}
 Idea
 
 Take a pre-trained model *as is*, freeze some of the layers (usually the first layers) and continue the training where it was stopped with our new dataset.
 :::
 
-::: {.example-block}
+::: {.content-block .example-block}
 Challenges
 
 - Find a good pre-trained model
