@@ -1,9 +1,12 @@
 ---
-title: "ML Course Part 1 - Introduction to Machine Learning"
-bibliography: references.bib
+title: "ML Course - Introduction to Machine Learning"
+bibliography: ../references.bib
 format:
   revealjs:
     header: "Introduction to Machine Learning"
+html-math-method:
+  method: mathjax
+  url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
 ---
 
 # Definitions
@@ -25,31 +28,6 @@ ML Model
 ::: {.notes}
 ML is really about learning to make extrapolations on a given task.
 :::
-
-### Neural Network (NN)
-
-:::: {.columns}
-::: {.column width=50%}
-
-::: {.content-block .definition-block .fragment}
-Neural Network (NN)
-
-**Subtype of ML model** inspired from *brains*. Composed of several **interconnected layers** of nodes capable of **processing** and **passing** information.
-:::
-
-::: {.content-block .definition-block .fragment}
-Deep Learning (DL)
-
-**Subcategory of Machine Learning**. Consists in using **large NN models** (i.e. with a high number of layers) to solve complex problems.
-:::
-
-:::
-::: {.column width=50% .fragment}
-
-![Common representation of a neural network [@wiso_neural_network]](images/Neural_network_example.svg){width="400px"}
-
-:::
-::::
 
 ## Categories of ML
 
@@ -102,6 +80,7 @@ Dataset example
 
 ```{python}
 #| echo: false
+#| fig-cap: "Iris dataset example"
 import pandas as pd
 from sklearn import datasets
 
@@ -149,6 +128,7 @@ Instances, features and labels
 
 ```{python}
 #| echo: false
+#| fig-cap: "Instance, feature and label in the Iris dataset"
 # Rename all the columns except the last one
 df_iris_renamed = df_iris.copy()
 df_iris_new_columns = [f'Feature {i+1}' for i in range(df_iris_renamed.shape[1] - 1)]
@@ -181,12 +161,13 @@ Metaphor of studies: exercises, past years exams and real exam
 
 ## Supervised Learning
 
-### Decision Trees
+### Decision Trees - Definition
 
 A tree-like structure used for both classification and regression
 
 ```{python}
 #| echo: false
+#| fig-cap: "Simple decision tree on the Iris dataset"
 from utils import ModelEvaluation, IrisData
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 import matplotlib.pyplot as plt
@@ -197,7 +178,7 @@ tree_evaluation = ModelEvaluation(
     iris_data_0_1,
 )
 
-plt.figure(figsize=(9, 5))
+plt.figure(figsize=(12, 5))
 plot_tree(tree_evaluation.model)
 plt.show()
 ```
@@ -206,12 +187,13 @@ plt.show()
 
 ```{python}
 #| echo: false
+#| fig-cap: "Decision boundaries of a decision tree on the Iris dataset"
 tree_evaluation.plot_decision_boundaries_all((12, 5))
 
 plt.show()
 ```
 
-### Random Forests
+### Random Forests - Definition
 
 An ensemble method that combines multiple decision trees:
 
@@ -220,10 +202,19 @@ An ensemble method that combines multiple decision trees:
   - **Feature bagging**: each split in the decision tree (i.e. each node) is chosen among a subset of the features
 - Take a decision by aggregating individual decisions of each tree
 
+::: {.notes}
+It can be seen as answering a question by asking multiple people and taking the most common answer.
+To improve the results, we take people with:
+
+- Different knowledge (bagging)
+- Different tools (feature bagging)
+:::
+
 ### Random Forests - Example
 
 ```{python}
 #| echo: false
+#| fig-cap: "Decision boundaries of a random forest on the Iris dataset"
 from sklearn.ensemble import RandomForestClassifier
 
 forest_evaluation = ModelEvaluation(
@@ -233,7 +224,7 @@ forest_evaluation = ModelEvaluation(
 forest_evaluation.plot_decision_boundaries_all((12, 5))
 ```
 
-### Support Vector Machines (SVM)
+### Support Vector Machines (SVM) - Definition
 
 Used for classification and regression, effective in high-dimensional spaces:
 
@@ -250,6 +241,7 @@ The kernel trick is a way to map the features in a higher dimensional space with
 
 ```{python}
 #| echo: false
+#| fig-cap: "Decision boundaries of a SVM with the RBF kernel on the Iris dataset"
 from sklearn.svm import SVC
 
 svm_evaluation = ModelEvaluation(
@@ -290,7 +282,7 @@ A method for partitioning data into $k$ clusters:
 :::
 ::: {.column}
 
-![$k$-Means Clustering convergence process [@chire_kmeans]](images/K-means_convergence.gif){width="100%"}
+![K-Means Clustering convergence process [@chire_kmeans]](images/K-means_convergence.gif){width="100%"}
 
 :::
 ::::
@@ -328,73 +320,342 @@ Other methods for unsupervised learning include:
 
 | Method | Description |
 |--------|-------------|
-| K-Means | Partition data into $k$ clusters |
-| Hierarchical Clustering | Build a hierarchy of clusters |
-| DBSCAN | Density-based clustering that groups points closely packed together |
 | Gaussian Mixture Models (GMM) | Probabilistic clustering assuming data is generated from multiple Gaussian distributions |
-| Principal Component Analysis (PCA) | Reduce dimensionality by finding principal components that explain variance |
-| t-SNE | Nonlinear dimensionality reduction for visualizing high-dimensional data |
 | Autoencoders | Neural networks that learn efficient representations of data in an unsupervised manner |
 | Self-Organizing Maps (SOM) | Neural network-based method for clustering and visualization |
 
 ## Dimensionality Reduction
 
-### Principal Component Analysis (PCA)
+### PCA - Definition
 
-Dimensionality reduction technique to project data into lower dimensions:
+PCA (Principal Component Analysis) is a dimensionality reduction technique to project data into lower dimensions:
 
 - Project data into a space of lower dimension
 - Keep as much variance (so as much information) as possible
 
 ![PCA Illustration [@nicoguaro2015]](images/GaussianScatterPCA.svg){height="350px"}
 
-### t-Distributed Stochastic Neighbor Embedding (t-SNE)
+### PCA - Example
 
-A nonlinear dimensionality reduction technique primarily used for visualization of high-dimensional data
+```{python}
+#| echo: false
+#| fig-cap: "PCA on the Iris dataset"
+from sklearn.decomposition import PCA
+from utils import DimensionalityReductionDisplay
+
+pca_evaluation = DimensionalityReductionDisplay(
+    PCA(n_components=2),
+    iris_data_0_1,
+)
+
+pca_evaluation.plot_transformed_data((8, 6))
+```
+
+### t-SNE - Definition
+
+t-SNE (t-Distributed Stochastic Neighbor Embedding) is a nonlinear dimensionality reduction technique primarily used for visualization of high-dimensional data
 
 ![t-SNE Result on MNIST dataset [@mcdonald2017]](images/T-SNE_Embedding_of_MNIST.png){height="400px"}
 
+### t-SNE - Example
+
+```{python}
+#| echo: false
+#| fig-cap: "t-SNE on the Iris dataset"
+from sklearn.manifold import TSNE
+
+tsne_evaluation = DimensionalityReductionDisplay(
+    TSNE(n_components=2),
+    iris_data_0_1,
+)
+
+tsne_evaluation.plot_transformed_data((8, 6))
+```
+
 # Neural Networks
 
-### Main points
+## Definitions
 
-- **Neural networks** are a type of ML model inspired by the brain
-- A NN is composed of **layers** of **nodes** (or neurons)
-- Each node takes inputs, sums them up with weights and applies an activation function to produce an output
-- There are many kinds of layers, the main ones being:
-  - **Dense** (or fully connected)
-  - **Convolutional**
-  - **Recurrent**
-  - **Pooling**
-  - ...
-- What defines a NN is:
-  - Its **architecture** ie the succession of layers and their parameters
-  - Its **weights** ie the values used to sum the inputs
-- The weights are learned during the training process, which consists in:
-  - **Forward pass**: compute the output of the model
-  - **Backward pass**: compute the gradient of the loss function with respect to the weights
-  - **Optimization**: update the weights using the gradient
-  - **Repeat** until the model performs well (on a validation set)
-  - **Evaluate** the model on a test set
-- Training a NN can be very long and complex and requires a lot of data -> transfer learning
+### Neural Network (NN)
 
-# Usual pipeline
+:::: {.columns}
+::: {.column width=50%}
 
-### Overview
+::: {.content-block .definition-block .fragment}
+Neural Network (NN)
+
+**Subtype of ML model** inspired from *brains*. Composed of several **interconnected layers** of nodes capable of **processing** and **passing** information.
+:::
+
+::: {.content-block .definition-block .fragment}
+Deep Learning (DL)
+
+**Subcategory of Machine Learning**. Consists in using **large NN models** (i.e. with a high number of layers) to solve complex problems.
+:::
+
+:::
+::: {.column width=50% .fragment}
+
+![Common representation of a neural network](selfmade_images/feed_forward_basic.svg){width="400px"}
+
+:::
+::::
+
+### Structure
+
+::: {.content-block .definition-block}
+Structure of a NN
+
+- **Neuron**: Base element. Takes multiple inputs, sums them with weights and passes the result as output.
+- **Layer**: Set of similar neurons taking different inputs and/or having different weights.
+- **Structure**: Ensemble of layers composing the model, including their types, sizes, succession and parameters.
+:::
+
+## Types of Layers
+
+### Dense (or Fully Connected) - Diagram
+
+The most basic layer, in which each output is a linear combination of each input (before the activation layer).
+
+![Fully connected layer](selfmade_images/feed_forward.svg)
+
+### Dense (or Fully Connected) - Math
+
+The output of a dense layer is computed as follows:
+
+$$
+\require{colortbl}
+\underbrace{
+  \left[
+    \begin{array}{c}
+      \rowcolor{#ffd077} x_1 & x_2 & x_3 & x_4
+    \end{array}
+  \right]
+}_{\text{Input}}
+\cdot
+\underbrace{
+  \left[
+    \begin{array}{c}
+      \columncolor{#ffd077} w_{11} & w_{12} & w_{13} \\
+      w_{21} & w_{22} & w_{23} \\
+      w_{31} & w_{32} & w_{33} \\
+      w_{41} & w_{42} & w_{43}
+    \end{array}
+  \right]
+}_{\text{Weights}}
+=
+\underbrace{
+  \begin{bmatrix}
+  \columncolor{#ffd077} y_1 & y_2 & y_3
+  \end{bmatrix}
+}_{\text{Output}}
+$$
+
+with $y_1 = x_1 w_{11} + x_2 w_{21} + x_3 w_{31} + x_4 w_{41}$
+
+### Convolutional - Diagram
+
+A layer combining geographically close features, used a lot to process rasters.
+
+::: {layout="[30, 70]" layout-valign="center"}
+![Convolutional layer - real input shape](selfmade_images/conv_real_input.svg)
+
+![Convolutional layer - easier to visualise](selfmade_images/conv.svg)
+:::
+
+### Convolutional - Math
+
+The output of a convolutional layer is computed as follows:
+
+$$
+\require{colortbl}
+\underbrace{
+  \left[
+    \begin{array}{c}
+      \cellcolor{#ffd077}x_{11} & \cellcolor{#ffd077}x_{12} & x_{13} \\
+      \cellcolor{#ffd077}x_{21} & \cellcolor{#ffd077}x_{22} & x_{23} \\
+      x_{31} & x_{32} & x_{33}
+    \end{array}
+  \right]
+}_{\text{Input}}
+\ast
+\underbrace{
+  \left[
+    \begin{array}{c}
+      \cellcolor{#ffd077}w_{11} & \cellcolor{#ffd077}w_{12} \\
+      \cellcolor{#ffd077}w_{21} & \cellcolor{#ffd077}w_{22}
+    \end{array}
+  \right]
+}_{\text{Kernel/Weights}}
+=
+\underbrace{
+  \begin{bmatrix}
+  \cellcolor{#ffd077}y_{11} & y_{12} \\
+  y_{21} & y_{22}
+  \end{bmatrix}
+}_{\text{Output}}
+$$
+
+with $y_{11} = x_{11} w_{11} + x_{12} w_{12} + x_{21} w_{21} + x_{22} w_{22}$
+
+### Recurrent
+
+Type of layers designed to process sequential data such as text, time series data, speech or audio. Works by combining input data and the state of the previous time step.
+
+The two main variants of recurrent layers are:
+
+::: {layout="[50, 50]" layout-valign="center"}
+![Long Short-Term Memory (LSTM) [@fdeloche_lstm]](images/Long_Short-Term_Memory.svg)
+
+![Gated Recurrent Unit (GRU) [@fdeloche_gru]](images/Gated_Recurrent_Unit.svg)
+:::
+
+Nowadays, transformer architectures are however preferred to process sequential data.
+
+### Pooling
+
+A type of layers used to reduce the number of features by merging multiple features into one. There are multiple kinds of pooling layers, the most simple ones being Maximum Pooling and Average Pooling.
+
+![Max Pooling Example [@godoy2023]](images/Convolutional_neural_network_maxpooling.png)
+
+### Other Types
+
+| Type | Description |
+|------|-------------|
+| Residual | Skips some layers to improve training |
+| Attention | Focuses on specific parts of the input data |
+| Embedding | Transforms discrete data into continuous vectors |
+| Dropout | Randomly drop out some of the nodes during training to reduce overfitting |
+| Batch Normalization | Normalizes the input of each layer across the batch to improve training stability and speed |
+| Layer Normalization | Normalizes the input of each layer across the features to improve training stability and speed |
+| Embedding | Transforms discrete input data into continuous vectors with lower-dimensional space |
+| Flatten | Convert multi-dimensional data into 1D data that can be fed into fully connected layers |
+
+## Architecture and Weights
+
+### Both are Crucial
+
+::: {.content-block .definition-block}
+A NN is defined by both its architecture and its weights
+
+- **Architecture**: The **structure** of a NN, including the **type** and **number** of layers, their **size** and **succession**.
+- **Weights**: The **values** used to sum the inputs of each node in the network. They are **learned** during the training process.
+:::
+
+### Both are Crucial - Without Weights
+
+![Architecture without weights is useless](selfmade_images/architecture_no_weights.svg){height="500px"}
+
+### Both are Crucial - Without Architecture
+
+Two architectures with the same weights but doing very different things:
+
+:::: {.columns}
+::: {.column width=32%}
+![A fully connected architecture](selfmade_images/weights_guess_architecture_dense.svg){height="300px"}
+:::
+::: {.column width=68%}
+![A convolutional architecture](selfmade_images/weights_guess_architecture_conv.svg){height="300px"}
+:::
+::::
+
+### Both are Crucial - Conclusion
+
+::: {.content-block .remark-block}
+Both the architecture and the weights are needed
+
+When importing a model, you need to import both the architecture and the weights. The process varies depending on the library used.
+
+This also means that the having access to the architecture is not enough to reproduce the model.
+:::
+
+## Training Process
+
+### Objective
+
+::: {.content-block .remark-block}
+What do we want?
+
+We want a model that **performs well** on a given task. To achieve this, we need to:
+
+1. Select the **right architecture** for the model (not covered in these slides)
+2. Find the **right weights** for the model
+:::
+
+### Right Weights
+
+::: {.content-block .remark-block}
+What are the right weights?
+
+The right weights are the ones that allow the model to perform well on the task. More precisely:
+
+- Performing well means **minimizing a loss function**
+- On the task means **on the dataset** that we have for the task
+:::
+
+::: {.content-block .definition-block}
+Loss function
+
+Function that evaluates the performance of a model. In supervised learning, it compares the predictions of the model to the ground-truth.
+:::
+
+### General Idea
+
+::: {.content-block .remark-block}
+General idea
+
+Since there is a huge number of possible combinations of weights, we need to **search** for the right ones. This process is called **training**. It is iterative and consists of the repetition of three steps:
+
+1. **Forward pass**: compute the output of the model on the training data
+2. **Backward pass**: compute the gradient of the loss function with respect to the weights
+3. **Optimization**: update the weights using the gradient
+
+The process is repeated until the model performs well on a validation set.
+:::
+
+### Animation - What Happens
+
+![Animation of the training process](selfmade_videos/gradient_descent_hesitant.mp4)
+
+### Animation - What We Really Know
+
+![Animation of the training process without the known loss function](selfmade_videos/gradient_descent_hesitant_tangent.mp4)
+
+### Animation - Sometimes It Works Well
+
+:::: {layout="[1, 1, 1]"}
+![It works well](selfmade_videos/gradient_descent_successful_2.gif)
+
+![It works well](selfmade_videos/gradient_descent_successful_3.gif)
+
+![It works](selfmade_videos/gradient_descent_hesitant.gif)
+::::
+
+### Animation - Sometimes It Doesn't Work
+
+:::: {layout="[1, 1, 1]"}
+![It doesn't work](selfmade_videos/gradient_descent_failed.gif)
+
+![It doesn't work](selfmade_videos/gradient_descent_failed_2.gif)
+
+![It doesn't work](selfmade_videos/gradient_descent_failed_3.gif)
+::::
+
+# Project Pipeline
+
+## Overview
 
 1. Data acquisition
 2. Data preprocessing
 3. Model selection
-4. Model evaluation
-5. Final model training
+4. Model optimization/training
+5. Model evaluation
+6. Go back to 3 if not satisfied
+7. Final model training
 
-### Data acquisition
+## Data Preprocessing
 
-Gather the data, potentially from multiple different sources. Choosing the right sources can also depend on the choices made in the next steps.
-
-## Data preprocessing
-
-### Different issues
+### Different Issues
 
 Multiple sources of issues and steps to perform:
 
@@ -404,12 +665,13 @@ Multiple sources of issues and steps to perform:
 4. Handle missing data
 5. Normalize
 
-### Why normalization?
+### Why Normalization?
 
-::: {.content-block .example-block}
-Idea
+::: {.content-block .remark-block}
+No prior knowledge
 
-*A priori* all features have the same importance, so none of them should have an advantage. Therefore, having features with larger values than others would be detrimental.
+*A priori* all features have the same importance, so none of them should have an advantage.
+Therefore, having features with larger values than others would be detrimental.
 :::
 
 Usually, all features are individually normalized over the whole dataset, to obtain a distribution with an average of 0 and a standard deviation of 1:
@@ -422,7 +684,7 @@ $$
 \end{align*}
 $$
 
-### Model selection
+## Model Selection
 
 - Type of model (ML, NN, DL, ...)
 - Complexity:
@@ -430,9 +692,9 @@ $$
   - Type of output
   - Size of the layers (for NN)
   - Number of layers (for NN)
-- Hyperparameters
+  - ...
 
-### Model optimization/training
+## Model Optimization / Training
 
 - Loss selection: depends on the task, the objectives, the specific issues to solve
 - Training process selection (lots of different tweaks and improvements can be implemented in NN training)
@@ -441,41 +703,46 @@ $$
   - Training the model one or multiple times
   - Determining the best hyperparameters
 
-### Model evaluation - Criteria
+## Model Evaluation
 
-Criteria selection among the many possible ones:
+### Criteria - Classification
 
-::: {.fragment}
-- For classification:
-  - Accuracy: for balanced datasets
-  - Precision: when false positives are costly
-  - Recall: when false negatives are costly
-  - F1-Score: when class distribution is unbalanced
-  - ...
-:::
-::: {.fragment}
-- For regression:
-  - Mean Absolute Error (MAE)
-  - Mean Square Error (MSE): more sensitive to large errors than MAE
-  - ...
-:::
+Most common evaluation criteria for classification tasks:
+  
+| Name | Use case | Formula |
+|------|----------|:-------:|
+| Accuracy | Balanced datasets | $\frac{TP + TN}{TP + TN + FP + FN}$ |
+| Precision | False positives are costly | $\frac{TP}{TP + FP}$ |
+| Recall | False negatives are costly | $\frac{TP}{TP + FN}$ |
+| F1-Score | Unbalanced class distribution | $\frac{2 \times \text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}$ |
+| ... | ... | ... |
 
-### Model evaluation - Cross-validation
+### Criteria - Regression
+
+Most common evaluation criteria for regression tasks:
+
+| Name | Use case | Formula |
+|------------|---------|:-------:|
+| Mean Absolute Error (MAE) | Robust to outliers | $\frac{1}{n} \sum\limits_{i=1}^n |y_i - \hat{y}_i|$ |
+| Mean Square Error (MSE) | Sensitive to large errors | $\frac{1}{n} \sum\limits_{i=1}^n (y_i - \hat{y}_i)^2$ |
+| ... | ... | ... |
+
+### Cross-validation
 
 ::: {.content-block .definition-block}
 Cross-validation
 
-Method to estimate real performance of the model by:
+Method to estimate the **real performance** of the model:
 
-  1. Splitting the dataset in multiple parts (usually 5)
-  2. For different combinations of these parts (usually 5), training and evaluating the model
+  1. Split the dataset in multiple parts (usually 5)
+  2. Train and evaluate the model for different combinations of these parts (usually 5)
 :::
 
 ![Cross-validation [@gufosowa2019]](images/K-fold_cross_validation_EN.svg)
 
-### Final model training
+## Final Model Training
 
-Once the data is preprocessed, the model is selected, the hyperparameters chosen and optimized, the final model can be trained multiple times to keep the best one.
+Once the data is preprocessed, the model is selected, the hyperparameters chosen and optimized, the final model can be trained (potentially multiple times to keep the best one).
 
 # Challenges
 
@@ -492,14 +759,14 @@ Quality of the data is obviously crucial to train well-performing models. Qualit
 
 ### Diversity
 
-Diversity is the most important aspect of a dataset because ML models are great at generalizing but bad at guessing in new scenarios. There are different aspects to diversity to keep in mind:
+**Diversity** is the most important aspect of a dataset because ML models are great at **generalizing** but bad at guessing in new scenarios. There are different aspects to diversity to keep in mind:
 
 ::: {.incremental}
 - A **well-defined task** is crucial to identify all the various cases that we want our model to handle. Being as *exhaustive* as possible when selecting the training instances will accelerate training and improve the model by a lot
 - **Balancing the dataset** can also improve the training. When training on imbalanced datasets (i.e. when some cases are much more represented than others), the model will focus on the most represented situations as it will be the easiest and quickest way to get better results. There are ways of correcting this phenomenon, but it is always better to avoid it if possible when building the dataset.
 :::
 
-### Biases and fairness
+### Biases and Fairness
 
 ::: {.content-block .definition-block}
 Biased
@@ -512,7 +779,7 @@ In practice, a model trained on **biased data** will most of the time **repeat t
 :::
 
 ::: {.fragment}
-However, there exist model architectures, training and evaluation methods to prevent and detect biases, which can sometimes allow to build unbiased models using biased data. But this needs to be well-thought and won't happen unless 
+There exist model architectures, training and evaluation methods to try to prevent and detect biases. They can sometimes allow to build unbiased models using biased data. But this adds complexity to the training process and doesn't always work.
 :::
 
 ## Underfitting and Overfitting
@@ -539,7 +806,7 @@ When a model is too complex to properly generalize to new data. Happens often wh
 
 ### Solutions
 
-| Solution | Underfitting | Overfitting |
+| Lever | In case of underfitting | In case of overfitting |
 | -------- | ------------ | ----------- |
 | Complexity | Increase | Reduce |
 | Number of features | Increase | Reduce |
@@ -549,9 +816,9 @@ When a model is too complex to properly generalize to new data. Happens often wh
 ::: {.fragment}
 General strategies:
 
-- Cross-validation to identify problems
-- Grid search/random search to tune hyperparameters and balance between underfitting and overfitting
-- Ensemble methods to reduce overfitting by using many smaller models instead of one big
+- **Cross-validation** to identify problems
+- **Grid search/random search** to tune hyperparameters and balance between underfitting and overfitting
+- **Ensemble methods** to reduce overfitting by using many smaller models instead of one big
 :::
 
 ## Interpretable and Explainable
@@ -570,9 +837,9 @@ Explainable
 Qualifies a ML model which decision-making process can be partly interpreted afterwards using **post hoc interpretation techniques**. These techniques are often used on models which are too complex to be interpreted.
 :::
 
-# Python libraries
+# Python Libraries
 
-### Data manipulation
+### Data Manipulation
 
 - [NumPy](https://numpy.org/)
   - Fast numerical operations

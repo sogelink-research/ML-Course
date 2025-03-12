@@ -188,49 +188,30 @@ class ModelEvaluation:
         axs[1].set_title(axs[1].get_title() + " (Testing Data)")
 
 
-# def fit_predict_evaluate_iris(
-#     model, data: Bunch, features_used: tuple[int, int], figsize: tuple[int, int]
-# ):
-#     X, y, feature_names, class_names = (
-#         data.data[:, features_used],
-#         data.target,
-#         [data.feature_names[i] for i in features_used],
-#         data.target_names,
-#     )
+class DimensionalityReductionDisplay:
 
-#     X_train, X_test, y_train, y_test = train_test_split(
-#         X, y, test_size=0.2, random_state=0
-#     )
+    def __init__(self, model, iris_data: IrisData):
+        self.model = model
+        self.iris_data = iris_data
+        if not hasattr(self.model, "fit_transform"):
+            raise ValueError("Model must have a fit_transform method")
+        self.X_transformed = self.model.fit_transform(
+            self.iris_data.X_train, self.iris_data.y_train
+        )
+        if self.X_transformed.shape[1] != 2:
+            raise ValueError("Model must reduce data to 2 dimensions")
 
-#     scaler = StandardScaler()
-#     X_train = scaler.fit_transform(X_train)
-#     X_test = scaler.transform(X_test)
-
-#     model.fit(X_train, y_train)
-#     # y_pred = model.predict(X_test)
-
-#     # accuracy = accuracy_score(y_test, y_pred)
-#     # print(f"Accuracy: {accuracy:.4f}")
-#     # fig, axs = plt.subplots(1, 4, figsize=(24, 5))
-#     fig, axs = plt.subplots(1, 2, figsize=figsize)
-#     plt.suptitle(
-#         f"{model.__class__.__name__} using features={features_used}",
-#         fontsize="xx-large",
-#         y=1.02,
-#     )
-
-#     # plot_confusion_matrix(y_test, y_pred, class_names, ax=axs[0])
-#     # axs[0].set_title(axs[0].get_title() + " (Testing Data)")
-#     # plot_evaluation(y_test, y_pred, class_names, ax=axs[1])
-#     # axs[1].set_title(axs[1].get_title() + " (Testing Data)")
-#     # plot_decision_boundaries(model, X_train, y_train, feature_names, ax=axs[2])
-#     # axs[2].set_title(axs[2].get_title() + " (Training Data)")
-#     # plot_decision_boundaries(model, X_test, y_test, feature_names, ax=axs[3])
-#     # axs[3].set_title(axs[3].get_title() + " (Testing Data)")
-
-#     plot_decision_boundaries(model, X_train, y_train, feature_names, ax=axs[0])
-#     axs[0].set_title(axs[0].get_title() + " (Training Data)")
-#     plot_decision_boundaries(model, X_test, y_test, feature_names, ax=axs[1])
-#     axs[1].set_title(axs[1].get_title() + " (Testing Data)")
-
-#     return model
+    def plot_transformed_data(self, figsize: tuple[int, int]):
+        fig, ax = plt.subplots(1, 1, figsize=figsize)
+        ax.set_title(f"{self.model.__class__.__name__}")
+        scatter = ax.scatter(
+            self.X_transformed[:, 0],
+            self.X_transformed[:, 1],
+            c=self.iris_data.y_train,
+            cmap="viridis",
+        )
+        legend = ax.legend(*scatter.legend_elements(), title="Classes")
+        ax.add_artist(legend)
+        plt.xlabel("Component 1")
+        plt.ylabel("Component 2")
+        # plt.legend()
