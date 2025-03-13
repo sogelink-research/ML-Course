@@ -1,0 +1,10 @@
+geopandas
+matplotlib
+numpy
+pandas
+rasterio
+requests
+shapely
+tqdm
+ipykernel
+ipywidgets

@@ -1,12 +1,28 @@
+# For Jupyter Notebooks
 ipykernel
 ipywidgets
 
+# For machine learning
 torch
 torchvision
-matplotlib
-numpy
 scikit-learn
-pandas
+transformers
+accelerate # For Open Llama
+huggingface_hub
+mistral_inference # For Mistral
+# google # For Mistral
+
+# For plotting
+matplotlib
 seaborn
 
+# For data manipulation
+numpy
+pandas
+
+# For progress bars
 tqdm
+
+# # For scraping
+# beautifulsoup4
+# requests
