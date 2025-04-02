@@ -56,8 +56,8 @@ class ImagesLoader:
                         self.image_shape[0] - mask_torch.shape[0],
                     ),
                 )
-                meta["width"] = self.image_shape[1]
-                meta["height"] = self.image_shape[0]
+            # meta["width"] = self.image_shape[1]
+            # meta["height"] = self.image_shape[0]
 
             self.images.append(image_torch)
             self.metas.append(meta)
@@ -78,11 +78,21 @@ class ImagesLoader:
         masks = self.get_masks()
         indices = torch.tensor(self.indices)
 
+        original_sizes = torch.tensor(
+            [
+                (
+                    self.get_meta(index.item())["width"],
+                    self.get_meta(index.item())["height"],
+                )
+                for index in indices
+            ]
+        )
         self.dataloader_train = DataLoader(
             TensorDataset(
                 images[:train_size],
                 masks[:train_size],
                 indices[:train_size],
+                original_sizes[:train_size],
             ),
             batch_size=batch_size,
             shuffle=False,
@@ -92,6 +102,7 @@ class ImagesLoader:
                 images[train_size:],
                 masks[train_size:],
                 indices[train_size:],
+                original_sizes[train_size:],
             ),
             batch_size=batch_size,
             shuffle=False,
@@ -178,4 +189,5 @@ class ImagesLoader:
 #         ),
 #     )
 
+#     return image_shape, dataloaders, metas
 #     return image_shape, dataloaders, metas
