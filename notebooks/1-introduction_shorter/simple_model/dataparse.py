@@ -102,7 +102,11 @@ def download_dsm(tif_file: Path, bbox: BboxInt, main_data_folder: Path):
     tif_file.parent.mkdir(parents=True, exist_ok=True)
 
     for i, url in tqdm(enumerate(urls), leave=False):
-        response = requests.get(url, stream=True, verify=False)
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+        }
+
+        response = requests.get(url, stream=True, verify=False, headers=headers)
         response.raise_for_status()
 
         temp_file = tif_file.parent / f"temp_{i}.tif"
