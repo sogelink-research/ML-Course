@@ -133,6 +133,7 @@ class TrainingMetrics:
         )
         self.y_axes = {}
         self.last_epoch = -1
+        self.y_limits = {}
 
         if self.show:
             self.out = Output()
@@ -156,10 +157,12 @@ class TrainingMetrics:
         val: float,
         count: int = 1,
         y_axis: str | None = None,
+        y_limits: tuple[float | None, float | None] = (None, None),
     ):
         if y_axis is None:
             y_axis = metric_name
         self.y_axes[metric_name] = y_axis
+        self.y_limits[metric_name] = y_limits
 
         metric = self.metrics_loop[metric_name][category_name]
 
@@ -177,7 +180,7 @@ class TrainingMetrics:
     def visualise(
         self,
         intervals: List[Tuple[int, int]] = [(0, 0)],
-        save_paths: Optional[Sequence[str | None]] = None,
+        save_paths: Optional[Sequence[Path | None]] = None,
     ):
         # Inspired from https://gitlab.com/robindar/dl-scaman_checker/-/blob/main/src/dl_scaman_checker/TP01.py
         if self.show is False and (
@@ -288,9 +291,20 @@ class TrainingMetrics:
                     )
 
                 ax.grid(alpha=0.5)
-                if np.isfinite(y_extent_min) and np.isfinite(y_extent_max):
-                    y_margin = (y_extent_max - y_extent_min) * 0.05
-                    ax.set_ylim(y_extent_min - y_margin, y_extent_max + y_margin)
+                y_lower = y_extent_min
+                y_upper = y_extent_max
+
+                if self.y_limits[metric_name][0] is not None:
+                    y_lower = self.y_limits[metric_name][0]
+                if self.y_limits[metric_name][1] is not None:
+                    y_upper = self.y_limits[metric_name][1]
+
+                if y_lower != y_upper and np.isfinite(y_lower) and np.isfinite(y_upper):
+                    y_margin = (y_upper - y_lower) * 0.05
+                    y_lower -= y_margin
+                    y_upper += y_margin
+
+                    ax.set_ylim(y_lower, y_upper)
 
                 if index >= n_metrics - ncols:
                     ax.set_xlabel("Epoch")
@@ -324,6 +338,7 @@ class TrainingMetrics:
             fig.tight_layout(rect=(0.0, legend_y_position, 1.0, 1.0))
 
             if save_path is not None:
+                save_path.parent.mkdir(parents=True, exist_ok=True)
                 plt.savefig(save_path, dpi=200)
 
         if self.show:

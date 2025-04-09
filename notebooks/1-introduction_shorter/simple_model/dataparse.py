@@ -1,5 +1,6 @@
 import json
 import warnings
+import zipfile
 from math import ceil
 from pathlib import Path
 
@@ -12,6 +13,7 @@ from rasterio.features import geometry_mask
 from rasterio.mask import mask
 from rasterio.merge import merge
 from rasterio.transform import from_origin
+from rasterio.warp import Resampling, calculate_default_transform, reproject
 from rasterio.windows import Window
 
 # from shapely.geometry import box
@@ -65,10 +67,11 @@ def find_dsm_urls_for_bbox(main_data_folder: Path, bbox: BboxInt):
 
     # Find the AHN urls for the intersecting regions
     ahn_urls = []
-    for index, row in intersecting_regions.iterrows():
-        ahn_urls.append(row["AHN5_05M_R"])
-
-    print(f"Found {len(ahn_urls)} AHN5 DSM 50cm URLs for the bounding box.")
+    for index, row in tqdm(intersecting_regions.iterrows()):
+        if row["AHN5_05M_R"] is not None:
+            ahn_urls.append(row["AHN5_05M_R"])
+        else:
+            ahn_urls.append(row["AHN4_05M_R"])
 
     return ahn_urls
 
@@ -84,15 +87,15 @@ def download_dsm(tif_file: Path, bbox: BboxInt, main_data_folder: Path):
     bbox : BboxInt
         The bounding box.
     main_data_folder : Path
-        The folder where the data is stored.
+        The folder where the download_dsmdata is stored.
 
     Returns
     -------
     None
     """
-    print("Downloading AHN5 DSM 50cm...")
+    print("Downloading AHN5 DSM 50cm...", end=" ", flush=True)
     if tif_file.exists():
-        print("File already exists.")
+        print("Skipped because file already exists.")
         return
 
     urls = find_dsm_urls_for_bbox(main_data_folder, bbox)
@@ -101,7 +104,7 @@ def download_dsm(tif_file: Path, bbox: BboxInt, main_data_folder: Path):
     temp_files = []
     tif_file.parent.mkdir(parents=True, exist_ok=True)
 
-    for i, url in tqdm(enumerate(urls), leave=False):
+    for i, url in tqdm(enumerate(urls)):
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
         }
@@ -109,10 +112,17 @@ def download_dsm(tif_file: Path, bbox: BboxInt, main_data_folder: Path):
         response = requests.get(url, stream=True, verify=False, headers=headers)
         response.raise_for_status()
 
-        temp_file = tif_file.parent / f"temp_{i}.tif"
+        temp_file = tif_file.parent / url.split("/")[-1]
         with open(temp_file, "wb") as f:
             for chunk in response.iter_content(chunk_size=8192):
                 f.write(chunk)
+
+        # Unzip the file if it is a zip file
+        if temp_file.suffix == ".zip":
+            with zipfile.ZipFile(temp_file, "r") as zip_ref:
+                zip_ref.extractall(temp_file.parent)
+            temp_file.unlink()  # Remove the zip file
+            temp_file = temp_file.parent / (str(temp_file.stem) + ".TIF")
 
         # Clip the image to the bbox
         clip_image(temp_file, temp_file, bbox)
@@ -126,128 +136,15 @@ def download_dsm(tif_file: Path, bbox: BboxInt, main_data_folder: Path):
     for temp_file in temp_files:
         temp_file.unlink()
 
-
-# def download_dsm_old_1(data_folder: Path) -> Path:
-#     print("Downloading AHN5 DSM 50cm...")
-#     url = "https://ns_hwh.fundaments.nl/hwh-ahn/AHN5/03a_DSM_50cm/2023_R_25GN1.TIF"
-#     output_file = data_folder / "25GN1.tif"
-
-#     # Download the file if it doesn't already exist
-#     if not output_file.exists():
-#         response = requests.get(url, stream=True, verify=False)
-#         response.raise_for_status()
-#         with open(output_file, "wb") as f:
-#             for chunk in response.iter_content(chunk_size=8192):
-#                 f.write(chunk)
-
-#     print("Done.")
-#     return output_file
-
-# def download_dsm_old_2(tif_file: Path, bbox: tuple[int, int, int, int]):
-#     print("Downloading DSM 50cm...")
-#     # Get the WCS of the AHN
-#     # url = "https://service.pdok.nl/rws/ahn/wcs/v1_0?request=GetCapabilities&service=WCS"
-#     url = "https://api.ellipsis-drive.com/v3/ogc/wcs/a4a8a27b-e36e-4dd5-a75b-f7b6c18d33ec?request=getCapabilities&version=1.0.0"
-#     wcs = WebCoverageService(url=url, version="1.0.0")
-
-#     print(list(wcs.contents))
-#     # layer = "dsm_05m"
-#     layer = "fc9d369f-94ca-4373-8281-a6854edb67c9"
-
-#     # Take the 0.5m DSM as an example
-#     cvg = wcs.contents[layer]
-
-#     # Print supported reference systems, the bounding box defined in WGS 84 coordinates, and supported file formats
-#     print(cvg.supportedCRS)
-#     print(cvg.boundingBoxWGS84)
-#     print(cvg.supportedFormats)
-
-#     step_size = 500
-#     temp_tifs = []
-#     current_index = 0
-
-#     for xmin in range(floor(bbox[0]), ceil(bbox[2]), step_size):
-#         for ymin in range(floor(bbox[3]), ceil(bbox[1]), step_size):
-#             xmax = min(xmin + step_size, int(bbox[2]))
-#             ymax = min(ymin + step_size, int(bbox[1]))
-#             bbox_correct = (xmin, ymin, xmax, ymax)
-
-#             # Get the coverage for the study area
-#             # response = wcs.getCoverage(
-#             #     identifier=layer,
-#             #     bbox=bbox_correct,
-#             #     format="GEOTIFF",
-#             #     crs="urn:ogc:def:crs:EPSG::28992",
-#             #     resx=0.5,
-#             #     resy=0.5,
-#             # )
-
-#             width = 2 * (bbox_correct[2] - bbox_correct[0])
-#             height = 2 * (bbox_correct[3] - bbox_correct[1])
-#             print(width, height)
-
-#             # Get the coverage for the study area
-#             response = wcs.getCoverage(
-#                 identifier=layer,
-#                 bbox=bbox_correct,
-#                 format="GEOTIFF",
-#                 crs="urn:ogc:def:crs:EPSG::28992",
-#                 # resx=0.5,
-#                 # resy=0.5,
-#                 width=width,
-#                 height=height,
-#             )
-
-#             # Save the response to a file
-#             current_tif = tif_file.parent / f"temp_{current_index}.tif"
-#             with open(current_tif, "wb") as f:
-#                 f.write(response.read())
-
-#             temp_tifs.append(current_tif)
-#             current_index += 1
-
-#     # Merge the temporary files into a single file
-#     merge_tiff_files(temp_tifs, tif_file, nodata=-9999)
-#     for temp_tif in temp_tifs:
-#         temp_tif.unlink()
-
-
-# def download_luchtfoto(bbox_str: str):
-#     print("Downloading luchtfoto 25cm...")
-#     output_file = "data/25GN1_luchtfoto.tif"
-
-#     url = "https://ns_hwh.fundaments.nl/hwh-ortho/2023/Ortho/1/04/beelden_tif_tegels/2023_153000_464000_RGB_hrl.tif"
-#     # Download the file if it doesn't already exist
-#     if not os.path.exists(output_file):
-#         response = requests.get(url, stream=True, verify=False)
-#         response.raise_for_status()
-#         with open(output_file, "wb") as f:
-#             for chunk in response.iter_content(chunk_size=8192):
-#                 f.write(chunk)
-
-#     print("Done.")
-#     return output_file
-
-
-# def download_luchtfoto(tif_file: Path, bbox_str: str):
-#     print("Downloading luchtfoto 25cm...")
-#     tif_file.parent.mkdir(parents=True, exist_ok=True)
-#     if not tif_file.exists():
-#         wmts_url = f"https://service.pdok.nl/hwh/luchtfotorgb/wmts/v1_0?&request=GetCapabilities&service=WMTS&bbox={bbox_str}"
-#         layer_name = "Actueel_ortho25"
-
-#         # Fetch data from WFS and load into GeoDataFrame
-#         gdf = gpd.read_file(f"{wmts_url}&typeName={layer_name}")
-
-#         # Write the GeoDataFrame to a TIF file
-#         gdf.to_file(tif_file, driver="GTiff")
-#     print("Done.")
+    print(f"Saved to {tif_file}.")
 
 
 def clip_image(input_file: Path, output_file: Path, bbox: BboxInt):
     bbox_shapely = bbox.to_shapely()
-    print(f"Clipping {input_file} to bbox {bbox_shapely.bounds}...")
-    with rasterio.open(input_file) as src:
+    print(
+        f"Clipping {input_file} to bbox {bbox_shapely.bounds}...", end=" ", flush=True
+    )
+    with rasterio.open(input_file, driver="GTiff") as src:
         # Clip the image to the bbox
         out_image, out_transform = mask(src, [bbox_shapely], crop=True)
 
@@ -267,21 +164,6 @@ def clip_image(input_file: Path, output_file: Path, bbox: BboxInt):
         with rasterio.open(output_file, "w", **out_meta) as dst:
             dst.write(out_image)
     print("Done.")
-
-
-# def download_buildings_old(geojson_file: Path, bbox_str: str):
-#     print("Downloading BAG buildings...")
-#     geojson_file.parent.mkdir(parents=True, exist_ok=True)
-#     if not geojson_file.exists() or True:
-#         wfs_url = f"WFS:https://service.pdok.nl/lv/bag/wfs/v2_0?request=getCapabilities&service=WFS&bbox={bbox_str}"
-#         layer_name = "bag:pand"
-
-#         # Fetch data from WFS and load into GeoDataFrame
-#         gdf = gpd.read_file(f"{wfs_url}&typeName={layer_name}")
-
-#         # Write the GeoDataFrame to a GeoJSON file
-#         gdf.to_file(geojson_file, driver="GeoJSON")
-#     print("Done.")
 
 
 def split_bbox(bbox: BboxInt, max_size: int) -> list[BboxInt]:
@@ -323,10 +205,10 @@ def split_bbox(bbox: BboxInt, max_size: int) -> list[BboxInt]:
 
 
 def download_buildings(geojson_file: Path, bbox: BboxInt):
-    print("Downloading BAG buildings...")
+    print("Downloading BAG buildings...", end=" ", flush=True)
 
     if geojson_file.exists():
-        print("File already exists.")
+        print("Skipped because file already exists.")
         return
 
     # Get the WFS of the BAG
@@ -343,7 +225,7 @@ def download_buildings(geojson_file: Path, bbox: BboxInt):
 
     all_features = []
 
-    for sub_bbox in tqdm(bboxes, leave=False):
+    for sub_bbox in tqdm(bboxes):
         start_index = 0
         while True:
             response = wfs.getfeature(
@@ -363,33 +245,16 @@ def download_buildings(geojson_file: Path, bbox: BboxInt):
             start_index += count  # Move to the next batch
 
     # Create GeoDataFrame, without saving first
-    buildings_gdf = gpd.GeoDataFrame.from_features(all_features, crs="EPSG:28992")
+    if len(all_features) == 0:
+        buildings_gdf = gpd.GeoDataFrame(geometry=[])
+    else:
+        buildings_gdf = gpd.GeoDataFrame.from_features(all_features, crs="EPSG:28992")
 
     # Save the GeoDataFrame to a GeoJSON file
     geojson_file.parent.mkdir(parents=True, exist_ok=True)
     buildings_gdf.to_file(geojson_file, driver="GeoJSON")
 
-    print(f"Downloaded BAG buildings to {geojson_file}")
-
-
-# def download_buildings(geojson_file: Path, bbox_str: str):
-#     url = "https://service.pdok.nl/lv/bag/wfs/v2_0"
-
-#     # Specify parameters (read data in json format).
-#     params = dict(
-#         service="WFS",
-#         version="2.0.0",
-#         request="GetFeature",
-#         typeName="bag:pand",
-#         outputFormat="json",
-#         bbox=bbox_str,
-#     )
-
-#     r = requests.get(url, params=params)
-
-#     data = gpd.GeoDataFrame.from_features(geojson.loads(r.content), crs="EPSG:28992")
-#     data.to_file(geojson_file, driver="GeoJSON")
-#     print(f"Downloaded BAG buildings to {geojson_file}")
+    print(f"Saved to {geojson_file}.")
 
 
 def filter_small_buildings(input_file: Path, output_file: Path):
@@ -397,25 +262,31 @@ def filter_small_buildings(input_file: Path, output_file: Path):
     Filter out the buildings that have the property "gebruiksdoel" set to NULL
     and an area smaller than 30 m².
     """
-    print("Filtering buildings...")
+    print("Filtering buildings...", end=" ", flush=True)
+
+    if output_file.exists():
+        print("Skipped because file already exists.")
+        return
 
     # Load the GeoDataFrame
     gdf = gpd.read_file(input_file)
 
     # Filter the buildings
-    gdf = gdf[(gdf["gebruiksdoel"] != "") | (gdf.geometry.area > 30)]
+    if not gdf.empty:
+        gdf = gdf[(gdf["gebruiksdoel"] != "") | (gdf.geometry.area > 30)]
 
     # Save the filtered GeoDataFrame
+    output_file.parent.mkdir(parents=True, exist_ok=True)
     gdf.to_file(output_file, driver="GeoJSON")
 
-    print(f"Filtered buildings saved to {output_file}")
+    print(f"Saved to {output_file}.")
 
 
 def create_mask(geojson_file: Path, mask_file: Path, bbox: BboxInt):
-    print(f"Creating mask from {geojson_file}...")
+    print(f"Creating mask from {geojson_file}...", end=" ", flush=True)
 
     if mask_file.exists():
-        print("File already exists.")
+        print("Skipped because file already exists.")
         return
 
     # Load the vector data from GeoJSON file
@@ -425,7 +296,11 @@ def create_mask(geojson_file: Path, mask_file: Path, bbox: BboxInt):
     pixel_size = 0.5
 
     # Get the bounds of the vector data
-    minx, miny, maxx, maxy = gdf.total_bounds
+    # minx, miny, maxx, maxy = gdf.total_bounds
+    # if gdf.empty:
+    minx, miny, maxx, maxy = bbox.to_float().to_tuple()
+
+    print(f"Bounds: {minx}, {miny}, {maxx}, {maxy}")
 
     # Define the transformation (top-left corner, pixel size)
     transform = from_origin(minx, maxy, pixel_size, pixel_size)
@@ -466,14 +341,14 @@ def create_mask(geojson_file: Path, mask_file: Path, bbox: BboxInt):
     # Remove the temporary file
     temp_file.unlink()
 
-    print(f"Rasterized mask saved to {mask_file}")
+    print(f"Saved to {mask_file}.")
 
 
 def tile_tiff_rasterio(image_path: Path, output_folder: Path, tile_size=512):
-    print(f"Creating tiles from {image_path}...")
+    print(f"Creating tiles from {image_path}...", end=" ", flush=True)
 
     if output_folder.exists():
-        print("Folder already exists.")
+        print("Skipped because folder already exists.")
         return
 
     # Ensure output directory exists
@@ -511,12 +386,75 @@ def tile_tiff_rasterio(image_path: Path, output_folder: Path, tile_size=512):
 
                 tile_index += 1
 
-    print(f"Saved {tile_index} tiles in {output_folder}")
+    print(f"Saved {tile_index} tiles in {output_folder}.")
+
+
+def reproject_to_common_crs(input_file: Path, output_file: Path, target_crs: str):
+    """
+    Reproject a raster to a common CRS.
+
+    Parameters
+    ----------
+    input_file : Path
+        The path to the input raster file.
+    output_file : Path
+        The path to the output reprojected raster file.
+    target_crs : str
+        The target CRS (e.g., "EPSG:28992").
+    """
+    with rasterio.open(input_file) as src:
+        transform, width, height = calculate_default_transform(
+            src.crs, target_crs, src.width, src.height, *src.bounds
+        )
+        kwargs = src.meta.copy()
+        kwargs.update(
+            {
+                "crs": target_crs,
+                "transform": transform,
+                "width": width,
+                "height": height,
+            }
+        )
+
+        with rasterio.open(output_file, "w", **kwargs) as dst:
+            for i in range(1, src.count + 1):
+                reproject(
+                    source=rasterio.band(src, i),
+                    destination=rasterio.band(dst, i),
+                    src_transform=src.transform,
+                    src_crs=src.crs,
+                    dst_transform=transform,
+                    dst_crs=target_crs,
+                    resampling=Resampling.nearest,
+                )
 
 
 def merge_tiff_files(
     input_files: list[Path], output_file: Path, nodata: float | None = None
 ):
+    """
+    Merge multiple raster files into one, ensuring they have a common CRS.
+
+    Parameters
+    ----------
+    input_files : list[Path]
+        List of input raster files.
+    output_file : Path
+        Path to the output merged raster file.
+    nodata : float | None
+        NoData value for the output raster.
+    """
+    target_crs = "EPSG:28992"
+
+    if len(input_files) == 0:
+        print("No input files provided.")
+        return
+
+    # Reproject all input files to the target CRS
+    for input_file in input_files:
+        reproject_to_common_crs(input_file, input_file, target_crs)
+
+    # Merge the reprojected files
     src_files_to_mosaic = [rasterio.open(f, "r") for f in input_files]
     nodata = nodata or src_files_to_mosaic[0].nodata
     mosaic, out_trans = merge(src_files_to_mosaic, nodata=nodata)
@@ -541,12 +479,33 @@ def merge_tiff_files(
     for src in src_files_to_mosaic:
         src.close()
 
-    print(f"Merged raster saved as {output_file}")
+    print(f"Saved as {output_file}.")
 
 
-def download_all(
-    bbox: BboxInt, main_data_folder: Path, tile_size: int, filter_buildings=True
-):
+def download_all(bbox: BboxInt, main_data_folder: Path, filter_buildings=True):
+    """
+    Download all the data for the given bounding box.
+    This includes the DSM, the buildings, and the mask.
+    The data is saved in a folder named after the bounding box.
+
+    Parameters
+    ----------
+    bbox : BboxInt
+        The bounding box.
+    main_data_folder : Path
+        The folder where the data is stored.
+    filter_buildings : bool
+        Whether to filter the buildings or not.
+
+    Returns
+    -------
+    data_folder : Path
+        The folder where the data is stored.
+    dsm_file : Path
+        The path to the DSM file.
+    mask_file : Path
+        The path to the mask file.
+    """
     data_folder = main_data_folder / bbox.folder_name()
     data_folder.mkdir(parents=True, exist_ok=True)
 
@@ -564,7 +523,7 @@ def download_all(
     download_buildings(buildings_file, bbox)
     if filter_buildings:
         filtered_buildings_file = (
-            data_folder / "buildings" / "buildings_filtered.geojson"
+            data_folder / "buildings_filtered" / "buildings.geojson"
         )
         filter_small_buildings(buildings_file, filtered_buildings_file)
         buildings_file = filtered_buildings_file
@@ -572,26 +531,28 @@ def download_all(
     # Create a mask from the buildings
     mask_file = data_folder / "mask" / "merged.tif"
     if filter_buildings:
-        mask_file = data_folder / "mask" / "merged_filtered.tif"
+        mask_file = data_folder / "mask_filtered" / "merged.tif"
     create_mask(buildings_file, mask_file, bbox)
 
-    # Create tiles from the DSM and mask
-    tiles_dsm_folder = data_folder / "dsm" / f"tiles_{tile_size}"
-    tiles_mask_folder = data_folder / "mask" / f"tiles_{tile_size}"
-    if filter_buildings:
-        tiles_mask_folder = data_folder / "mask" / f"tiles_{tile_size}_filtered"
-    tile_tiff_rasterio(dsm_file, tiles_dsm_folder, tile_size=tile_size)
-    tile_tiff_rasterio(mask_file, tiles_mask_folder, tile_size=tile_size)
-
-    return data_folder, tiles_dsm_folder, tiles_mask_folder
+    return data_folder, dsm_file, mask_file
 
 
-if __name__ == "__main__":
-    # minx, maxy, maxx, miny = 120000.0, 481500.0, 125000.0, 481250.0
-    minx, maxy, maxx, miny = 80000, 457000, 85000, 452000
-    main_data_folder = Path("../data")
-    tile_size = 512
+def tile_image(image_file: Path, tile_size: int) -> Path:
+    """
+    Tile the image into smaller images of the given size.
 
-    bbox = (minx, maxy, maxx, miny)
+    Parameters
+    ----------
+    image_file : Path
+        The path to the image file.
+    tile_size : int
+        The size of the tiles.
 
-    # download_all(bbox, main_data_folder, tile_size)
+    Returns
+    -------
+    Path
+        The path to the folder where the tiles are saved.
+    """
+    output_folder = image_file.parent / f"tiles_{tile_size}"
+    tile_tiff_rasterio(image_file, output_folder, tile_size=tile_size)
+    return output_folder

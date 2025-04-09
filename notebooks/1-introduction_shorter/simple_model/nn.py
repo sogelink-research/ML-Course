@@ -1,5 +1,8 @@
+import datetime
 import json
+from collections import defaultdict
 from pathlib import Path
+from typing import Tuple
 
 import numpy as np
 import rasterio
@@ -7,108 +10,49 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from affine import Affine
-from torchvision.ops.focal_loss import sigmoid_focal_loss
-from tqdm.autonotebook import tqdm
+from matplotlib import pyplot as plt
 
-from simple_model.dataloader import ImagesLoader
+from simple_model.dataloader import ImagesLoader, TrainValLoaders
 from simple_model.dataparse import merge_tiff_files
+from simple_model.metrics import EvaluationMetrics, full_loss
+from simple_model.model_plotting import (
+    LayerDrawer,
+    TensorDrawer,
+    output_shape_conv,
+    output_shape_pool,
+    output_shape_upsample,
+    plot_model,
+)
 from simple_model.visualisation import TrainingMetrics
 
-# # Function to check if running inside a Jupyter Notebook
-# def is_running_in_notebook():
-#     """Detect whether the script is running inside a Jupyter Notebook."""
-#     try:
-#         from IPython import get_ipython
-
-#         return get_ipython() is not None
-#     except ImportError:
-#         return False
+# from tqdm.autonotebook import tqdm
 
 
-# # Import correct tqdm version
-# if is_running_in_notebook():
-#     from tqdm.notebook import tqdm  # Jupyter-friendly
-# else:
-#     from tqdm import tqdm  # Standard terminal tqdm
+# Function to check if running inside a Jupyter Notebook
+def is_running_in_notebook():
+    """Detect whether the script is running inside a Jupyter Notebook."""
+    try:
+        from IPython import get_ipython
+
+        return get_ipython() is not None
+    except ImportError:
+        return False
 
 
-def accuracy(
-    tp: np.ndarray, fp: np.ndarray, tn: np.ndarray, fn: np.ndarray
-) -> np.ndarray:
-    """
-    Calculate the accuracy metric (TP + TN) / (TP + FP + TN + FN).
-    """
-    return (tp + tn) / (tp + fp + tn + fn)
+# Import correct tqdm version
+if is_running_in_notebook():
+    from tqdm.notebook import tqdm  # Jupyter-friendly
+else:
+    from tqdm import tqdm  # Standard terminal tqdm
 
 
-def precision(
-    tp: np.ndarray, fp: np.ndarray, tn: np.ndarray, fn: np.ndarray
-) -> np.ndarray:
-    """
-    Calculate the precision metric TP / (TP + FP).
-    If the denominator is 0, return -1.0.
-    """
-    return np.where(tp + fp == 0, -1.0, tp / (tp + fp))
-
-
-def recall(
-    tp: np.ndarray, fp: np.ndarray, tn: np.ndarray, fn: np.ndarray
-) -> np.ndarray:
-    """
-    Calculate the recall metric TP / (TP + FN).
-    If the denominator is 0, return -1.0.
-    """
-    return np.where(tp + fn == 0, -1.0, tp / (tp + fn))
-
-
-def f1(tp: np.ndarray, fp: np.ndarray, tn: np.ndarray, fn: np.ndarray) -> np.ndarray:
-    """
-    Calculate the F1 score metric 2 * (precision * recall) / (precision + recall).
-    If the denominator is 0, return -1.0.
-    """
-    precision_value = precision(tp, fp, tn, fn)
-    recall_value = recall(tp, fp, tn, fn)
-    return np.where(
-        precision_value + recall_value == 0,
-        -1.0,
-        2 * (precision_value * recall_value) / (precision_value + recall_value),
-    )
-
-
-def dice_loss(logits, targets, reduction: str, smooth: float = 1.0):
-    preds = torch.sigmoid(logits)
-    intersection = (preds * targets).sum(dim=(2, 3))
-    union = preds.sum(dim=(2, 3)) + targets.sum(dim=(2, 3))
-    loss = 1 - ((2.0 * intersection + smooth) / (union + smooth))
-    if reduction == "mean":
-        return loss.mean()
-    elif reduction == "sum":
-        return loss.sum()
-    else:
-        raise ValueError(f"Invalid reduction: {reduction}")
-
-
-def full_loss(logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
-    alpha = 1
-    beta = 1
-    gamma = 1
-    sum_weights = alpha + beta + gamma
-    alpha /= sum_weights
-    beta /= sum_weights
-    gamma /= sum_weights
-
-    bce = F.binary_cross_entropy_with_logits(logits, targets, reduction="mean")
-    dice = dice_loss(logits, targets, reduction="mean")
-    focal = sigmoid_focal_loss(logits, targets, reduction="mean")
-
-    # Combine the losses
-    total = alpha * bce + beta * dice + gamma * focal
-    return total
+def get_new_model_name() -> str:
+    return datetime.datetime.now().strftime("%y%m%d_%H%M%S")
 
 
 class Downsample(nn.Module):
 
-    def __init__(self, in_channels: int, out_channels: int, layers: int):
+    def __init__(self, in_channels: int, out_channels: int, layers: int, reduce: bool):
         super().__init__()
 
         kernel_size = 3
@@ -126,31 +70,28 @@ class Downsample(nn.Module):
             ]
         )
 
-        # self.conv1 = nn.Conv2d(
-        #     in_channels, out_channels, kernel_size=kernel_size, padding=padding
-        # )
-        # self.conv2 = nn.Conv2d(
-        #     out_channels, out_channels, kernel_size=kernel_size, padding=padding
-        # )
-
-        # self.bn1 = nn.BatchNorm2d(out_channels)
-        # self.bn2 = nn.BatchNorm2d(out_channels)
-
         self.bns = nn.ModuleList([nn.BatchNorm2d(out_channels) for i in range(layers)])
 
+        if reduce:
+            self.pool = nn.MaxPool2d(kernel_size=2)
+        else:
+            self.pool = nn.Identity()
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # x = F.relu(self.bn1(self.conv1(x)))
-        # x = F.relu(self.bn2(self.conv2(x)))
         for conv, bn in zip(self.convs, self.bns):
             x = F.relu(bn(conv(x)))
-        x_reduced = F.max_pool2d(x, kernel_size=2)
+
+        x_reduced = self.pool(x)
+        # x_reduced = F.max_pool2d(x, kernel_size=2)
 
         return x, x_reduced
 
 
 class Upsample(nn.Module):
 
-    def __init__(self, in_channels: int, out_channels: int, layers: int):
+    def __init__(
+        self, in_channels: int, out_channels: int, layers: int, upsample: bool
+    ):
         super().__init__()
 
         if layers < 1:
@@ -163,7 +104,10 @@ class Upsample(nn.Module):
 
         for i in range(layers):
             if i == 0:
-                in_channels_layer = 2 * in_channels
+                if upsample:
+                    in_channels_layer = 2 * in_channels
+                else:
+                    in_channels_layer = in_channels
             elif i == 1:
                 in_channels_layer = in_channels
             else:
@@ -185,25 +129,22 @@ class Upsample(nn.Module):
 
         self.convs = nn.ModuleList(self.convs)
 
-        # self.conv1 = nn.Conv2d(
-        #     2 * in_channels, in_channels, kernel_size=kernel_size, padding=padding
-        # )
-        # self.conv2 = nn.Conv2d(
-        #     in_channels, out_channels, kernel_size=kernel_size, padding=padding
-        # )
+        self.do_upsample = upsample
 
-        self.upsample = nn.Upsample(
-            scale_factor=2,
-            mode="bilinear",
-        )
+        if upsample:
+            self.upsample = nn.Upsample(
+                scale_factor=2,
+                mode="bilinear",
+            )
+        else:
+            self.upsample = nn.Identity()
 
     def forward(self, x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
-        x = self.upsample(x)
-        x = torch.cat((x, y), dim=1)
+        if self.do_upsample:
+            x = self.upsample(x)
+            x = torch.cat((x, y), dim=1)
         for conv in self.convs:
             x = F.relu(conv(x))
-        # x = F.relu(self.conv1(x))
-        # x = F.relu(self.conv2(x))
 
         return x
 
@@ -212,7 +153,7 @@ class SegmentationConvolutionalNetwork(nn.Module):
 
     def __init__(
         self,
-        image_size: tuple[int, int],
+        image_shape: tuple[int, int],
         encoder_channels: list[int],
         layers_downsample: int,
         layers_upsample: int,
@@ -222,28 +163,58 @@ class SegmentationConvolutionalNetwork(nn.Module):
     ):
         super().__init__()
 
-        self.image_size = image_size
+        number_downsizing = len(encoder_channels) - 1
+        divisor = 2**number_downsizing
+        if image_shape[0] % divisor != 0 or image_shape[1] % divisor != 0:
+            raise ValueError(
+                f"With {number_downsizing + 1} encoder steps (= len(encoder_channels)) \
+                                , the model performs {number_downsizing} downsampling, meaning that \
+                                the width and height of the image should be divisible by \
+                                2^{number_downsizing} (= {2**number_downsizing}) "
+            )
+
+        self.image_shape = image_shape
+        self.input_channels = input_channels
 
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         # Encoder
         encoder_steps = [input_channels, *encoder_channels]
-        self.encoders = nn.ModuleList(
-            [
-                Downsample(encoder_steps[i], encoder_steps[i + 1], layers_downsample)
-                for i in range(len(encoder_steps) - 1)
-            ]
-        )
+        encoders = []
+        for i in range(len(encoder_steps) - 1):
+            if i == len(encoder_steps) - 2:
+                reduce = False
+            else:
+                reduce = True
+            encoders.append(
+                Downsample(
+                    encoder_steps[i],
+                    encoder_steps[i + 1],
+                    layers_downsample,
+                    reduce=reduce,
+                )
+            )
+        self.encoders = nn.ModuleList(encoders)
 
         # Decoder
         decoder_steps = encoder_steps[:]
         decoder_steps[0] = 1
-        self.decoders = nn.ModuleList(
-            [
-                Upsample(decoder_steps[i + 1], decoder_steps[i], layers_upsample)
-                for i in range(len(encoder_steps) - 2, -1, -1)
-            ]
-        )
+        decoders = []
+        for i in range(len(decoder_steps) - 2, -1, -1):
+            if i == len(decoder_steps) - 2:
+                upsample = False
+            else:
+                upsample = True
+            decoders.append(
+                Upsample(
+                    decoder_steps[i + 1],
+                    decoder_steps[i],
+                    layers_upsample,
+                    upsample=upsample,
+                )
+            )
+
+        self.decoders = nn.ModuleList(decoders)
 
         self.final_conv = nn.Conv2d(decoder_steps[0], 1, kernel_size=1)
 
@@ -252,7 +223,7 @@ class SegmentationConvolutionalNetwork(nn.Module):
         # Save the model input parameters
         self.model_folder = model_folder
         parameters = {
-            "image_size": image_size,
+            "image_shape": image_shape,
             "encoder_channels": encoder_channels,
             "layers_downsample": layers_downsample,
             "layers_upsample": layers_upsample,
@@ -260,9 +231,12 @@ class SegmentationConvolutionalNetwork(nn.Module):
             "data_folders": list(map(str, data_folders)),
         }
         model_folder.mkdir(parents=True, exist_ok=True)
-        parameters_path = model_folder.joinpath("parameters.json")
+        parameters_path = model_folder / "parameters.json"
         with open(parameters_path, "w") as f:
             json.dump(parameters, f)
+
+        self.training_folder = model_folder / "training"
+        self.training_folder.mkdir(parents=True, exist_ok=True)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # Encoder
@@ -287,21 +261,33 @@ class SegmentationConvolutionalNetwork(nn.Module):
         images: torch.Tensor,
         targets: torch.Tensor,
         optimizer: torch.optim.Optimizer,
-    ) -> float:
+        metrics: EvaluationMetrics | None = None,
+    ) -> Tuple[torch.Tensor, Tuple[torch.Tensor]]:
         logits = self.forward(images)
-        loss = full_loss(logits, targets)
+        loss, loss_components = full_loss(logits, targets)
 
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
 
-        return loss.nanmean().item()
+        with torch.no_grad():
+            metrics.add_logits_and_targets(logits, targets)
 
-    def validation_step(self, images: torch.Tensor, targets: torch.Tensor) -> float:
+        return loss, loss_components
+
+    def validation_step(
+        self,
+        images: torch.Tensor,
+        targets: torch.Tensor,
+        metrics: EvaluationMetrics | None = None,
+    ) -> Tuple[torch.Tensor, Tuple[torch.Tensor]]:
         logits = self.forward(images)
-        loss = full_loss(logits, targets)
+        loss, loss_components = full_loss(logits, targets)
 
-        return loss.nanmean().item()
+        with torch.no_grad():
+            metrics.add_logits_and_targets(logits, targets)
+
+        return loss, loss_components
 
     def _masks_from_original_sizes(
         self, targets: torch.Tensor, original_sizes: torch.Tensor
@@ -312,26 +298,26 @@ class SegmentationConvolutionalNetwork(nn.Module):
 
     def train_model(
         self,
-        dataloaders: tuple[torch.utils.data.DataLoader],
-        epochs: int,
-        visualisation_output: Path,
+        dataloaders: TrainValLoaders,
+        max_epochs: int,
         stop_early_after: int = 10,
+        save_weights: bool = True,
     ):
         print("Training the model...")
         print(f"Using the following device: {self.device}")
 
-        # optimizer = torch.optim.AdamW(self.parameters(), lr=0.001, weight_decay=1e-4)
-        optimizer = torch.optim.SGD(
-            self.parameters(), lr=0.01, weight_decay=1e-5, momentum=0.9
-        )
+        optimizer = torch.optim.AdamW(self.parameters(), lr=0.01, weight_decay=1e-4)
+        # optimizer = torch.optim.SGD(
+        #     self.parameters(), lr=0.01, weight_decay=1e-5, momentum=0.9
+        # )
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-            optimizer, mode="min", factor=0.5, patience=5
+            optimizer, mode="min", factor=0.3, patience=10
         )
-        progress = tqdm(range(epochs))
+        progress = tqdm(range(max_epochs))
 
         # Save the training parameters
         training_parameters = {
-            "epochs": epochs,
+            "max_epochs": max_epochs,
             "stop_early_after": stop_early_after,
             "optimizer": {
                 "name": optimizer.__class__.__name__,
@@ -342,9 +328,7 @@ class SegmentationConvolutionalNetwork(nn.Module):
                 "params": scheduler.state_dict(),
             },
         }
-        training_parameters_path = self.model_folder.joinpath(
-            "training_parameters.json"
-        )
+        training_parameters_path = self.model_folder / "training_parameters.json"
         with open(training_parameters_path, "w") as f:
             json.dump(training_parameters, f)
 
@@ -356,24 +340,42 @@ class SegmentationConvolutionalNetwork(nn.Module):
         best_model = None
 
         # Visualisation
-        # visualisation = TrainingVisualisation()
-        visualisation = TrainingMetrics(show=True)
-        visualisation.visualise()
-
-        all_mean_losses = dict(training=[], validation=[])
+        training_metrics = TrainingMetrics(show=True)
+        training_metrics_vis_path = self.training_folder / "training_metrics_vis.png"
+        training_metrics.visualise(save_paths=[training_metrics_vis_path])
+        training_metrics_values_path = (
+            self.training_folder / "training_metrics_values.json"
+        )
 
         for epoch in progress:
             losses = dict(training=[], validation=[])
+            bces = dict(training=[], validation=[])
+            dices = dict(training=[], validation=[])
+            focals = dict(training=[], validation=[])
             batches_sizes = dict(training=[], validation=[])
+
+            train_eval_metrics = EvaluationMetrics()
+            eval_eval_metrics = EvaluationMetrics()
 
             self.train()
 
-            for images, targets, indices, original_sizes in dataloaders[0]:
+            for (
+                images,
+                targets,
+                indices,
+                # original_sizes,
+                # images_set_indices,
+            ) in dataloaders.train_dataloader:
                 images = images.to(self.device)
                 targets = targets.float().to(self.device)
-                losses["training"].append(
-                    self.training_step(images, targets, optimizer)
+                loss, (bce, dice, focal) = self.training_step(
+                    images, targets, optimizer, metrics=train_eval_metrics
                 )
+                losses["training"].append(loss.item())
+                bces["training"].append(bce.item())
+                dices["training"].append(dice.item())
+                focals["training"].append(focal.item())
+
                 batches_sizes["training"].append(images.shape[0])
 
             mean_training_loss = (
@@ -382,16 +384,29 @@ class SegmentationConvolutionalNetwork(nn.Module):
                 )
                 / sum(batches_sizes["training"])
             ).item()
+
             if scheduler is not None:
                 scheduler.step(mean_training_loss)
 
             with torch.no_grad():
                 self.eval()
-
-                for images, targets, indices, original_sizes in dataloaders[1]:
+                for (
+                    images,
+                    targets,
+                    indices,
+                    # original_sizes,
+                    # images_set_indices,
+                ) in dataloaders.val_dataloader:
                     images = images.to(self.device)
                     targets = targets.float().to(self.device)
-                    losses["validation"].append(self.validation_step(images, targets))
+                    loss, (bce, dice, focal) = self.validation_step(
+                        images, targets, metrics=eval_eval_metrics
+                    )
+                    losses["validation"].append(loss.item())
+                    bces["validation"].append(bce.item())
+                    dices["validation"].append(dice.item())
+                    focals["validation"].append(focal.item())
+
                     batches_sizes["validation"].append(images.shape[0])
 
             mean_validation_loss = (
@@ -403,51 +418,66 @@ class SegmentationConvolutionalNetwork(nn.Module):
             ).item()
 
             progress.set_description(
-                "[training.loss] {:.4f}, [validation.loss] {:.4f}".format(
+                "[training.loss] {:.6f}, [validation.loss] {:.6f}".format(
                     mean_training_loss, mean_validation_loss
                 ),
                 refresh=True,
             )
-
-            all_mean_losses["training"].append(mean_training_loss)
-            all_mean_losses["validation"].append(mean_validation_loss)
 
             current_lr = (
                 scheduler.get_last_lr()[0]
                 if scheduler is not None
                 else optimizer.param_groups[0]["lr"]
             )
-            # visualisation.update_plots(
-            #     epoch=epoch,
-            #     train_loss=mean_training_loss,
-            #     val_loss=mean_validation_loss,
-            #     lr=current_lr,
-            # )
-            visualisation.update(
-                category_name="Training",
-                metric_name="Loss",
-                val=mean_training_loss,
-                y_axis="Loss",
-            )
-            visualisation.update(
-                category_name="Validation",
-                metric_name="Loss",
-                val=mean_validation_loss,
-                y_axis="Loss",
-            )
-            visualisation.update(
+
+            # Update the visualisation with metrics values
+            categories_names = ["Training", "Validation"]
+            losses = {
+                "Loss": [mean_training_loss, mean_validation_loss],
+                "BCE Loss": [np.mean(bces["training"]), np.mean(bces["validation"])],
+                "Dice Loss": [np.mean(dices["training"]), np.mean(dices["validation"])],
+                "Focal Loss": [
+                    np.mean(focals["training"]),
+                    np.mean(focals["validation"]),
+                ],
+            }
+            categories_eval_metrics = [train_eval_metrics, eval_eval_metrics]
+            for i, (cat_name, eval_metric) in enumerate(
+                zip(categories_names, categories_eval_metrics)
+            ):
+                for metric_name, metric_value in losses.items():
+                    training_metrics.update(
+                        category_name=cat_name,
+                        metric_name=metric_name,
+                        val=metric_value[i],
+                    )
+                for (
+                    metric_name,
+                    metric_value,
+                ) in eval_metric.get_global_metrics().items():
+                    training_metrics.update(
+                        category_name=cat_name,
+                        metric_name=metric_name,
+                        val=metric_value,
+                        y_limits=(0, 1),
+                    )
+
+            training_metrics.update(
                 category_name="Training",
                 metric_name="Learning rate",
                 val=current_lr,
                 y_axis="Learning rate",
             )
 
-            visualisation.end_loop(epoch=epoch)
-            visualisation.visualise()
+            training_metrics.end_loop(epoch=epoch)
+            training_metrics.visualise(save_paths=[training_metrics_vis_path])
+            training_metrics.save_metrics(save_path=training_metrics_values_path)
 
             if mean_validation_loss < best_loss:
                 best_loss = mean_validation_loss
                 best_model = self.state_dict()
+                if save_weights:
+                    self.save_weights()
 
             if mean_validation_loss < best_loss_big_change * big_change_factor:
                 best_loss_big_change = mean_validation_loss
@@ -456,51 +486,51 @@ class SegmentationConvolutionalNetwork(nn.Module):
                 if epoch - epoch_big_change > stop_early_after:
                     break
 
-        visualisation_output.parent.mkdir(parents=True, exist_ok=True)
-        # visualisation.savefig(visualisation_output)
-        # visualisation.close()
-        visualisation.save_metrics(visualisation_output)
-
         self.load_state_dict(best_model)
 
     def save_predictions(
         self,
         images_loader: ImagesLoader,
-        dataloaders: tuple[torch.utils.data.DataLoader],
+        dataloaders: TrainValLoaders,
         output_folder: Path,
         threshold: float = 0.5,
     ):
-        output_folder.mkdir(parents=True, exist_ok=True)
-        predictions_folder = output_folder / "output"
-        errors_folder = output_folder / "error"
-        probabilities_folder = output_folder / "probabilities"
+        # output_folder.mkdir(parents=True, exist_ok=True)
 
-        train_postfix = "train"
-        val_postfix = "val"
+        dataloaders_postfixes = {
+            "train": dataloaders.train_dataloader,
+            "val": dataloaders.val_dataloader,
+        }
+
+        def get_path(
+            category: str, postfix: str, image_set_name: str, tile_name: str = None
+        ):
+            if tile_name is not None:
+                path = (
+                    output_folder
+                    / image_set_name
+                    / f"tiles_{postfix}"
+                    / category
+                    / tile_name
+                )
+            else:
+                path = output_folder / image_set_name / f"{category}_{postfix}.tif"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            return path
 
         self.eval()
         with torch.no_grad():
-            for dataloader, postfix in zip(dataloaders, [train_postfix, val_postfix]):
-                # Create subfolders for predictions and errors
-                current_predictions_tiles_folder = (
-                    predictions_folder / postfix / "tiles"
-                )
-                current_predictions_tiles_folder.mkdir(parents=True, exist_ok=True)
-
-                current_errors_tiles_folder = errors_folder / postfix / "tiles"
-                current_errors_tiles_folder.mkdir(parents=True, exist_ok=True)
-
-                current_probabilities_tiles_folder = (
-                    probabilities_folder / postfix / "tiles"
-                )
-                current_probabilities_tiles_folder.mkdir(parents=True, exist_ok=True)
-
+            for postfix, dataloader in dataloaders_postfixes.items():
                 # Store files paths for merging
-                predictions_files = []
-                errors_files = []
-                probabilities_files = []
+                predictions_files = defaultdict(list)
+                errors_files = defaultdict(list)
+                probabilities_files = defaultdict(list)
 
-                for images, targets, indices, original_sizes in dataloader:
+                for (
+                    images,
+                    targets,
+                    indices,
+                ) in dataloader:
                     images = images.to(self.device)
                     logits = self.forward(images)
                     probabilities = torch.sigmoid(logits)
@@ -515,9 +545,20 @@ class SegmentationConvolutionalNetwork(nn.Module):
                     # Set predictions to 0 or 1
                     predictions = np.where(probabilities > threshold, 1, 0)
 
-                    for probability, prediction, target, index, original_size in zip(
-                        probabilities, predictions, targets, indices, original_sizes
+                    for (
+                        probability,
+                        prediction,
+                        target,
+                        index,
+                    ) in zip(
+                        probabilities,
+                        predictions,
+                        targets,
+                        indices,
                     ):
+                        original_size = images_loader.get_original_size(index)
+                        image_set_name = images_loader.get_image_set_name(index)
+
                         # Resize the predictions to the original size
                         probability = probability[
                             : original_size[1], : original_size[0]
@@ -530,18 +571,19 @@ class SegmentationConvolutionalNetwork(nn.Module):
                         image_meta = images_loader.get_meta(index).copy()
 
                         # Get the file paths
-                        prediction_path = current_predictions_tiles_folder.joinpath(
-                            image_file_name
+                        prediction_path = get_path(
+                            "predictions", postfix, image_set_name, image_file_name
                         )
-                        error_path = current_errors_tiles_folder.joinpath(
-                            image_file_name
+                        error_path = get_path(
+                            "errors", postfix, image_set_name, image_file_name
                         )
-                        probabilities_path = (
-                            current_probabilities_tiles_folder.joinpath(image_file_name)
+                        probabilities_path = get_path(
+                            "probabilities", postfix, image_set_name, image_file_name
                         )
-                        predictions_files.append(prediction_path)
-                        errors_files.append(error_path)
-                        probabilities_files.append(probabilities_path)
+
+                        predictions_files[image_set_name].append(prediction_path)
+                        errors_files[image_set_name].append(error_path)
+                        probabilities_files[image_set_name].append(probabilities_path)
 
                         image_meta.update({"dtype": "uint8", "nodata": 255})
                         with rasterio.open(prediction_path, "w", **image_meta) as dest:
@@ -559,89 +601,102 @@ class SegmentationConvolutionalNetwork(nn.Module):
                             dest.write(probability, 1)
 
                 # Merge the prediction and error files
-                merge_tiff_files(
-                    predictions_files, output_folder / f"predictions_{postfix}.tif"
-                )
-                merge_tiff_files(errors_files, output_folder / f"errors_{postfix}.tif")
-                merge_tiff_files(
-                    probabilities_files, output_folder / f"probabilities_{postfix}.tif"
-                )
+                for image_set_name in predictions_files.keys():
+                    full_predictions_path = get_path(
+                        "predictions", postfix, image_set_name
+                    )
+                    full_errors_path = get_path("errors", postfix, image_set_name)
+                    full_probabilities_path = get_path(
+                        "probabilities", postfix, image_set_name
+                    )
+                    merge_tiff_files(
+                        predictions_files[image_set_name], full_predictions_path
+                    )
+                    merge_tiff_files(errors_files[image_set_name], full_errors_path)
+                    merge_tiff_files(
+                        probabilities_files[image_set_name], full_probabilities_path
+                    )
 
     def save_metrics(
         self,
         images_loader: ImagesLoader,
-        dataloaders: tuple[torch.utils.data.DataLoader],
+        dataloaders: TrainValLoaders,
         metrics_folder: Path,
         threshold: float = 0.5,
     ):
-        metrics_folder.mkdir(parents=True, exist_ok=True)
+        # metrics_folder.mkdir(parents=True, exist_ok=True)
 
-        metrics_names = ["accuracy", "precision", "recall", "f1"]
-        metrics_functions = [accuracy, precision, recall, f1]
+        dataloaders_postfixes = {
+            "train": dataloaders.train_dataloader,
+            "val": dataloaders.val_dataloader,
+        }
 
-        train_postfix = "train"
-        val_postfix = "val"
+        def get_path(
+            category: str, postfix: str, image_set_name: str, tile_name: str = None
+        ):
+            if tile_name is not None:
+                path = (
+                    metrics_folder
+                    / image_set_name
+                    / f"tiles_{postfix}"
+                    / category
+                    / tile_name
+                )
+            else:
+                path = metrics_folder / image_set_name / f"{category}_{postfix}.tif"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            return path
 
         self.eval()
-        for dataloader, postfix in zip(dataloaders, [train_postfix, val_postfix]):
+        for postfix, dataloader in dataloaders_postfixes.items():
             index_all = []
-            tp_all = []
-            fp_all = []
-            tn_all = []
-            fn_all = []
-
-            metrics_tiles_folders = [
-                metrics_folder / name / f"tiles_{postfix}" for name in metrics_names
-            ]
+            evaluation_metrics = EvaluationMetrics()
 
             with torch.no_grad():
-                for images, targets, indices, original_sizes in dataloader:
+                for (
+                    images,
+                    targets,
+                    indices,
+                ) in dataloader:
                     images = images.to(self.device)
                     logits = self.forward(images)
-                    probabilities = torch.sigmoid(logits)
 
-                    probabilities = probabilities.squeeze().detach().cpu().numpy()
+                    logits = logits.squeeze().detach().cpu().numpy()
                     targets = targets.squeeze().detach().cpu().numpy()
 
-                    # Transpose to write the image with rasterio
-                    probabilities = np.transpose(probabilities, (0, 2, 1))
-                    targets = np.transpose(targets, (0, 2, 1))
-
-                    # Set predictions to 0 or 1
-                    predictions = np.where(probabilities > threshold, 1, 0)
-
-                    for prediction, target, index in zip(predictions, targets, indices):
-                        # Resize the predictions to the original size
-                        prediction = prediction[
-                            : original_sizes[0][1], : original_sizes[0][0]
-                        ]
-                        target = target[: original_sizes[0][1], : original_sizes[0][0]]
-
+                    for logit, target, index in zip(logits, targets, indices):
                         # Get the index and the confusion matrix values
                         index = index.item()
                         index_all.append(index)
-                        tp = np.sum(np.logical_and(prediction == 1, target == 1))
-                        fp = np.sum(np.logical_and(prediction == 1, target == 0))
-                        tn = np.sum(np.logical_and(prediction == 0, target == 0))
-                        fn = np.sum(np.logical_and(prediction == 0, target == 1))
-                        tp_all.append(tp)
-                        fp_all.append(fp)
-                        tn_all.append(tn)
-                        fn_all.append(fn)
 
-            # Calculate and save metrics for each image
-            for metric_name, metric_tiles_folder, metric_function in zip(
-                metrics_names, metrics_tiles_folders, metrics_functions
+                        evaluation_metrics.add_logits_and_targets(
+                            logit, target, threshold=threshold
+                        )
+
+            metrics_individual_values = evaluation_metrics.get_individual_metrics()
+
+            # metrics_tiles_folders = {
+            #     (metric_name, image_set_name): metrics_folder
+            #     / metric_name
+            #     / image_set_name
+            #     / f"tiles_{postfix}"
+            #     for metric_name in metrics_individual_values.keys()
+            #     for image_set_name in images_loader.get_all_image_set_names()
+            # }
+            # for metrics_tiles_folder in metrics_tiles_folders.values():
+            #     metrics_tiles_folder.mkdir(parents=True, exist_ok=True)
+
+            for metric_name, metric_values in zip(
+                metrics_individual_values.keys(), metrics_individual_values.values()
             ):
-                metric_tiles_folder.mkdir(parents=True, exist_ok=True)
-                metrics = metric_function(
-                    np.array(tp_all),
-                    np.array(fp_all),
-                    np.array(tn_all),
-                    np.array(fn_all),
-                )
-                metric_files = []
-                for index, metric in zip(index_all, metrics):
+                metric_set_files = {
+                    image_set_name: []
+                    for image_set_name in images_loader.get_all_image_set_names()
+                }
+                for index, metric_value in zip(index_all, metric_values):
+                    # Get the image set name
+                    image_set_name = images_loader.get_image_set_name(index)
+
                     # Get the correct metadata to cover the image with one pixel
                     image_meta = images_loader.get_meta(index).copy()
                     image_meta["transform"] = Affine(
@@ -659,39 +714,40 @@ class SegmentationConvolutionalNetwork(nn.Module):
                         print(image_meta)
 
                     image_file_name = images_loader.get_file_name(index)
-                    metric_path = metric_tiles_folder.joinpath(image_file_name)
+                    # metric_tiles_folder = metrics_tiles_folders[
+                    #     (metric_name, image_set_name)
+                    # ]
+                    # metric_path = metric_tiles_folder / image_file_name
+                    metric_path = get_path(
+                        metric_name.lower(), postfix, image_set_name, image_file_name
+                    )
 
                     with rasterio.open(metric_path, "w", **image_meta) as dest:
-                        dest.write(np.array([metric]).reshape((1, 1)), 1)
+                        dest.write(np.array([metric_value]).reshape((1, 1)), 1)
 
-                    metric_files.append(metric_path)
+                    metric_set_files[image_set_name].append(metric_path)
 
                 # Merge the metrics files
-                merge_tiff_files(
-                    metric_files,
-                    metrics_folder.joinpath(f"{metric_name}_{postfix}.tif"),
-                )
+                for image_set_name, metric_files in metric_set_files.items():
+                    full_metric_path = get_path(
+                        metric_name.lower(), postfix, image_set_name
+                    )
+
+                    merge_tiff_files(metric_files, full_metric_path)
 
             # Calculate the global metrics
-            tp_total = np.sum(tp_all)
-            fp_total = np.sum(fp_all)
-            tn_total = np.sum(tn_all)
-            fn_total = np.sum(fn_all)
-            metrics = [
-                metric_function(tp_total, fp_total, tn_total, fn_total).item()
-                for metric_function in metrics_functions
-            ]
-            metrics_dict = dict(zip(metrics_names, metrics))
-            metrics_path = metrics_folder.joinpath("metrics.json")
+            metrics_global_values = evaluation_metrics.get_global_metrics()
+
+            metrics_path = metrics_folder / "metrics.json"
             with open(metrics_path, "w") as f:
-                json.dump(metrics_dict, f)
+                json.dump(metrics_global_values, f)
 
     def save_weights(self):
-        weights_path = self.model_folder.joinpath("weights.pth")
+        weights_path = self.model_folder / "weights.pth"
         torch.save(self.state_dict(), weights_path)
 
     def load_weights(self, model_folder: Path):
-        weights_path = model_folder.joinpath("weights.pth")
+        weights_path = model_folder / "weights.pth"
         self.load_state_dict(torch.load(weights_path))
 
     @staticmethod
@@ -700,7 +756,7 @@ class SegmentationConvolutionalNetwork(nn.Module):
             new_model_folder = model_folder
 
         new_model_folder.mkdir(parents=True, exist_ok=True)
-        parameters_path = model_folder.joinpath("parameters.json")
+        parameters_path = model_folder / "parameters.json"
         with open(parameters_path, "r") as f:
             parameters = json.load(f)
 
@@ -710,3 +766,145 @@ class SegmentationConvolutionalNetwork(nn.Module):
         model.load_weights(model_folder)
 
         return model
+
+    def plot_model(self, only_main_layers: bool = False):
+        """Plot the model architecture."""
+        tensors_drawers = []
+        tensors_drawers.append(TensorDrawer(self.input_channels, self.image_shape[0]))
+
+        layers_drawers = []
+        input_shape = self.image_shape
+
+        layers_categories = {
+            "Conv2d": "Convolution",
+            "BatchNorm2d": "Normalization",
+            "MaxPool2d": "Max Pooling",
+            "Upsample": "Upsampling",
+        }
+        layers_colors = {
+            "Convolution": "blue",
+            "Normalization": "orange",
+            "Max Pooling": "green",
+            "Upsampling": "purple",
+            "Concatenation": "red",
+        }
+
+        encoder_output_per_shape = {}
+        encoder_channel_per_shape = {}
+        previous_channels = self.input_channels
+
+        for encoder in self.encoders:
+            for conv, bn in zip(encoder.convs, encoder.bns):
+                # Calculate output shape of the convolutional layer
+                output_shape = output_shape_conv(conv, input_shape)
+
+                # Conv
+                tensors_drawers.append(TensorDrawer(conv.out_channels, output_shape[0]))
+                layers_drawers.append(
+                    LayerDrawer(
+                        layers_categories[conv.__class__.__name__],
+                        tensors_drawers[-2],
+                        tensors_drawers[-1],
+                    )
+                )
+
+                # BatchNorm
+                if not only_main_layers:
+                    tensors_drawers.append(
+                        TensorDrawer(bn.num_features, output_shape[0])
+                    )
+                    layers_drawers.append(
+                        LayerDrawer(
+                            layers_categories[bn.__class__.__name__],
+                            tensors_drawers[-2],
+                            tensors_drawers[-1],
+                        )
+                    )
+
+                input_shape = output_shape
+
+            encoder_output_per_shape[output_shape] = tensors_drawers[-1]
+            encoder_channel_per_shape[output_shape] = conv.out_channels
+            previous_channels = conv.out_channels
+
+            # MaxPool2D
+            output_shape = output_shape_pool(encoder.pool, input_shape)
+            if isinstance(encoder.pool, nn.Identity):
+                break
+            tensors_drawers.append(TensorDrawer(conv.out_channels, output_shape[0]))
+            layers_drawers.append(
+                LayerDrawer(
+                    layers_categories[encoder.pool.__class__.__name__],
+                    tensors_drawers[-2],
+                    tensors_drawers[-1],
+                )
+            )
+
+            input_shape = output_shape
+
+        for decoder in self.decoders:
+            # Upsample
+            output_shape = output_shape_upsample(decoder.upsample, input_shape)
+            if not isinstance(decoder.upsample, nn.Identity):
+                tensors_drawers.append(TensorDrawer(conv.out_channels, output_shape[0]))
+                layers_drawers.append(
+                    LayerDrawer(
+                        layers_categories[decoder.upsample.__class__.__name__],
+                        tensors_drawers[-2],
+                        tensors_drawers[-1],
+                    )
+                )
+                input_shape = output_shape
+
+            # Concatenate
+            if not isinstance(decoder.upsample, nn.Identity):
+                tensors_drawers.append(
+                    TensorDrawer(
+                        previous_channels + encoder_channel_per_shape[output_shape],
+                        output_shape[0],
+                    )
+                )
+                layers_drawers.append(
+                    LayerDrawer(
+                        "Concatenation",
+                        [
+                            encoder_output_per_shape[output_shape],
+                            tensors_drawers[-2],
+                        ],
+                        tensors_drawers[-1],
+                    )
+                )
+
+            for conv in decoder.convs:
+                # Calculate output shape of the convolutional layer
+                output_shape = output_shape_conv(conv, input_shape)
+
+                # Conv
+                tensors_drawers.append(TensorDrawer(conv.out_channels, output_shape[0]))
+                layers_drawers.append(
+                    LayerDrawer(
+                        layers_categories[conv.__class__.__name__],
+                        tensors_drawers[-2],
+                        tensors_drawers[-1],
+                    )
+                )
+
+                input_shape = output_shape
+                previous_channels = conv.out_channels
+
+        # Set a color for each size of tensor
+        tensors_colors = {}
+        for i, tensor_drawer in enumerate(tensors_drawers):
+            if tensor_drawer.image_size not in tensors_colors:
+                # Get a light color from matplotlib colors
+                tensors_colors[tensor_drawer.image_size] = plt.cm.tab10(
+                    len(tensors_colors) % 10
+                )[:3]
+
+        plot_model(
+            tensors_drawers,
+            layers_drawers,
+            tensors_colors,
+            layers_colors,
+            self.model_folder / "model_plot.png",
+        )

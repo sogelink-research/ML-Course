@@ -23,7 +23,6 @@ class Bbox:
         return self.maxy - self.miny
 
     def to_shapely(self):
-        print(self.to_tuple())
         return box(*self.to_tuple())
 
     def to_int(self):
