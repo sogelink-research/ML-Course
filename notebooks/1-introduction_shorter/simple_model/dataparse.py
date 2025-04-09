@@ -43,13 +43,21 @@ def find_dsm_urls_for_bbox(main_data_folder: Path, bbox: BboxInt):
         The list of URLs to the AHN5 DSM 50cm files.
     """
     # Download the GeoPackage with the regions
-    regions_url = "https://ns_hwh.fundaments.nl/hwh-ahn/AUX/bladwijzer.gpkg"
+    # regions_url = "https://ns_hwh.fundaments.nl/hwh-ahn/AUX/bladwijzer.gpkg"
+    regions_url = "https://basisdata.nl/hwh-ahn/AUX/bladwijzer.gpkg"
     regions_file = main_data_folder / "bladwijzer.gpkg"
 
     if not regions_file.exists():
         regions_file.parent.mkdir(parents=True, exist_ok=True)
-        response = requests.get(regions_url, stream=True, verify=False)
+
+        # Download the file
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+        }
+        response = requests.get(regions_url, stream=True, verify=False, headers=headers)
         response.raise_for_status()
+
+        # Save the file
         with open(regions_file, "wb") as f:
             for chunk in response.iter_content(chunk_size=8192):
                 f.write(chunk)
@@ -108,7 +116,6 @@ def download_dsm(tif_file: Path, bbox: BboxInt, main_data_folder: Path):
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
         }
-
         response = requests.get(url, stream=True, verify=False, headers=headers)
         response.raise_for_status()
 
