@@ -566,7 +566,7 @@ Both the architecture and the weights are needed
 
 When importing a model, you need to import both the architecture and the weights. The process varies depending on the library used.
 
-This also means that the having access to the architecture is not enough to reproduce the model.
+This also means that having access to the architecture is not enough to reproduce the model.
 :::
 
 ## Training Process

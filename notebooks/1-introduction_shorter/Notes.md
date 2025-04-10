@@ -1,5 +1,9 @@
 # Notes
 
+## Link to the data organisation
+
+<https://basisdata.nl/hwh-ahn/AUX/bladwijzer.gpkg>
+
 ## Evaluation
 
 Bounding boxes to use for the evaluation:

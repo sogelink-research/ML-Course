@@ -454,7 +454,7 @@ def merge_tiff_files(
     target_crs = "EPSG:28992"
 
     if len(input_files) == 0:
-        print("No input files provided.")
+        print("Cannot merge: no input files provided.")
         return
 
     # Reproject all input files to the target CRS
@@ -485,8 +485,6 @@ def merge_tiff_files(
     # Close the source files
     for src in src_files_to_mosaic:
         src.close()
-
-    print(f"Saved as {output_file}.")
 
 
 def download_all(bbox: BboxInt, main_data_folder: Path, filter_buildings=True):
