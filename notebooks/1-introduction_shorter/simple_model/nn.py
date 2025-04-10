@@ -300,18 +300,27 @@ class SegmentationConvolutionalNetwork(nn.Module):
         self,
         dataloaders: TrainValLoaders,
         max_epochs: int,
+        initial_learning_rate: float,
+        optimizer_type: str,
         stop_early_after: int = 10,
         save_weights: bool = True,
     ):
         print("Training the model...")
         print(f"Using the following device: {self.device}")
 
-        optimizer = torch.optim.AdamW(self.parameters(), lr=0.01, weight_decay=1e-4)
-        # optimizer = torch.optim.SGD(
-        #     self.parameters(), lr=0.01, weight_decay=1e-5, momentum=0.9
-        # )
+        if optimizer_type.lower() == "adam":
+            optimizer = torch.optim.AdamW(
+                self.parameters(), lr=initial_learning_rate, weight_decay=1e-4
+            )
+        elif optimizer_type.lower() == "sgd":
+            optimizer = torch.optim.SGD(
+                self.parameters(),
+                lr=initial_learning_rate,
+                weight_decay=1e-5,
+                momentum=0.9,
+            )
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-            optimizer, mode="min", factor=0.3, patience=10
+            optimizer, mode="min", factor=0.3, patience=stop_early_after // 2
         )
         progress = tqdm(range(max_epochs))
 

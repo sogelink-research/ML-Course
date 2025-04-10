@@ -34,4 +34,4 @@ Cancelled:
   - [-] Use a smaller image size?
 - [-] Try dropout
 - [-] Focal loss (try different combinations)
-- [ ] Pretrain models on two different datasets (one with many buildings, one with few buildings)
+- [-] Pretrain models on two different datasets (one with many buildings, one with few buildings)
